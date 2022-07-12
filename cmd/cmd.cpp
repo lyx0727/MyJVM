@@ -1,6 +1,7 @@
 #include "cmd.h"
 #include <iostream>
 #include <cstring>
+#include <unistd.h>
 
 using namespace std;
 
@@ -20,7 +21,7 @@ Cmd parseCmd(int argc, char* argv[]){
             }
             // -cp / -classpath
             else if(strcmp(arg, "cp") == 0 || strcmp(arg, "classpath") == 0){
-                cmd.cpOption = argv[i + 1];
+                cmd.cpOption = argv[++i];
             }
             else{
                 break;
@@ -30,26 +31,21 @@ Cmd parseCmd(int argc, char* argv[]){
             break;
         }
     }
-    
-    cmd.Class = argv[i++];
-    
-    for(; i < argc; i++){
-        cmd.args.push_back(argv[i]);
-    }
 
-    if(cmd.versionFlag){
-        cout << "version 0.0.1" << endl;
-    }
-    else if(cmd.helpFlag){
-        printUsage(cmd);
+    if(i < argc){
+        cmd.Class = argv[i++];
+        for(; i < argc; i++){
+            cmd.args.push_back(argv[i]);
+        }
     }
     else{
-        
+        printUsage(argv);
+        exit(1);
     }
 
     return cmd;
 }
 
-void printUsage(Cmd cmd){
-    cout << "Usage: " << cmd.Class << " [-options] class [args...]" << endl; 
+void printUsage(char* argv[]){
+    cout << "Usage: " << argv[0] << " [-options] class [args...]" << endl; 
 }

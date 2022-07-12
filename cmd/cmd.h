@@ -13,6 +13,6 @@ struct Cmd
 };
 
 Cmd parseCmd(int argc, char* argv[]);
-void printUsage(Cmd cmd);
+void printUsage(char* argv[]);
 #endif
 
