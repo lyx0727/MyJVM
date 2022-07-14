@@ -1,7 +1,7 @@
 CC = g++
 CFFLAGS = -lm -Wall -g
-jvm: main.cpp ./cmd/cmd.cpp
-	$(CC) $(CFFLAGS) main.cpp ./cmd/cmd.cpp -o jvm	
+jvm: main.cpp ./cmd/*.cpp ./classpath/*.cpp ./test/*.cpp
+	$(CC) $(CFFLAGS) main.cpp ./cmd/*.cpp ./classpath/*.cpp ./test/*.cpp -o jvm	
 
 clean: 
 	rm *.o
