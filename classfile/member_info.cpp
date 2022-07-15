@@ -1,7 +1,21 @@
 #include "member_info.h"
 using namespace std;
 
-const vector<MemberInfo*> readMembers(ClassReader& cr){
-    // TODO
-    return vector<MemberInfo*>();
+const vector<MemberInfo> readMembers(ClassReader& cr, ConstantPool& cp){
+    uint16_t n = cr.readUint16();
+    vector<MemberInfo> memberInfos;
+    for(uint16_t i = 0; i < n; i++){
+        memberInfos.push_back(readMember(cr, cp));
+    }
+    return memberInfos;
+}
+
+MemberInfo readMember(ClassReader& cr, ConstantPool& cp){
+    return MemberInfo(
+        cp,                         // cp
+        cr.readUint16(),            // accessFlags
+        cr.readUint16(),            // nameIndex
+        cr.readUint16(),            // descriptorIndex
+        readAttributes(cr, cp)      // attributes
+    );
 }

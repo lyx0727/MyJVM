@@ -10,6 +10,6 @@ int main(){
     print(bytes);
     
     ClassFile cf(bytes);
-    cout << cf.getClassName() << endl;
+    cout << cf.toString() << endl;
     return 0;
 }

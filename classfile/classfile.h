@@ -19,8 +19,8 @@ private:
     uint16_t                   thisClass;
     uint16_t                   superClass;
     std::vector<uint16_t>      interfaces;
-    std::vector<MemberInfo*>   fields;
-    std::vector<MemberInfo*>   methods;
+    std::vector<MemberInfo>    fields;
+    std::vector<MemberInfo>    methods;
     std::vector<AttributeInfo> attributes;
 public:
     ClassFile(const std::vector<Byte>& classData){ 
@@ -36,8 +36,8 @@ public:
     const uint16_t getMajorVersion() const { return majorVersion; }
     const ConstantPool getConstantPool() const { return constantPool; }
     const uint16_t getAccessFlags() const { return accessFlags; } 
-    const std::vector<MemberInfo*>  getFields() const { return fields; } 
-    const std::vector<MemberInfo*>  getMethods() const { return methods; } 
+    const std::vector<MemberInfo>  getFields() const { return fields; } 
+    const std::vector<MemberInfo>  getMethods() const { return methods; } 
     const std::string getClassName() const { return constantPool.getClassName(thisClass); }
     const std::string getSuperClassName() const {
         if(superClass > 0){
@@ -47,6 +47,8 @@ public:
         return "";
     }
     const std::vector<std::string> getInterfacesNames() const;
+
+    const std::string toString() const; 
 };
 
 #endif

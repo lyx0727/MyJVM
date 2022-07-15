@@ -9,13 +9,13 @@ cmd_test: utils.o cmd.o cmd_test.o
 cmd_test.o: ./cmd/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
-classpath_test: utils.o classpath.o entry.o classpath_test.o 
+classpath_test: utils.o classpath.o classpath_test.o entry.o  
 	$(CC) $(CFFLAGS) $^ -o $@
 
 classpath_test.o: ./classpath/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
-classfile_test: utils.o classfile.o class_reader.o constant_pool.o member_info.o attribute_info.o classfile_test.o
+classfile_test: utils.o attribute_info.o class_reader.o constant_pool.o member_info.o constant_info.o classfile.o classfile_test.o
 	$(CC) $(CFFLAGS) $^ -o $@
 
 classfile_test.o: ./classfile/test.cpp
@@ -51,6 +51,8 @@ member_info.o: ./classfile/member_info.cpp
 attribute_info.o: ./classfile/attribute_info.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
+constant_info.o: ./classfile/constant_info.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
 
 clean: 
 	rm *.o
