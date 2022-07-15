@@ -3,4 +3,5 @@
 /.vs
 /.vscode
 /*.o
+/*_test
 /README.pdf
