@@ -9,10 +9,10 @@ cmd_test: utils.o cmd.o cmd_test.o
 cmd_test.o: ./cmd/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
-cp_test: utils.o classpath.o entry.o cp_test.o
+classpath_test: utils.o classpath.o entry.o classpath_test.o
 	$(CC) $(CFFLAGS) $^ -o $@
 
-cp_test.o: ./classpath/test.cpp
+classpath_test.o: ./classpath/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 utils.o: utils/utils.cpp

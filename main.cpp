@@ -6,6 +6,7 @@ void startJVM(Cmd cmd){
     Classpath cp(cmd.XjreOption, cmd.cpOption);
     vector<Byte> bytes = cp.readClass(cmd.Class);
     cout << cp.toString() << endl;
+    cout << "\n----------" << cmd.Class << "----------" << endl;
     for(Byte byte : bytes){
         cout << hex << (int)byte << ' ';
     }
