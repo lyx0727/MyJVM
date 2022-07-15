@@ -14,12 +14,11 @@ ostream& operator<<(ostream& os, const Entry& entry){
     return os;
 }
 
+/*
+ * DirEntry
+ */
 DirEntry::DirEntry(const std::string& path){
-    const int maxSize = 256;
-    char* buf = new char[maxSize];
-    this->absDir =  getcwd(buf, 256);
-    this->absDir += "/" + path;
-    delete[] buf;
+    absDir = getAbsPath(path);
 }
 
 vector<Byte> DirEntry::readClass(const std::string& className){
@@ -39,18 +38,21 @@ vector<Byte> DirEntry::readClass(const std::string& className){
     return bytes;
 }
 
-const string& CompositeEntry::toString() const{
+/*
+ * CompositeEntry
+ */
+CompositeEntry::CompositeEntry(const vector<string>& paths){
+    for(const string& path : paths){
+        this->entrys.push_back(getEntry(path));
+    }
+}
+
+const string CompositeEntry::toString() const{
     string s;
     for(Entry* entry : entrys){
         s += entry->toString() + '\n';
     }
     return s;
-}
-
-CompositeEntry::CompositeEntry(const vector<string>& paths){
-    for(const string& path : paths){
-        this->entrys.push_back(getEntry(path));
-    }
 }
 
 vector<Byte> CompositeEntry::readClass(const string& className){

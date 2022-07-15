@@ -2,7 +2,8 @@
 #define JVM_GUARD
 
 #include "cmd/cmd.h"
-#include "classpath/entry.h"
+#include "classpath/classpath.h"
+#include "utils/utils.h"
 #include <iostream>
 
 #endif

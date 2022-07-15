@@ -1,10 +1,5 @@
+#include "cmd.h"
 #include <iostream>
-#include <unistd.h>
-#include <cstdlib>
-#include "jvm.h"
-#include <dirent.h>
-#include <cstring>
-#include "test/test.h"
 using namespace std;
 
 int main(int argc, char* argv[]){
@@ -17,7 +12,12 @@ int main(int argc, char* argv[]){
         printUsage(argv);
     }
     else{
-        
+        cout << "----------[class]----------" << endl;
+        cout << cmd.Class << endl;
+        cout << "----------[args]----------" << endl;
+        for(string& arg : cmd.args){
+            cout << arg << endl;
+        }
     }
 
     return 0;
