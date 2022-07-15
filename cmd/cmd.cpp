@@ -23,6 +23,10 @@ Cmd parseCmd(int argc, char* argv[]){
             else if(strcmp(arg, "cp") == 0 || strcmp(arg, "classpath") == 0){
                 cmd.cpOption = argv[++i];
             }
+            // -Xjre
+            else if(strcmp(arg, "Xjre") == 0){
+                cmd.XjreOption = argv[++i];
+            }
             else{
                 break;
             }

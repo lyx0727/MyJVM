@@ -5,14 +5,11 @@
 #include <iostream>
 using namespace std;
 
-Classpath* parse(const string& jreOption, const string& cpOption){
-    Classpath* cp = new Classpath();
-    cp->parseBootAndExtClasspath(jreOption);
-    cp->parseUserClasspath(cpOption);
-    return cp;
-}
-
 const string getJreDir(const string& jreOption){
+    // TODO
+    // fix jre to test
+    return "jre";
+    
     if(jreOption != ""){
         return jreOption;
     }
@@ -38,13 +35,14 @@ void Classpath::parseUserClasspath(const std::string& cpOption){
 
 vector<Byte> Classpath::readClass(const string& className){
     vector<Byte> bytes;
-    bytes = this->bootClasspath->readClass(className);
+    string cls = replace(className, '.', '/');
+    bytes = this->bootClasspath->readClass(cls);
     if(!bytes.empty()){
         return bytes;
     }
-    bytes = this->extClasspath->readClass(className);
+    bytes = this->extClasspath->readClass(cls);
     if(!bytes.empty()){
         return bytes;
     }
-    return this->userClasspath->readClass(className);
+    return this->userClasspath->readClass(cls);
 }

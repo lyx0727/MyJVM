@@ -1,11 +1,16 @@
 #include <iostream>
-#include <unistd.h>
-#include <cstdlib>
 #include "jvm.h"
-#include <dirent.h>
-#include <cstring>
-#include "test/test.h"
 using namespace std;
+
+void startJVM(Cmd cmd){
+    Classpath cp(cmd.XjreOption, cmd.cpOption);
+    vector<Byte> bytes = cp.readClass(cmd.Class);
+    cout << cp.toString() << endl;
+    for(Byte byte : bytes){
+        cout << hex << (int)byte << ' ';
+    }
+    cout << endl;
+}
 
 int main(int argc, char* argv[]){
     Cmd cmd = parseCmd(argc, argv);
@@ -17,7 +22,7 @@ int main(int argc, char* argv[]){
         printUsage(argv);
     }
     else{
-        
+        startJVM(cmd);
     }
 
     return 0;

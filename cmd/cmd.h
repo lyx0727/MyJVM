@@ -9,6 +9,7 @@ struct Cmd
     bool versionFlag = false;
     std::string cpOption;
     std::string Class;
+    std::string XjreOption;
     std::vector<std::string> args;
 };
 

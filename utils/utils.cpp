@@ -53,7 +53,7 @@ void getFileNames(const string& path, vector<string>& fileNames){
     DIR *pDir;
     struct dirent* ptr;
     if(!(pDir = opendir(path.c_str()))){
-        cerr << "Folder doesn't exist!" << endl;
+        cerr << "Folder " << path << " doesn't exist!" << endl;
         return;
     }
     while((ptr = readdir(pDir))!=0) {
@@ -62,4 +62,12 @@ void getFileNames(const string& path, vector<string>& fileNames){
         }
     }
     closedir(pDir);
+}
+
+void walkDir(const std::string& path, WalkFn walkFn, void* that = nullptr){
+    vector<string> fileNames;
+    getFileNames(path, fileNames);
+    for(const string& fileName : fileNames){
+        walkFn(fileName, that);
+    }
 }

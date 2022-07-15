@@ -12,6 +12,9 @@ public:
     virtual ~Entry(){};
 };
 
+/*
+ * DirEntry
+ */
 class DirEntry : public Entry{
 private:
     std::string absDir;
@@ -22,6 +25,22 @@ public:
     ~DirEntry(){}
 };
 
+/*
+ * ZipEntry
+ */
+class ZipEntry : public Entry{
+private:
+    std::string absDir;
+public:
+    ZipEntry(const std::string& path);
+    std::vector<Byte> readClass(const std::string& className); 
+    const std::string toString() const { return this->absDir; }
+    ~ZipEntry(){}
+};
+
+/*
+ * CompositeEntry
+ */
 class CompositeEntry : public Entry{
 private:
     std::vector<Entry*> entrys;
@@ -30,6 +49,20 @@ public:
     std::vector<Byte> readClass(const std::string& className); 
     const std::string toString() const;
     ~CompositeEntry();
+};
+
+/*
+ * WildcardEntry
+ */
+class WildcardEntry : public Entry{
+private:
+    std::vector<Entry*> entrys;
+public:
+    WildcardEntry(const std::string& path);
+    void addEntry(Entry* entry){ entrys.push_back(entry); }
+    std::vector<Byte> readClass(const std::string& className); 
+    const std::string toString() const;
+    ~WildcardEntry();
 };
 
 std::ostream& operator<<(std::ostream& os, const Entry& entry);
