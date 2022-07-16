@@ -6,7 +6,7 @@ void ClassFile::read(ClassReader& reader){
     readAndCheckMagic(reader);
     readAndCheckVersion(reader);
 
-    constantPool = readConstantPool(reader);
+    readConstantPool(reader, constantPool);
 
     accessFlags = reader.readUint16();
     thisClass = reader.readUint16();
@@ -64,15 +64,29 @@ const string ClassFile::toString() const {
     for(string& interfaceName : interfaceNames){
         str += "\t" + interfaceName + "\n";
     }
-    vector<MemberInfo> fields = getFields();
-    str += "[fileds count]\t" + to_string(fields.size());
-    for(MemberInfo& field : fields){
-        str += "\t" + field.toString() + "\n";
+    vector<MemberInfo*> fields = getFields();
+    str += "[fileds count]\t" + to_string(fields.size()) + "\n";
+    for(MemberInfo* field : fields){
+        str += "\t" + field->toString() + "\n";
     }
-    vector<MemberInfo> methods = getMethods();
-    str += "[methods count]\t" + to_string(methods.size());
-    for(MemberInfo& method : methods){
-        str += "\t" + method.toString() + "\n";
+    vector<MemberInfo*> methods = getMethods();
+    str += "[methods count]\t" + to_string(methods.size()) + "\n";
+    for(MemberInfo* method : methods){
+        str += "\t" + method->toString() + "\n";
     }
     return str;
+}
+
+ClassFile::~ClassFile(){
+    for(MemberInfo* member : fields){
+        delete member;
+        // cout << member << ": " << member->getName() << endl;
+    }
+    for(MemberInfo* member : methods){
+        delete member;
+        // cout << member << ": " << member->getName() << endl;
+    }
+    for(AttributeInfo* attr : attributes){
+        delete attr;
+    }
 }

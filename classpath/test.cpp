@@ -6,7 +6,7 @@ using namespace std;
 void testDirEntry(){
     Entry* entry = getEntry("src/com/lyx");
     cout << *entry << endl;
-    vector<Byte> bytes = entry->readClass("test");
+    vector<Byte> bytes = entry->readClass("Test");
     print(bytes);
     delete entry;
 }
@@ -14,7 +14,7 @@ void testDirEntry(){
 void testWildcardEntry(){
     Entry* entry = getEntry("*");
     cout << *entry << endl;
-    vector<Byte> bytes = entry->readClass("test");
+    vector<Byte> bytes = entry->readClass("Test");
     print(bytes);
     delete entry;
 }

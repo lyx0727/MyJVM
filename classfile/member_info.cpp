@@ -1,17 +1,23 @@
 #include "member_info.h"
 using namespace std;
 
-const vector<MemberInfo> readMembers(ClassReader& cr, ConstantPool& cp){
+MemberInfo::~MemberInfo(){ 
+    for(AttributeInfo* attr : attributes){
+        delete attr;
+    }
+}
+
+const vector<MemberInfo*> readMembers(ClassReader& cr, ConstantPool& cp){
     uint16_t n = cr.readUint16();
-    vector<MemberInfo> memberInfos;
+    vector<MemberInfo*> memberInfos(n);
     for(uint16_t i = 0; i < n; i++){
-        memberInfos.push_back(readMember(cr, cp));
+        memberInfos[i] = readMember(cr, cp);
     }
     return memberInfos;
 }
 
-MemberInfo readMember(ClassReader& cr, ConstantPool& cp){
-    return MemberInfo(
+MemberInfo* readMember(ClassReader& cr, ConstantPool& cp){
+    return new MemberInfo(
         cp,                         // cp
         cr.readUint16(),            // accessFlags
         cr.readUint16(),            // nameIndex
