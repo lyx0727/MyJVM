@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-void ClassFile::read(ClassReader& reader){
+void Classfile::read(ClassReader& reader){
     readAndCheckMagic(reader);
     readAndCheckVersion(reader);
 
@@ -18,7 +18,7 @@ void ClassFile::read(ClassReader& reader){
     attributes = readAttributes(reader, constantPool);
 }
 
-void ClassFile::readAndCheckMagic(ClassReader& reader){
+void Classfile::readAndCheckMagic(ClassReader& reader){
     uint32_t magic = reader.readUint32();
     if(magic != 0xCAFEBABE){
         cerr << "java.lang.ClassFormatError: magic!" << endl;
@@ -26,7 +26,7 @@ void ClassFile::readAndCheckMagic(ClassReader& reader){
     }
 }
 
-void ClassFile::readAndCheckVersion(ClassReader& reader){
+void Classfile::readAndCheckVersion(ClassReader& reader){
     minorVersion = reader.readUint16();
     majorVersion = reader.readUint16();
     switch (majorVersion){
@@ -45,7 +45,7 @@ void ClassFile::readAndCheckVersion(ClassReader& reader){
     exit(1);
 }
 
-const vector<string> ClassFile::getInterfacesNames() const {
+const vector<string> Classfile::getInterfacesNames() const {
     size_t n = interfaces.size();
     vector<string> interfaceNames(n);
     for(size_t i = 0; i < n; i++){
@@ -54,7 +54,7 @@ const vector<string> ClassFile::getInterfacesNames() const {
     return interfaceNames;
 }
 
-const string ClassFile::toString() const {
+const string Classfile::toString() const {
     string str = "[version]\t" + to_string(getMajorVersion()) + "." + to_string(getMinorVersion())
         + "\n" + "[access flag]\t" + to_string(getAccessFlags())
         + "\n" + "[this class]\t" + getClassName() 
@@ -78,7 +78,7 @@ const string ClassFile::toString() const {
     return str;
 }
 
-ClassFile::~ClassFile(){
+Classfile::~Classfile(){
     for(MemberInfo* member : fields){
         delete member;
     }

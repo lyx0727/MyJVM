@@ -7,10 +7,8 @@ void startJVM(Cmd cmd){
     vector<Byte> bytes = cp.readClass(cmd.Class);
     cout << cp.toString() << endl;
     cout << "\n----------" << cmd.Class << "----------" << endl;
-    for(Byte byte : bytes){
-        cout << hex << (int)byte << ' ';
-    }
-    cout << endl;
+    Classfile cf(bytes);
+    cout << cf.toString() << endl;
 }
 
 int main(int argc, char* argv[]){

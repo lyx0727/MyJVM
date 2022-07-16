@@ -1,5 +1,5 @@
-#ifndef CLASSFILE_GUARD
-#define CLASSFILE_GUARD
+#ifndef Classfile_GUARD
+#define Classfile_GUARD
 
 #include <vector>
 #include <cstdint>
@@ -9,7 +9,7 @@
 #include "member_info.h"
 #include "attribute_info.h"
 
-class ClassFile{
+class Classfile{
 private:
     uint32_t                    magic;
     uint16_t                    minorVersion;
@@ -23,11 +23,11 @@ private:
     std::vector<MemberInfo*>    methods;
     std::vector<AttributeInfo*> attributes;
 public:
-    ClassFile(const std::vector<Byte>& classData){ 
+    Classfile(const std::vector<Byte>& classData){ 
         ClassReader cr(classData);
         read(cr); 
     }
-    ~ClassFile();
+    ~Classfile();
 
     void read(ClassReader& cr);
     void readAndCheckMagic(ClassReader& cr);

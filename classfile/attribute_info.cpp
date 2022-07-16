@@ -2,7 +2,12 @@
 using namespace std;
 
 AttributeInfo* getAttributeInfo(const std::string& attrName, uint32_t attrlen, ConstantPool& cp){
-    switch (AttributeNameMap.at(attrName)){
+    uint8_t tag;
+    if(AttributeNameMap.count(attrName)){
+        tag = AttributeNameMap.at(attrName);
+    }
+    
+    switch (tag){
         case AttributeType::Code:  return new CodeAttribute(cp);
         case AttributeType::ConstantValue:  return new ConstantValueAttribute;
         case AttributeType::Deprecated:  return new DeprecatedAttribute;

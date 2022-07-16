@@ -1,6 +1,6 @@
 CC = g++
 CFFLAGS = -lm -Wall -g
-jvm: utils.o main.o cmd.o classpath.o entry.o
+jvm: utils.o main.o cmd.o classpath.o entry.o attribute_info.o class_reader.o constant_pool.o member_info.o constant_info.o classfile.o
 	$(CC) $(CFFLAGS) $^ -o $@	
 
 cmd_test: utils.o cmd.o cmd_test.o
@@ -9,7 +9,7 @@ cmd_test: utils.o cmd.o cmd_test.o
 cmd_test.o: ./cmd/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
-classpath_test: utils.o classpath.o classpath_test.o entry.o  
+classpath_test: utils.o classpath.o classpath_test.o entry.o
 	$(CC) $(CFFLAGS) $^ -o $@
 
 classpath_test.o: ./classpath/test.cpp
