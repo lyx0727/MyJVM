@@ -24,7 +24,7 @@ public:
     const std::string toString() const { return getName(); }
 };
 
-const std::vector<MemberInfo*> readMembers(ClassReader& cr, ConstantPool& cp);
+std::vector<MemberInfo*> readMembers(ClassReader& cr, ConstantPool& cp);
 
 MemberInfo* readMember(ClassReader& cr, ConstantPool& cp);
 

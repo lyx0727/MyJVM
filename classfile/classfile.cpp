@@ -74,17 +74,16 @@ const string ClassFile::toString() const {
     for(MemberInfo* method : methods){
         str += "\t" + method->toString() + "\n";
     }
+    str += constantPool.toString();
     return str;
 }
 
 ClassFile::~ClassFile(){
     for(MemberInfo* member : fields){
         delete member;
-        // cout << member << ": " << member->getName() << endl;
     }
     for(MemberInfo* member : methods){
         delete member;
-        // cout << member << ": " << member->getName() << endl;
     }
     for(AttributeInfo* attr : attributes){
         delete attr;

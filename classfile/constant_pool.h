@@ -32,6 +32,8 @@ public:
     const std::string getClassName(uint16_t index) const;
     
     const std::string getUtf8(uint16_t index) const;
+
+    const std::string toString() const;
 };
 
 void readConstantPool(ClassReader& cr, ConstantPool& cp);

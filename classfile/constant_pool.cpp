@@ -9,8 +9,8 @@ void readConstantPool(ClassReader& cr, ConstantPool& cp){
     for(uint16_t i = 1; i < n; i++){
         cp[i] = readConstantInfo(cr, cp);
         switch(cp[i]->getTag()){
-            case ConstantType::CONSTANT_Long:
-            case ConstantType::CONSTANT_Double:
+            case ConstantType::Long:
+            case ConstantType::Double:
             // take 2 places
                 i++;
         }
@@ -34,9 +34,16 @@ const string ConstantPool::getUtf8(uint16_t index) const {
     return c->str;
 }
 
-ConstantPool::~ConstantPool(){
-    cout << "~cp: " << this << endl; 
+const string ConstantPool::toString() const{
+    string str = "[constant pool]\t" + to_string(constantInfos.size()) + "\n";
     for(ConstantInfo* c : constantInfos){
-        delete c;
+        if(c) str += "\t" + c->toString() + "\n";
+    }   
+    return str;
+}
+
+ConstantPool::~ConstantPool(){ 
+    for(ConstantInfo* c : constantInfos){
+        if(c) delete c;
     }
 }

@@ -7,7 +7,7 @@ MemberInfo::~MemberInfo(){
     }
 }
 
-const vector<MemberInfo*> readMembers(ClassReader& cr, ConstantPool& cp){
+vector<MemberInfo*> readMembers(ClassReader& cr, ConstantPool& cp){
     uint16_t n = cr.readUint16();
     vector<MemberInfo*> memberInfos(n);
     for(uint16_t i = 0; i < n; i++){
