@@ -21,7 +21,7 @@ public:
     const uint16_t getAccessFlags() const { return accessFlags; }
     const std::string getName() const { return cp.getUtf8(nameIndex); } 
     const std::string getDescriptor() const { return cp.getUtf8(descriptorIndex); } 
-    const std::string toString() const { return getName(); }
+    const std::string toString() const;
 };
 
 std::vector<MemberInfo*> readMembers(ClassReader& cr, ConstantPool& cp);

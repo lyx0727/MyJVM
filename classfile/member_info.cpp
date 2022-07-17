@@ -25,3 +25,11 @@ MemberInfo* readMember(ClassReader& cr, ConstantPool& cp){
         readAttributes(cr, cp)      // attributes
     );
 }
+
+const string MemberInfo::toString() const{
+    string str = getName() + ": " + getDescriptor();
+    for(AttributeInfo* attr : attributes){
+        str += "\n\t\t" + attr->toString();  
+    }
+    return str;
+}

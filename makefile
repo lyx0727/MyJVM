@@ -3,31 +3,27 @@ CFFLAGS = -lm -Wall -g
 jvm: utils.o main.o cmd.o classpath.o entry.o attribute_info.o class_reader.o constant_pool.o member_info.o constant_info.o classfile.o
 	$(CC) $(CFFLAGS) $^ -o $@	
 
-cmd_test: utils.o cmd.o cmd_test.o
-	$(CC) $(CFFLAGS) $^ -o $@
-
-cmd_test.o: ./cmd/test.cpp
-	$(CC) $(CFFLAGS) -c $^ -o $@
-
-classpath_test: utils.o classpath.o classpath_test.o entry.o
-	$(CC) $(CFFLAGS) $^ -o $@
-
-classpath_test.o: ./classpath/test.cpp
-	$(CC) $(CFFLAGS) -c $^ -o $@
-
-classfile_test: utils.o attribute_info.o class_reader.o constant_pool.o member_info.o constant_info.o classfile.o classfile_test.o
-	$(CC) $(CFFLAGS) $^ -o $@
-
-classfile_test.o: ./classfile/test.cpp
-	$(CC) $(CFFLAGS) -c $^ -o $@
-
 utils.o: utils/utils.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 main.o: main.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
+# cmd
+cmd_test: utils.o cmd.o cmd_test.o
+	$(CC) $(CFFLAGS) $^ -o $@
+
+cmd_test.o: ./cmd/test.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
 cmd.o: ./cmd/cmd.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
+# classpath
+classpath_test: utils.o classpath.o classpath_test.o entry.o
+	$(CC) $(CFFLAGS) $^ -o $@
+
+classpath_test.o: ./classpath/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 classpath.o: ./classpath/classpath.cpp
@@ -36,6 +32,12 @@ classpath.o: ./classpath/classpath.cpp
 entry.o: ./classpath/entry.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
+# classfile
+classfile_test: utils.o attribute_info.o class_reader.o constant_pool.o member_info.o constant_info.o classfile.o classfile_test.o
+	$(CC) $(CFFLAGS) $^ -o $@
+
+classfile_test.o: ./classfile/test.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
 classfile.o: ./classfile/classfile.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 

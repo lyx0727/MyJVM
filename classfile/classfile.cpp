@@ -7,7 +7,6 @@ void Classfile::read(ClassReader& reader){
     readAndCheckVersion(reader);
 
     readConstantPool(reader, constantPool);
-
     accessFlags = reader.readUint16();
     thisClass = reader.readUint16();
     superClass = reader.readUint16();
@@ -15,7 +14,7 @@ void Classfile::read(ClassReader& reader){
 
     fields = readMembers(reader, constantPool);
     methods = readMembers(reader, constantPool);
-    attributes = readAttributes(reader, constantPool);
+    // attributes = readAttributes(reader, constantPool);
 }
 
 void Classfile::readAndCheckMagic(ClassReader& reader){
@@ -73,6 +72,10 @@ const string Classfile::toString() const {
     str += "[methods count]\t" + to_string(methods.size()) + "\n";
     for(MemberInfo* method : methods){
         str += "\t" + method->toString() + "\n";
+    }
+    str += "[attributes count]\t" + to_string(attributes.size()) + "\n";
+    for(AttributeInfo* attr : attributes){
+        str += "\t" + attr->toString() + "\n";
     }
     str += constantPool.toString();
     return str;

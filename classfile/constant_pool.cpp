@@ -36,8 +36,16 @@ const string ConstantPool::getUtf8(uint16_t index) const {
 
 const string ConstantPool::toString() const{
     string str = "[constant pool]\t" + to_string(constantInfos.size()) + "\n";
+    size_t i = 0;
     for(ConstantInfo* c : constantInfos){
-        if(c) str += "\t" + c->toString() + "\n";
+        if(c){
+            str += "\t" + c->toString() + "\n";
+            i++;
+        }
+        if(i > 10){
+            str += "\t...\n";
+            break;
+        }
     }   
     return str;
 }

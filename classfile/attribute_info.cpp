@@ -6,6 +6,9 @@ AttributeInfo* getAttributeInfo(const std::string& attrName, uint32_t attrlen, C
     if(AttributeNameMap.count(attrName)){
         tag = AttributeNameMap.at(attrName);
     }
+    else{
+        return new UnparsedAttribute(attrName, attrlen);
+    }
     
     switch (tag){
         case AttributeType::Code:  return new CodeAttribute(cp);
