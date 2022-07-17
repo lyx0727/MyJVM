@@ -57,7 +57,7 @@ constant_info.o: ./classfile/constant_info.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # runtime data area
-rtda_test: rtda_test.o
+rtda_test: rtda_test.o utils.o
 	$(CC) $(CFFLAGS) $^ -o $@
 
 rtda_test.o: rtda/test.cpp

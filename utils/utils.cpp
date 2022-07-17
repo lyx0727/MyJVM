@@ -71,3 +71,10 @@ void walkDir(const std::string& path, WalkFn walkFn, void* that = nullptr){
         walkFn(fileName, that);
     }
 }
+
+template<>long toLong(int val){
+    long l;
+    memcpy(&l, &val, sizeof(int) / sizeof(Byte));
+    l &= 0x00000000ffffffffL;
+    return l;
+}

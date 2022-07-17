@@ -1,10 +1,14 @@
 # MyJVM in C++
 
 ## Environment
-**Linux** only
+dev env: 
+- **Linux** only
+- $\geq$ **C++11**
 
 ## Modules so far
 ```bash
+├── rtda
+├── classfile
 ├── classpath
 ├── cmd
 ├── jre
