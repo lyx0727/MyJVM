@@ -12,6 +12,11 @@ public:
     Classpath(const std::string& jreOption, const std::string& cpOption){
         parse(jreOption, cpOption);
     }
+    ~Classpath(){
+        delete bootClasspath;
+        delete extClasspath;
+        delete userClasspath;
+    }
     
     void parse(const std::string& jreOption, const std::string& cpOption){
         parseBootAndExtClasspath(jreOption);
