@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstring>
 #include <unistd.h>
+#include <cstdlib>
 
 using namespace std;
 
@@ -26,6 +27,10 @@ Cmd parseCmd(int argc, char* argv[]){
             // -Xjre
             else if(strcmp(arg, "Xjre") == 0){
                 cmd.XjreOption = argv[++i];
+            }
+            // -Xss
+            else if(strcmp(arg, "Xss") == 0){
+                cmd.Xss = (unsigned int)atoi(argv[++i]);
             }
             else{
                 break;

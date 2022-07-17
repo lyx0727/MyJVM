@@ -58,7 +58,8 @@ const string Classfile::toString() const {
         + "\n" + "[access flag]\t" + to_string(getAccessFlags())
         + "\n" + "[this class]\t" + getClassName() 
         + "\n" + "[super class]\t" + getSuperClassName()
-        + "\n" + "[interfaces]\n";
+        + "\n";
+    str += "[interfaces count]\t" + to_string(interfaces.size()) + "\n";
     vector<string> interfaceNames = getInterfacesNames();
     for(string& interfaceName : interfaceNames){
         str += "\t" + interfaceName + "\n";

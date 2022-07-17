@@ -10,6 +10,7 @@ struct Cmd
     std::string cpOption;
     std::string Class;
     std::string XjreOption;
+    unsigned int Xss = 1024U;
     std::vector<std::string> args;
 };
 
