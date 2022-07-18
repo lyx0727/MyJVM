@@ -34,9 +34,9 @@ struct ConstantInfo{
 
 struct ConstantIntegerInfo : public ConstantInfo {  
     uint8_t getTag(){ return ConstantType::Integer; }
-    int32_t val; 
+    int val; 
     void readInfo(ClassReader& cr){
-        val = (int32_t)cr.readUint32();
+        val = toInt(cr.readUint32());
     }
     const std::string toString() const { return std::to_string(val); }
 };
@@ -44,7 +44,7 @@ struct ConstantFloatInfo : public ConstantInfo {
     uint8_t getTag(){ return ConstantType::Float; }
     float val;
     void readInfo(ClassReader& cr){
-        val = (float)cr.readUint32();
+        val = toFloat(cr.readUint32());
     }
     const std::string toString() const { return std::to_string(val); }
 };
@@ -52,7 +52,7 @@ struct ConstantLongInfo : public ConstantInfo {
     uint8_t getTag(){ return ConstantType::Long; }
     long val;
     void readInfo(ClassReader& cr){
-        val = (long)cr.readUint64();
+        val = toLong(cr.readUint64());
     }
     const std::string toString() const { return std::to_string(val); }
 };
@@ -60,7 +60,7 @@ struct ConstantDoubleInfo : public ConstantInfo {
     uint8_t getTag(){ return ConstantType::Double; }
     double val;
     void readInfo(ClassReader& cr){
-        val = (double)cr.readUint64();
+        val = toDouble(cr.readUint64());
     }
     const std::string toString() const { return std::to_string(val); }
 };
@@ -69,7 +69,7 @@ struct ConstantUtf8Info : public ConstantInfo {
     std::string str;
     static const std::string decodeMUTF8(const std::vector<Byte>& bytes); 
     void readInfo(ClassReader& cr){
-        uint32_t length = (uint16_t)cr.readUint16();
+        uint16_t length = cr.readUint16();
         std::vector<Byte> bytes = cr.readBytes(length);
         str = decodeMUTF8(bytes);
     }
