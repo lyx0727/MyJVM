@@ -49,5 +49,6 @@ void testOperandStack(){
 int main(){
     testLocalVars();
     testOperandStack();
+
     return 0;
 }

@@ -62,6 +62,25 @@ rtda_test: rtda_test.o utils.o
 
 rtda_test.o: rtda/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
+
+# instructions
+instructions_test: instructions.o loads.o stores.o
+	$(CC) $(CFFLAGS) $^ -o $@
+instructions.o: instructions/test.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
+loads.o: instructions/loads.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
+stores.o: instructions/stores.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
+# test
+t: test.o
+	$(CC) $(CFFLAGS) $^ -o $@
+test.o: test/test.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
 clean: 
 	rm *.o
 	rm *_test
