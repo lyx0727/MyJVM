@@ -21,6 +21,7 @@ public:
     const uint16_t getAccessFlags() const { return accessFlags; }
     const std::string getName() const { return cp.getUtf8(nameIndex); } 
     const std::string getDescriptor() const { return cp.getUtf8(descriptorIndex); } 
+    CodeAttribute* getCodeAttribute() const;
     const std::string toString() const;
 };
 

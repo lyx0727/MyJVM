@@ -8,9 +8,13 @@ class Thread;
 
 struct Frame{
     Frame* lower;
-    LocalVars localvals;
+    LocalVars localVars;
     OperandStack operandStack;
     Thread* thread;
+    int nextPc;
+
+    Frame(Thread* thread, unsigned int maxLocals, unsigned int maxStack)
+        : lower(nullptr), localVars(maxLocals), operandStack(maxStack), thread(thread) {}
 };
 
 #endif

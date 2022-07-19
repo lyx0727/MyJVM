@@ -51,9 +51,9 @@ struct IINC : public Instruction{
         constant = (int)br.readInt8();
     }
     void execute(Frame* frame){
-        int var = frame->localvals.getInt(index);
+        int var = frame->localVars.getInt(index);
         var += constant;
-        frame->localvals.set(index, var);
+        frame->localVars.set(index, var);
     }
-}
+};
 #endif

@@ -1,6 +1,13 @@
 CC = g++
 CFFLAGS = -lm -Wall -g
-jvm: utils.o main.o cmd.o classpath.o entry.o attribute_info.o class_reader.o constant_pool.o member_info.o constant_info.o classfile.o
+# dependency
+CMD_DEP = cmd.o
+CLASSPATH_DEP = entry.o classpath.o
+CLASSFILE_DEP = attribute_info.o class_reader.o constant_pool.o member_info.o constant_info.o classfile.o
+RTDA_DEP = jvm_stack.o thread.o
+INSTRUCTION_DEP = interpreter.o instruction.o
+
+jvm: utils.o main.o $(CMD_DEP) $(CLASSPATH_DEP) $(CLASSFILE_DEP) $(RTDA_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@	
 
 utils.o: utils/utils.cpp
@@ -10,7 +17,7 @@ main.o: main.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # cmd
-cmd_test: utils.o cmd.o cmd_test.o
+cmd_test: utils.o cmd_test.o $(CMD_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@
 
 cmd_test.o: ./cmd/test.cpp
@@ -20,7 +27,7 @@ cmd.o: ./cmd/cmd.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # classpath
-classpath_test: utils.o classpath.o classpath_test.o entry.o
+classpath_test: utils.o classpath_test.o $(CLASSPATH_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@
 
 classpath_test.o: ./classpath/test.cpp
@@ -33,7 +40,7 @@ entry.o: ./classpath/entry.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # classfile
-classfile_test: utils.o attribute_info.o class_reader.o constant_pool.o member_info.o constant_info.o classfile.o classfile_test.o
+classfile_test: utils.o  classfile_test.o $(CLASSFILE_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@
 
 classfile_test.o: ./classfile/test.cpp
@@ -57,7 +64,7 @@ constant_info.o: ./classfile/constant_info.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # runtime data area
-rtda_test: rtda_test.o utils.o jvm_stack.o thread.o
+rtda_test: rtda_test.o utils.o $(RTDA_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@
 
 rtda_test.o: rtda/test.cpp
@@ -69,13 +76,16 @@ jvm_stack.o: rtda/jvm_stack.cpp
 thread.o: rtda/thread.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
-# instructions
-instructions_test: instructions_test.o instruction.o thread.o utils.o
+# instructions 
+instruction_test: instruction_test.o utils.o $(INSTRUCTION_DEP) $(CLASSFILE_DEP) $(RTDA_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@
-instructions_test.o: instructions/test.cpp
+instruction_test.o: instruction/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
-instruction.o: instructions/instruction.cpp
+instruction.o: instruction/instruction.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
+interpreter.o: instruction/interpreter.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # test

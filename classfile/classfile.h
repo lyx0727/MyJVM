@@ -49,6 +49,8 @@ public:
     }
     const std::vector<std::string> getInterfacesNames() const;
 
+    MemberInfo* getMainMethod();
+
     const std::string toString() const; 
 };
 

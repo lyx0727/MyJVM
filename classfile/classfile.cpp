@@ -53,6 +53,15 @@ const vector<string> Classfile::getInterfacesNames() const {
     return interfaceNames;
 }
 
+MemberInfo* Classfile::getMainMethod(){
+    for(MemberInfo* method : methods){
+        if(method->getName() == "main" && method->getDescriptor() == "([Ljava/lang/String;)V"){
+            return method;
+        }
+    }
+    return nullptr;
+}
+
 const string Classfile::toString() const {
     string str = "[version]\t" + to_string(getMajorVersion()) + "." + to_string(getMinorVersion())
         + "\n" + "[access flag]\t" + to_string(getAccessFlags())

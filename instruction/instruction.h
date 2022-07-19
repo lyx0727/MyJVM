@@ -41,4 +41,6 @@ struct Index16Instruction : public Instruction{
 
 void branch(Frame* frame, int offset);
 
+Instruction* getInstrucion(uint8_t opCode);
+
 #endif

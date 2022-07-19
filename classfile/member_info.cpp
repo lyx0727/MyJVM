@@ -26,10 +26,21 @@ MemberInfo* readMember(ClassReader& cr, ConstantPool& cp){
     );
 }
 
-const string MemberInfo::toString() const{
+const string MemberInfo::toString() const {
     string str = getName() + ": " + getDescriptor();
     for(AttributeInfo* attr : attributes){
         str += "\n\t\t" + attr->toString();  
     }
     return str;
+}
+
+CodeAttribute* MemberInfo::getCodeAttribute() const {
+    for(AttributeInfo* attr : attributes){
+        uint8_t type = AttributeTypeMap.at(attr->getName());
+        switch (type){
+        case AttributeType::Code:
+            return dynamic_cast<CodeAttribute*>(attr);
+        }
+    }
+    return nullptr;
 }

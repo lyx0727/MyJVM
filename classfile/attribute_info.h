@@ -17,7 +17,7 @@ enum AttributeType{
     Synthetic
 };
 
-const std::map<std::string, uint8_t> AttributeNameMap{
+const std::map<std::string, uint8_t> AttributeTypeMap{
     { "Code",               AttributeType::Code },
     { "ConstantValue",      AttributeType::ConstantValue },
     { "Deprecated",         AttributeType::Deprecated },

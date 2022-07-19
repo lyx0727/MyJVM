@@ -2,6 +2,17 @@
 #include <iostream>
 using namespace std;
 
+void deleteFrame(Frame* frame){
+    if(frame->lower){
+        deleteFrame(frame->lower);
+    }
+    delete frame;
+}
+
+Stack::~Stack(){
+    deleteFrame(_top);
+}
+
 void Stack::push(Frame* frame){
     if(size >= maxSize){
         std::cerr << "java.lang.StackOverflowError" << std::endl;

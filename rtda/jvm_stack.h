@@ -11,6 +11,7 @@ private:
     Frame* _top;
 public:
     Stack(unsigned int maxSize): maxSize(maxSize){}
+    ~Stack();
     void push(Frame* frame);
     Frame* top();
     Frame* pop();

@@ -1,6 +1,6 @@
-#include "classfile.h"
 #include <iostream>
 #include <fstream>
+#include "classfile.h"
 using namespace std;
 
 int main(){
@@ -10,6 +10,5 @@ int main(){
     Classfile cf(bytes);
     
     cout << cf.toString() << endl;
-    
     return 0;
 }

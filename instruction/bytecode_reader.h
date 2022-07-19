@@ -9,6 +9,11 @@ private:
     std::vector<Byte> code;
     int pc;
 public:
+    BytecodeReader(){}
+    void reset(const std::vector<Byte>& code, int pc){ this->code = code; this->pc = pc; };
+
+    int getPc() const { return pc; }
+    
     uint8_t readUint8(){ return (uint8_t)code[pc++]; }
     int8_t readInt8(){ return (int8_t)readUint8(); }
     uint16_t readUint16(){ 

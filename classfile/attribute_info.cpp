@@ -3,8 +3,8 @@ using namespace std;
 
 AttributeInfo* getAttributeInfo(const std::string& attrName, uint32_t attrlen, ConstantPool& cp){
     uint8_t tag;
-    if(AttributeNameMap.count(attrName)){
-        tag = AttributeNameMap.at(attrName);
+    if(AttributeTypeMap.count(attrName)){
+        tag = AttributeTypeMap.at(attrName);
     }
     else{
         return new UnparsedAttribute(attrName, attrlen);

@@ -11,13 +11,14 @@ private:
     int pc;
     Stack* stack;
 public:
-    Thread(unsigned int maxSize);
+    Thread(unsigned int maxSize = 1024);
     ~Thread();
     int getPc(){ return pc; }
     void setPc(int pc){ this->pc = pc; }
     void pushFrame(Frame* frame);
+    Frame* newFrame(unsigned int maxLocals, unsigned int maxStack);
     Frame* popFrame();
-    Frame* currentFrame();
+    Frame* getCurrentFrame();
 };
 
 #endif

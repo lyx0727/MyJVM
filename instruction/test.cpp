@@ -1,0 +1,20 @@
+#include <iostream>
+#include <cmath>
+#include <fstream>
+#include "instruction.h"
+#include "interpreter.h"
+#include "../classfile/classfile.h" 
+using namespace std;
+
+int main(){
+    ifstream in("src/com/lyx/GaussTest.class");
+    vector<Byte> bytes((istreambuf_iterator<char>(in)), istreambuf_iterator<char>()); 
+    
+    Classfile cf(bytes);
+    
+    MemberInfo* main = cf.getMainMethod();
+    
+    interpret(main);
+
+    return 0;
+}
