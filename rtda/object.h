@@ -4,4 +4,6 @@
 // TODO
 struct Object{};
 
+typedef Object* Ref;
+
 #endif

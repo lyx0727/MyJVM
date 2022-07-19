@@ -4,7 +4,7 @@
 
 union Slot{
     int num;
-    Object* ref;
+    Ref ref;
     Slot(int num):num(num){}
     Slot(Object* ref = nullptr):ref(ref){}
 };
