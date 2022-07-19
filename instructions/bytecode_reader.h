@@ -22,7 +22,18 @@ public:
         uint8_t b2 = readUint8();
         uint8_t b3 = readUint8();
         uint8_t b4 = readUint8();
-        return ((int32_t)b1 << 24) | ((int32_t)b2 << 16) | ((int32_t)b2 << 8) | (int32_t)b2;  
+        return ((int32_t)b1 << 24) | ((int32_t)b2 << 16) | ((int32_t)b3 << 8) | (int32_t)b4;  
+    }
+    void skipPadding(){
+        while(pc % 4 != 0){
+            readUint8();
+        }
+    }
+    int32_t* readInt32s(int32_t n){
+        int32_t* ints = new int32_t[n];
+        for(int32_t i = 0; i < n; i++){
+            ints[i] = readInt32();
+        } 
     }
 };
 

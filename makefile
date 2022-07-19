@@ -57,22 +57,25 @@ constant_info.o: ./classfile/constant_info.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # runtime data area
-rtda_test: rtda_test.o utils.o
+rtda_test: rtda_test.o utils.o jvm_stack.o thread.o
 	$(CC) $(CFFLAGS) $^ -o $@
 
 rtda_test.o: rtda/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
+jvm_stack.o: rtda/jvm_stack.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
+thread.o: rtda/thread.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
 # instructions
-instructions_test: instructions.o loads.o stores.o
+instructions_test: instructions_test.o instruction.o thread.o utils.o
 	$(CC) $(CFFLAGS) $^ -o $@
-instructions.o: instructions/test.cpp
+instructions_test.o: instructions/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
-loads.o: instructions/loads.cpp
-	$(CC) $(CFFLAGS) -c $^ -o $@
-
-stores.o: instructions/stores.cpp
+instruction.o: instructions/instruction.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # test

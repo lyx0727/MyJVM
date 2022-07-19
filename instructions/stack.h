@@ -1,5 +1,5 @@
-#ifndef STACKS_INSTANCE_GUARD
-#define STACKS_INSTANCE_GUARD
+#ifndef STACKS_INSTRUCTION_GUARD
+#define STACKS_INSTRUCTION_GUARD
 #include "instruction.h"
 
 // Pop the top operand stack value

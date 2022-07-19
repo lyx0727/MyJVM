@@ -29,7 +29,7 @@ struct Index8Instruction : public Instruction{
         index = (unsigned int)br.readUint8();
     }
     virtual void execute(Frame* frame) = 0;
-}
+};
 
 struct Index16Instruction : public Instruction{
     unsigned int index;
@@ -37,5 +37,8 @@ struct Index16Instruction : public Instruction{
         index = (unsigned int)br.readUint16();
     }
     virtual void execute(Frame* frame) = 0;
-}
+};
+
+void branch(Frame* frame, int offset);
+
 #endif

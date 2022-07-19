@@ -1,7 +1,7 @@
 #include <iostream>
+#include <cstring>
 #include "local_vars.h"
 #include "operand_stack.h"
-#include <cstring>
 using namespace std;
 
 void testLocalVars() {
