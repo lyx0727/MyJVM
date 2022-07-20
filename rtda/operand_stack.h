@@ -15,7 +15,7 @@ public:
     void push(float val){ push(toInt(val)); }
     void push(long val){ push((int)val); push((int)(val >> 32)); }
     void push(double val){ push(toLong(val)); }
-    void push(Object* ref){ slots.push(Slot(ref)); }
+    void push(Ref ref){ slots.push(Slot(ref)); }
     void push(Slot slot){ slots.push(slot); }
 
     int popInt(){ int val = slots.top().num; slots.pop(); return val; }

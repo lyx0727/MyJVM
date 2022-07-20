@@ -37,7 +37,7 @@ struct DUP2 : public NoOperandsInstruction{
 };
 
 // Swap the top two operand stack values
-struct stack : public NoOperandsInstruction{
+struct SWAP : public NoOperandsInstruction{
     void execute(Frame* frame){
         Slot slot1 = frame->operandStack.popSlot();
         Slot slot2 = frame->operandStack.popSlot();

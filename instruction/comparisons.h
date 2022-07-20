@@ -1,13 +1,13 @@
 #ifndef CONPARISONS_INSTRUCTION_GUARD
 #define CONPARISONS_INSTRUCTION_GUARD
+#include <cmath>
 #include "instruction.h"
 
-template<typename T>
-int _compare(const T& lhs, const T& rhs){
-    if(lhs < rhs){
+template<typename T> int compare( T v1, T v2, bool gFlag){
+    if(v1 < v2){
         return -1;
     }
-    else if(lhs == rhs){
+    else if(v1 == v2){
         return 0;
     }
     else {
@@ -15,47 +15,63 @@ int _compare(const T& lhs, const T& rhs){
     }
 }
 
-int _compare(const float& lhs, const float& rhs, bool gFlag);
+inline int compare(float v1, float v2, bool gFlag){
+    if(std::isnan(v1) || std::isnan(v2)){
+        return gFlag ? 1 : -1;
+    }
+    if(v1 > v2){
+        return 1;
+    }
+    else if(v1 == v2){
+        return 0;
+    }
+    else{
+        return -1;
+    }
+}
 
-// Compare long
-struct LCMP : public NoOperandsInstruction{
+// Compare T
+template<typename T, bool G_FLAG = false> struct CMP : public NoOperandsInstruction{
     void execute(Frame* frame){
-        int v2 = frame->operandStack.popInt(); 
-        int v1 = frame->operandStack.popInt();
-        frame->operandStack.push(_compare(v1, v2));
+        T v2 = frame->pop<T>(); 
+        T v1 = frame->pop<T>();
+        frame->push(compare(v1, v2, G_FLAG));
     }
 };
+typedef CMP<int>          ICMP;
+typedef CMP<long>         LCMP;
+typedef CMP<float, true>  FCMPG;
+typedef CMP<float, false> FCMPL;
 
-// Compare float
-struct FCMPG : public NoOperandsInstruction{
-    void execute(Frame* frame){
-        int v2 = frame->operandStack.popFloat(); 
-        int v1 = frame->operandStack.popFloat();
-        frame->operandStack.push(_compare(v1, v2, true));
-    }
-};
-struct FCMPL : public NoOperandsInstruction{
-    void execute(Frame* frame){
-        int v2 = frame->operandStack.popFloat(); 
-        int v1 = frame->operandStack.popFloat();
-        frame->operandStack.push(_compare(v1, v2, false));
-    }
-};
+// IF<OP>
+constexpr int EQ = 1;
+constexpr int LT = 1 << 1;
+constexpr int GT = 1 << 2;
+constexpr int NE = LT | GT;
+constexpr int LE = LT | EQ;
+constexpr int GE = GT | EQ;
 
-// Branch if int comparison with zero succeeds
-struct IFEQ : public BranchInstruction{
+template<int OP> 
+struct IF : public BranchInstruction{
     void execute(Frame* frame){
-        int val = frame->operandStack.popInt();
-        if(val == 0){
-            branch(frame, offset);
-        } 
+        int var = frame->pop<int>();
+        int op = 0;
+        switch (var){
+            case  0: op |= EQ; break; 
+            case -1: op |= LT; break; 
+            case  1: op |= GT; break; 
+        }
+        if((op & OP) != 0){
+            frame->branch(offset);
+        }
     }
 };
-// struct IFNE : public BranchInstruction{};
-// struct IFLT : public BranchInstruction{};
-// struct IFLE : public BranchInstruction{};
-// struct IFGT : public BranchInstruction{};
-// struct IFGE : public BranchInstruction{};
+typedef IF<EQ> IFEQ;
+typedef IF<NE> IFNE;
+typedef IF<LT> IFLT;
+typedef IF<LE> IFLE;
+typedef IF<GT> IFGT;
+typedef IF<GE> IFGE;
 
 // struct IF_ICMPEQ : public BranchInstruction{};
 struct IF_ICMPNE : public BranchInstruction{
@@ -73,8 +89,8 @@ struct IF_ICMPNE : public BranchInstruction{
 // struct IF_ICMPGE : public BranchInstruction{};
 struct IF_ACMPEQ : public BranchInstruction{
     void execute(Frame* frame){
-        Object* ref2 = frame->operandStack.popRef();
-        Object* ref1 = frame->operandStack.popRef();
+        Ref ref2 = frame->operandStack.popRef();
+        Ref ref1 = frame->operandStack.popRef();
         if(ref1 == ref2){
             branch(frame, offset);
         } 

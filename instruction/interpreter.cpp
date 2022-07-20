@@ -30,7 +30,7 @@ void loop(Thread& thread, const std::vector<Byte>& code){
         inst->fetchOperands(reader);
         frame->nextPc = reader.getPc();
         // execute
-        cout << "pc: " << pc << " inst: " << typeid(*inst).name() << endl;
+        cout <<  hex << "pc: " << pc << " inst: " << typeid(*inst).name() << endl;
         inst->execute(frame);
     }
 }

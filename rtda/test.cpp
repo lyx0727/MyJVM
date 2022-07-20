@@ -12,9 +12,9 @@ void testLocalVars() {
     vars.set(4, -2997924580L);
     vars.set(6, 3.1415926F);
     vars.set(7, 2.71828182845);
-    Ref obj = new Object;
-    vars.set(9, obj);
-    delete obj;
+    char* ref = new char;
+    vars.set(9, ref);
+    delete ref;
     cout << "---------local vars----------" << endl;
     cout << vars.get<int>(0) << endl;
     cout << vars.get<int>(1) << endl;
@@ -33,9 +33,9 @@ void testOperandStack(){
     ops.push(-2997924580L);
     ops.push(3.1415926F);
     ops.push(2.71828182845);
-    Object* obj = new Object;
-    ops.push(obj);
-    delete obj;
+    char* ref = new char;
+    ops.push(ref);
+    delete ref;
     cout << "---------operand stack----------" << endl;
     cout << ops.pop<Ref>() << endl;
     cout << ops.pop<double>() << endl;

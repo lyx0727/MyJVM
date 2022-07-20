@@ -15,6 +15,21 @@ struct Frame{
 
     Frame(Thread* thread, unsigned int maxLocals, unsigned int maxStack)
         : lower(nullptr), localVars(maxLocals), operandStack(maxStack), thread(thread) {}
+
+    // load T from local variable
+    template<typename T> void load(unsigned int index){
+        T var = localVars.get<T>(index);
+        operandStack.push(var);
+    }
+    // store T into local variable
+    template<typename T> void store(unsigned int index){
+        T var = operandStack.pop<T>();
+        localVars.set(index, var);
+    }
+    template<typename T> void push(T var){ operandStack.push(var); }
+    template<typename T> T pop(){ return operandStack.pop<T>(); }
+    // jump to brand statement
+    void branch(int offset);
 };
 
 #endif

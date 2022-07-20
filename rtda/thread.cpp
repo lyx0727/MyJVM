@@ -16,3 +16,5 @@ Frame* Thread::popFrame(){
 Frame* Thread::getCurrentFrame(){
     return stack->top();
 }
+
+void Frame::branch(int offset){ nextPc = thread->getPc() + offset; }                                                                   

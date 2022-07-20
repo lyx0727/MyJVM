@@ -2,6 +2,13 @@
 #define CONVERSIONS_INSTRUCTION_GUARD
 #include "instruction.h"
 
+// TODO
+template<typename X, typename Y>
+struct X2Y : public NoOperandsInstruction{
+    void execute(Frame* frame){
+    }
+};
+
 // struct D2F : public NoOperandsInstruction{};
 struct D2I : public NoOperandsInstruction{
     void execute(Frame* frame){

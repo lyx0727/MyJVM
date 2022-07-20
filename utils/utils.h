@@ -6,6 +6,7 @@
 #include <iostream>
 
 typedef unsigned char Byte;
+typedef void*         Ref;
 
 const std::string getSuffix(const std::string& s, size_t n);
 const std::string replace(const std::string& s, char oldVal, char newVal);
