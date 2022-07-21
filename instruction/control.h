@@ -5,7 +5,7 @@
 // Branch always
 struct GOTO : public BranchInstruction{
     void execute(Frame* frame){
-        branch(frame, offset);
+        frame->branch(offset);
     }
 };
 
@@ -24,7 +24,7 @@ struct TABLE_SWITCH : public Instruction{
         jumpOffsets = br.readInt32s(high - low + 1);
     }
     void execute(Frame* frame){
-        int index = frame->operandStack.popInt();
+        int index = frame->pop<int>();
         int offset;
         if(index >= low && index <= high){
             offset = jumpOffsets[index - low];
@@ -32,7 +32,7 @@ struct TABLE_SWITCH : public Instruction{
         else{
             offset = defaultOffset;
         }
-        branch(frame, offset);
+        frame->branch(offset);
     }
 };
 
@@ -48,16 +48,15 @@ struct LOOKUP_SWITCH : public Instruction{
         matchOffsets = br.readInt32s(npairs * 2);
     }
     void execute(Frame* frame){
-        int key = frame->operandStack.popInt();
+        int key = frame->pop<int>();
         for(int i = 0; i < npairs * 2; i += 2){
             if(matchOffsets[i] == key){
-                branch(frame, matchOffsets[i + 1]);
+                frame->branch(matchOffsets[i + 1]);
                 return;
             }
         }
-        branch(frame, defaultOffset);
+        frame->branch(defaultOffset);
     }
 };
-
 
 #endif

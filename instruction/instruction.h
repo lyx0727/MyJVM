@@ -1,5 +1,6 @@
 #ifndef INSTRUCTION_GUARD
 #define INSTRUCTION_GUARD
+#include <unordered_map>
 #include "bytecode_reader.h"
 #include "../rtda/frame.h"
 

@@ -39,6 +39,7 @@ public:
         for(int32_t i = 0; i < n; i++){
             ints[i] = readInt32();
         } 
+        return ints;
     }
 };
 

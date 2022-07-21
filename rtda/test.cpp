@@ -27,13 +27,13 @@ void testLocalVars() {
 
 void testOperandStack(){
     OperandStack ops(1024);
+    char* ref = new char;
     ops.push(100);
     ops.push(-100);
     ops.push(2997924580L);
     ops.push(-2997924580L);
     ops.push(3.1415926F);
     ops.push(2.71828182845);
-    char* ref = new char;
     ops.push(ref);
     delete ref;
     cout << "---------operand stack----------" << endl;

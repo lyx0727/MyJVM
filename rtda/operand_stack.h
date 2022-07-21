@@ -12,16 +12,16 @@ public:
     OperandStack(size_t maxSize): maxSize(maxSize){}
   
     void push(int val){ slots.push(Slot(val)); }
-    void push(float val){ push(toInt(val)); }
+    void push(float val){ push(to<int>(val)); }
     void push(long val){ push((int)val); push((int)(val >> 32)); }
-    void push(double val){ push(toLong(val)); }
+    void push(double val){ push(to<long>(val)); }
     void push(Ref ref){ slots.push(Slot(ref)); }
     void push(Slot slot){ slots.push(slot); }
 
     int popInt(){ int val = slots.top().num; slots.pop(); return val; }
-    float popFloat(){ return toFloat(popInt()); }
-    long popLong(){ return (toLong(popInt()) << 32) | toLong(popInt()); }
-    double popDouble(){ return toDouble(popLong()); }
+    float popFloat(){ return to<float>(popInt()); }
+    long popLong(){ return (to<long>(popInt()) << 32) | to<long>(popInt()); }
+    double popDouble(){ return to<double>(popLong()); }
     Ref popRef(){ Ref ref = slots.top().ref; slots.pop(); return ref; }
     Slot popSlot(){ Slot slot = slots.top(); slots.pop(); return slot; }
 

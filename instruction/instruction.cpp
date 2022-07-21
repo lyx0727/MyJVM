@@ -1,10 +1,11 @@
 #include "math.h"
 #include "stack.h"
-// #include "control.h"
+#include "control.h"
 #include "constants.h"
 #include "loads.h"
 #include "stores.h"
 #include "comparisons.h"
+#include "conversions.h"
 using namespace std;
 
 Instruction* getInstrucion(uint8_t opCode){
@@ -144,45 +145,45 @@ Instruction* getInstrucion(uint8_t opCode){
 		case 0x82: return new IXOR;
 		case 0x83: return new LXOR;
 		case 0x84: return new IINC;
-		// case 0x85: return i2l;
-		// case 0x86: return i2f;
-		// case 0x87: return i2d;
-		// case 0x88: return l2i;
-		// case 0x89: return l2f;
-		// case 0x8a: return l2d;
-		// case 0x8b: return f2i;
-		// case 0x8c: return f2l;
-		// case 0x8d: return f2d;
-		// case 0x8e: return d2i;
-		// case 0x8f: return d2l;
-		// case 0x90: return d2f;
+		case 0x85: return new I2L;
+		case 0x86: return new I2F;
+		case 0x87: return new I2D;
+		case 0x88: return new L2I;
+		case 0x89: return new L2F;
+		case 0x8a: return new L2D;
+		case 0x8b: return new F2I;
+		case 0x8c: return new F2L;
+		case 0x8d: return new F2D;
+		case 0x8e: return new D2I;
+		case 0x8f: return new D2L;
+		case 0x90: return new D2F;
 		// case 0x91: return i2b;
 		// case 0x92: return i2c;
 		// case 0x93: return i2s;
-		// case 0x94: return lcmp;
-		// case 0x95: return fcmpl;
-		// case 0x96: return fcmpg;
-		// case 0x97: return dcmpl;
-		// case 0x98: return dcmpg;
+		case 0x94: return new LCMP;
+		case 0x95: return new FCMPL;
+		case 0x96: return new FCMPG;
+		case 0x97: return new DCMPL;
+		case 0x98: return new DCMPG;
 		case 0x99: return new IFEQ;
 		case 0x9a: return new IFNE;
 		case 0x9b: return new IFLT;
 		case 0x9c: return new IFGE;
 		case 0x9d: return new IFGT;
 		case 0x9e: return new IFLE;
-		// case 0x9f: return NewIfICmpEQ();
-		// case 0xa0: return NewIfICmpNE();
-		// case 0xa1: return NewIfICmpLT();
-		// case 0xa2: return NewIfICmpGE();
-		// case 0xa3: return NewIfICmpGT();
-		// case 0xa4: return NewIfICmpLE();
-		// case 0xa5: return NewIfACmpEQ();
-		// case 0xa6: return NewIfACmpNE();
-		// case 0xa7: return &Goto{};
+		case 0x9f: return new IF_ICMPEQ;
+		case 0xa0: return new IF_ICMPNE;
+		case 0xa1: return new IF_ICMPLT;
+		case 0xa2: return new IF_ICMPGE;
+		case 0xa3: return new IF_ICMPGT;
+		case 0xa4: return new IF_ICMPLE;
+		case 0xa5: return new IF_ACMPEQ;
+		case 0xa6: return new IF_ACMPNE;
+		case 0xa7: return new GOTO;
 		// case 0xa8: return &JSR{};
 		// case 0xa9: return &RET{};
-		// case 0xaa: return &TableSwitch{};
-		// case 0xab: return &LookupSwitch{};
+		case 0xaa: return new TABLE_SWITCH;
+		case 0xab: return new LOOKUP_SWITCH;
 		// case 0xac: return ireturn;
 		// case 0xad: return lreturn;
 		// case 0xae: return freturn;
