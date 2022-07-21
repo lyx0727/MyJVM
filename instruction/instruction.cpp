@@ -8,219 +8,133 @@
 #include "conversions.h"
 using namespace std;
 
+// TODO
+const unordered_map<uint8_t, Instruction*> Instructions = {
+	// constants
+	{0x00, new NOP}, {0x01, new ACONST_NULL},
+	{ 0x02, new ICONST_M1 }, { 0x03, new ICONST_0 }, { 0x04, new ICONST_1 }, { 0x05, new ICONST_2 }, { 0x06, new ICONST_3 }, { 0x07, new ICONST_4 }, { 0x08, new ICONST_5 },
+	{ 0x09, new LCONST_0 }, { 0x0a, new LCONST_1 },
+	{ 0x0b, new FCONST_0 }, { 0x0c, new FCONST_1 }, { 0x0d, new FCONST_2 },
+	{ 0x0e, new DCONST_0 }, { 0x0f, new DCONST_1 },
+	{ 0x10, new BIPUSH }, { 0x11, new SIPUSH },
+	// load s
+	// { 0x12, new &LDC{} },
+	// { 0x13, new &LDC_W{} },
+	// { 0x14, new &LDC2_W{} },
+	{ 0x15, new ILOAD }, { 0x16, new LLOAD }, { 0x17, new FLOAD }, { 0x18, new DLOAD }, { 0x19, new ALOAD },
+	{ 0x1a, new ILOAD_0 }, { 0x1b, new ILOAD_1 }, { 0x1c, new ILOAD_2 }, { 0x1d, new ILOAD_3 },
+	{ 0x1e, new LLOAD_0 }, { 0x1f, new LLOAD_1 }, { 0x20, new LLOAD_2 }, { 0x21, new LLOAD_3 },
+	{ 0x22, new FLOAD_0 }, { 0x23, new FLOAD_1 }, { 0x24, new FLOAD_2 }, { 0x25, new FLOAD_3 },
+	{ 0x26, new DLOAD_0 }, { 0x27, new DLOAD_1 }, { 0x28, new DLOAD_2 }, { 0x29, new DLOAD_3 },
+	{ 0x2a, new ALOAD_0 }, { 0x2b, new ALOAD_1 }, { 0x2c, new ALOAD_2 }, { 0x2d, new ALOAD_3 },
+	// { 0x2e, new IALOAD },
+	// { 0x2f, new LALOAD },
+	// { 0x30, new FALOAD },
+	// { 0x31, new DALOAD },
+	// { 0x32, new AALOAD },
+	// { 0x33, new BALOAD },
+	// { 0x34, new CALOAD },
+	// { 0x35, new SALOAD },
+	// stores
+	{ 0x36, new ISTORE }, { 0x37, new LSTORE }, { 0x38, new FSTORE }, { 0x39, new DSTORE }, { 0x3a, new ASTORE },
+	{ 0x3b, new ISTORE_0 }, { 0x3c, new ISTORE_1 }, { 0x3d, new ISTORE_2 }, { 0x3e, new ISTORE_3 },
+	{ 0x3f, new LSTORE_0 }, { 0x40, new LSTORE_1 }, { 0x41, new LSTORE_2 }, { 0x42, new LSTORE_3 },
+	{ 0x43, new FSTORE_0 }, { 0x44, new FSTORE_1 }, { 0x45, new FSTORE_2 }, { 0x46, new FSTORE_3 },
+	{ 0x47, new DSTORE_0 }, { 0x48, new DSTORE_1 }, { 0x49, new DSTORE_2 }, { 0x4a, new DSTORE_3 },
+	{ 0x4b, new ASTORE_0 }, { 0x4c, new ASTORE_1 }, { 0x4d, new ASTORE_2 }, { 0x4e, new ASTORE_3 },
+	// { 0x4f, new IASTORE },
+	// { 0x50, new LASTORE },
+	// { 0x51, new FASTORE },
+	// { 0x52, new DASTORE },
+	// { 0x53, new AASTORE },
+	// { 0x54, new BASTORE },
+	// { 0x55, new CASTORE },
+	// { 0x56, new SASTORE },
+	// stack
+	{ 0x57, new POP }, { 0x58, new POP2 },
+	{ 0x59, new DUP },
+	// { 0x5a, new DUP_X1 },
+	// { 0x5b, new DUP_X2 },
+	{ 0x5c, new DUP2 },
+	// { 0x5d, new DUP2_X1 },
+	// { 0x5e, new DUP2_X2 },
+	{ 0x5f, new SWAP },
+	// math
+	{ 0x60, new IADD }, { 0x61, new LADD }, { 0x62, new FADD }, { 0x63, new DADD },
+	{ 0x64, new ISUB }, { 0x65, new LSUB }, { 0x66, new FSUB }, { 0x67, new DSUB },
+	{ 0x68, new IMUL }, { 0x69, new LMUL }, { 0x6a, new FMUL }, { 0x6b, new DMUL },
+	{ 0x6c, new IDIV }, { 0x6d, new LDIV }, { 0x6e, new FDIV }, { 0x6f, new DDIV },
+	{ 0x70, new IREM }, { 0x71, new LREM }, { 0x72, new FREM }, { 0x73, new DREM },
+	{ 0x74, new INEG }, { 0x75, new LNEG }, { 0x76, new FNEG }, { 0x77, new DNEG },
+	{ 0x78, new ISHL }, { 0x79, new LSHL },
+	{ 0x7a, new ISHR }, { 0x7b, new LSHR },
+	{ 0x7c, new IUSHR }, { 0x7d, new LUSHR },
+	{ 0x7e, new IAND }, { 0x7f, new LAND },
+	{ 0x80, new IOR }, { 0x81, new LOR },
+	{ 0x82, new IXOR }, { 0x83, new LXOR },
+	{ 0x84, new IINC },
+	// conversions
+	{ 0x85, new I2L }, { 0x86, new I2F }, { 0x87, new I2D },
+	{ 0x88, new L2I }, { 0x89, new L2F }, { 0x8a, new L2D },
+	{ 0x8b, new F2I }, { 0x8c, new F2L }, { 0x8d, new F2D },
+	{ 0x8e, new D2I }, { 0x8f, new D2L }, { 0x90, new D2F },
+	// { 0x91, new I2B },
+	// { 0x92, new I2C },
+	// { 0x93, new I2S },
+	// comparisons
+	{ 0x94, new LCMP },
+	{ 0x95, new FCMPL }, { 0x96, new FCMPG },
+	{ 0x97, new DCMPL }, { 0x98, new DCMPG },
+	{ 0x99, new IFEQ }, { 0x9a, new IFNE }, { 0x9b, new IFLT }, { 0x9c, new IFGE }, { 0x9d, new IFGT }, { 0x9e, new IFLE },
+	{ 0x9f, new IF_ICMPEQ }, { 0xa0, new IF_ICMPNE }, { 0xa1, new IF_ICMPLT }, { 0xa2, new IF_ICMPGE }, { 0xa3, new IF_ICMPGT }, { 0xa4, new IF_ICMPLE },
+	{ 0xa5, new IF_ACMPEQ }, { 0xa6, new IF_ACMPNE },
+	// control
+	{ 0xa7, new GOTO },
+	// { 0xa8, new &JSR{} },
+	// { 0xa9, new &RET{} },
+	{ 0xaa, new TABLE_SWITCH }, { 0xab, new LOOKUP_SWITCH },
+	// { 0xac, new ireturn },
+	// { 0xad, new lreturn },
+	// { 0xae, new freturn },
+	// { 0xaf, new dreturn },
+	// { 0xb0, new areturn },
+	// { 0xb1, new _return },
+	// { 0xb2, new &GetStatic{} },
+	// { 0xb3, new &PupStatic{} },
+	// { 0xb4, new &GetField{} },
+	// { 0xb5, new &PutField{} },
+	// { 0xb6, new &InvokeVirtual{} },
+	// { 0xb7, new &InvokeSpecial{} },
+	// { 0xb8, new &InvokeStatic{} },
+	// { 0xb9, new &InvokeInterface{} },
+	// { 0xba, new &InvokeDynamic{} },
+	// { 0xbb, new &New{} },
+	// { 0xbc, new &NewArray{} },
+	// { 0xbd, new &ANewArray{} },
+	// { 0xbe, new arraylength },
+	// { 0xbf, new athrow },
+	// { 0xc0, new &CheckCast{} },
+	// { 0xc1, new &InstanceOf{} },
+	// { 0xc2, new monitorenter },
+	// { 0xc3, new monitorexit },
+	// { 0xc4, new &Wide{} },
+	// { 0xc5, new &MultiANewArray{} },
+	// { 0xc6, new NewIfNull() },
+	// { 0xc7, new NewIfNonNull() },
+	// { 0xc8, new &GotoW{} },
+	// { 0xc9, new &JSR_W{} },
+	// // case 0xca: todo breakpoint
+	// { 0xfe, new invoke_native },	// impdep1
+	// { 0xff, new &Bootstrap{} }, 	// impdep2
+};
+
 Instruction* getInstrucion(uint8_t opCode){
-    switch(opCode){
-		// constants
-		case 0x00: return new NOP;
-		case 0x01: return new ACONST_NULL;
-		case 0x02: return new ICONST_M1;
-		case 0x03: return new ICONST_0;
-		case 0x04: return new ICONST_1;
-		case 0x05: return new ICONST_2;
-		case 0x06: return new ICONST_3;
-		case 0x07: return new ICONST_4;
-		case 0x08: return new ICONST_5;
-		case 0x09: return new LCONST_0;
-		case 0x0a: return new LCONST_1;
-		case 0x0b: return new FCONST_0;
-		case 0x0c: return new FCONST_1;
-		case 0x0d: return new FCONST_2;
-		case 0x0e: return new LCONST_0;
-		case 0x0f: return new LCONST_1;
-		case 0x10: return new BIPUSH;
-		case 0x11: return new SIPUSH;
-		// loads
-		// case 0x12: return &LDC{};
-		// case 0x13: return &LDC_W{};
-		// case 0x14: return &LDC2_W{};
-		case 0x15: return new ILOAD;
-		case 0x16: return new LLOAD;
-		case 0x17: return new FLOAD;
-		case 0x18: return new DLOAD;
-		case 0x19: return new ALOAD;
-		case 0x1a: return new ILOAD_0;
-		case 0x1b: return new ILOAD_1;
-		case 0x1c: return new ILOAD_2;
-		case 0x1d: return new ILOAD_3;
-		case 0x1e: return new LLOAD_0;
-		case 0x1f: return new LLOAD_1;
-		case 0x20: return new LLOAD_2;
-		case 0x21: return new LLOAD_3;
-		case 0x22: return new FLOAD_0;
-		case 0x23: return new FLOAD_1;
-		case 0x24: return new FLOAD_2;
-		case 0x25: return new FLOAD_3;
-		case 0x26: return new DLOAD_0;
-		case 0x27: return new DLOAD_1;
-		case 0x28: return new DLOAD_2;
-		case 0x29: return new DLOAD_3;
-		case 0x2a: return new ALOAD_0;
-		case 0x2b: return new ALOAD_1;
-		case 0x2c: return new ALOAD_2;
-		case 0x2d: return new ALOAD_3;
-		// case 0x2e: return iaload;
-		// case 0x2f: return laload;
-		// case 0x30: return faload;
-		// case 0x31: return daload;
-		// case 0x32: return aaload;
-		// case 0x33: return baload;
-		// case 0x34: return caload;
-		// case 0x35: return saload;
-		case 0x36: return new ISTORE;
-		case 0x37: return new LSTORE;
-		case 0x38: return new FSTORE;
-		case 0x39: return new DSTORE;
-		case 0x3a: return new ASTORE;
-		case 0x3b: return new ISTORE_0;
-		case 0x3c: return new ISTORE_1;
-		case 0x3d: return new ISTORE_2;
-		case 0x3e: return new ISTORE_3;
-		case 0x3f: return new LSTORE_0;
-		case 0x40: return new LSTORE_1;
-		case 0x41: return new LSTORE_2;
-		case 0x42: return new LSTORE_3;
-		case 0x43: return new FSTORE_0;
-		case 0x44: return new FSTORE_1;
-		case 0x45: return new FSTORE_2;
-		case 0x46: return new FSTORE_3;
-		case 0x47: return new DSTORE_0;
-		case 0x48: return new DSTORE_1;
-		case 0x49: return new DSTORE_2;
-		case 0x4a: return new DSTORE_3;
-		case 0x4b: return new ASTORE_0;
-		case 0x4c: return new ASTORE_1;
-		case 0x4d: return new ASTORE_2;
-		case 0x4e: return new ASTORE_3;
-		// case 0x4f: return iastore;
-		// case 0x50: return lastore;
-		// case 0x51: return fastore;
-		// case 0x52: return dastore;
-		// case 0x53: return aastore;
-		// case 0x54: return bastore;
-		// case 0x55: return castore;
-		// case 0x56: return sastore;
-		case 0x57: return new POP;
-		case 0x58: return new POP2;
-		case 0x59: return new DUP;
-		// case 0x5a: return dup_x1;
-		// case 0x5b: return dup_x2;
-		// case 0x5c: return dup2;
-		// case 0x5d: return dup2_x1;
-		// case 0x5e: return dup2_x2;
-		case 0x5f: return new SWAP;
-		case 0x60: return new IADD;
-		case 0x61: return new LADD;
-		case 0x62: return new FADD;
-		case 0x63: return new DADD;
-		case 0x64: return new ISUB;
-		case 0x65: return new LSUB;
-		case 0x66: return new FSUB;
-		case 0x67: return new DSUB;
-		case 0x68: return new IMUL;
-		case 0x69: return new LMUL;
-		case 0x6a: return new FMUL;
-		case 0x6b: return new DMUL;
-		case 0x6c: return new IDIV;
-		case 0x6d: return new LDIV;
-		case 0x6e: return new FDIV;
-		case 0x6f: return new DDIV;
-		case 0x70: return new IREM;
-		case 0x71: return new LREM;
-		case 0x72: return new FREM;
-		case 0x73: return new DREM;
-		case 0x74: return new INEG;
-		case 0x75: return new LNEG;
-		case 0x76: return new FNEG;
-		case 0x77: return new DNEG;
-		case 0x78: return new ISHL;
-		case 0x79: return new LSHL;
-		case 0x7a: return new ISHR;
-		case 0x7b: return new LSHR;
-		case 0x7c: return new IUSHR;
-		case 0x7d: return new LUSHR;
-		case 0x7e: return new IAND;
-		case 0x7f: return new LAND;
-		case 0x80: return new IOR;
-		case 0x81: return new LOR;
-		case 0x82: return new IXOR;
-		case 0x83: return new LXOR;
-		case 0x84: return new IINC;
-		case 0x85: return new I2L;
-		case 0x86: return new I2F;
-		case 0x87: return new I2D;
-		case 0x88: return new L2I;
-		case 0x89: return new L2F;
-		case 0x8a: return new L2D;
-		case 0x8b: return new F2I;
-		case 0x8c: return new F2L;
-		case 0x8d: return new F2D;
-		case 0x8e: return new D2I;
-		case 0x8f: return new D2L;
-		case 0x90: return new D2F;
-		// case 0x91: return i2b;
-		// case 0x92: return i2c;
-		// case 0x93: return i2s;
-		case 0x94: return new LCMP;
-		case 0x95: return new FCMPL;
-		case 0x96: return new FCMPG;
-		case 0x97: return new DCMPL;
-		case 0x98: return new DCMPG;
-		case 0x99: return new IFEQ;
-		case 0x9a: return new IFNE;
-		case 0x9b: return new IFLT;
-		case 0x9c: return new IFGE;
-		case 0x9d: return new IFGT;
-		case 0x9e: return new IFLE;
-		case 0x9f: return new IF_ICMPEQ;
-		case 0xa0: return new IF_ICMPNE;
-		case 0xa1: return new IF_ICMPLT;
-		case 0xa2: return new IF_ICMPGE;
-		case 0xa3: return new IF_ICMPGT;
-		case 0xa4: return new IF_ICMPLE;
-		case 0xa5: return new IF_ACMPEQ;
-		case 0xa6: return new IF_ACMPNE;
-		case 0xa7: return new GOTO;
-		// case 0xa8: return &JSR{};
-		// case 0xa9: return &RET{};
-		case 0xaa: return new TABLE_SWITCH;
-		case 0xab: return new LOOKUP_SWITCH;
-		// case 0xac: return ireturn;
-		// case 0xad: return lreturn;
-		// case 0xae: return freturn;
-		// case 0xaf: return dreturn;
-		// case 0xb0: return areturn;
-		// case 0xb1: return _return;
-		// case 0xb2: return &GetStatic{};
-		// case 0xb3: return &PupStatic{};
-		// case 0xb4: return &GetField{};
-		// case 0xb5: return &PutField{};
-		// case 0xb6: return &InvokeVirtual{};
-		// case 0xb7: return &InvokeSpecial{};
-		// case 0xb8: return &InvokeStatic{};
-		// case 0xb9: return &InvokeInterface{};
-		// case 0xba: return &InvokeDynamic{};
-		// case 0xbb: return &New{};
-		// case 0xbc: return &NewArray{};
-		// case 0xbd: return &ANewArray{};
-		// case 0xbe: return arraylength;
-		// case 0xbf: return athrow;
-		// case 0xc0: return &CheckCast{};
-		// case 0xc1: return &InstanceOf{};
-		// case 0xc2: return monitorenter;
-		// case 0xc3: return monitorexit;
-		// case 0xc4: return &Wide{};
-		// case 0xc5: return &MultiANewArray{};
-		// case 0xc6: return NewIfNull();
-		// case 0xc7: return NewIfNonNull();
-		// case 0xc8: return &GotoW{};
-		// case 0xc9: return &JSR_W{};
-		// //case 0xca: todo breakpoint
-		// case 0xfe: return invoke_native; // impdep1
-		// case 0xff: return &Bootstrap{}; // impdep2
-		default:
-			// panic(fmt.Errorf("invalid opcode: %v", opcode))
-			cerr << "invalid opcode: " << (int)opCode << endl;
-			exit(1);
-    }
+	if(Instructions.count(opCode)){
+		return Instructions.at(opCode);
+	}
+	else{
+		cerr << "invalid opcode: " << (int)opCode << endl;
+		exit(1);
+	}
 	return nullptr;
 }

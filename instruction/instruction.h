@@ -9,6 +9,8 @@ struct Instruction{
     virtual void execute(Frame* frame) = 0;
 };
 
+extern const std::unordered_map<uint8_t, Instruction*> Instructions;
+
 struct NoOperandsInstruction : public Instruction{
     void fetchOperands(BytecodeReader& br){
         // do nothing
