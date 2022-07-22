@@ -17,4 +17,12 @@ Frame* Thread::getCurrentFrame(){
     return stack->top();
 }
 
-void Frame::branch(int offset){ nextPc = thread->getPc() + offset; }                                                                   
+void Frame::branch(int offset){ nextPc = thread->getPc() + offset; }             
+
+const string LocalVars::toString() const {
+    string str;
+    for(Slot var : vars){
+        str += "(" + to_string(var.num) + ")\n";
+    }
+    return str;
+}   

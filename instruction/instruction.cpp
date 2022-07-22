@@ -134,7 +134,7 @@ Instruction* getInstrucion(uint8_t opCode){
 	}
 	else{
 		cerr << "invalid opcode: " << (int)opCode << endl;
-		exit(1);
+		// exit(1);
 	}
 	return nullptr;
 }

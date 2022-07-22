@@ -24,6 +24,8 @@ public:
     Ref getRef(size_t index){ return vars[index].ref; }
 
     template<typename T> T get(size_t index);
+
+    const std::string toString() const;
 };
 
 template<> inline int LocalVars::get(size_t index){ return getInt(index); }

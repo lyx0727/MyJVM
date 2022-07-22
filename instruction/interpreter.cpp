@@ -17,6 +17,11 @@ void interpret(MemberInfo* memberInfo){
     loop(thread, code);
 }
 
+void catchErr(Frame* frame){
+    cout << frame->localVars.toString() << endl;
+    exit(1);
+}
+
 void loop(Thread& thread, const std::vector<Byte>& code){
     Frame* frame = thread.popFrame();
     BytecodeReader reader;
@@ -27,10 +32,13 @@ void loop(Thread& thread, const std::vector<Byte>& code){
         reader.reset(code, pc);
         uint8_t opCode = reader.readUint8();
         Instruction* inst = getInstrucion(opCode);
+        if(inst == nullptr){
+            catchErr(frame);
+        }
         inst->fetchOperands(reader);
         frame->nextPc = reader.getPc();
         // execute
-        cout <<  hex << "pc: " << pc << " inst: " << typeid(*inst).name() << endl;
+        cout << "pc: " << pc << " inst: " << typeid(*inst).name() << endl;
         inst->execute(frame);
     }
 }
