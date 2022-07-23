@@ -25,7 +25,7 @@ public:
     void parseBootAndExtClasspath(const std::string& jreOption);
     void parseUserClasspath(const std::string& cpOption);
     
-    std::vector<Byte> readClass(const std::string& className);
+    std::pair<std::vector<Byte>, Entry*> readClass(const std::string& className);
 
     const std::string toString() const {
         return "----------[boot]----------\n" + bootClasspath->toString()

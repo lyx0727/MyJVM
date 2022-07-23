@@ -6,7 +6,7 @@ CLASSPATH_DEP = entry.o classpath.o
 CLASSFILE_DEP = attribute_info.o class_reader.o constant_pool.o member_info.o constant_info.o classfile.o
 RTDA_DEP = jvm_stack.o thread.o
 INSTRUCTION_DEP = interpreter.o instruction.o
-HEAP_DEP = class_member.o
+HEAP_DEP = class.o class_loader.o
 
 jvm: utils.o main.o $(CMD_DEP) $(CLASSPATH_DEP) $(CLASSFILE_DEP) $(RTDA_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@	
@@ -78,12 +78,15 @@ thread.o: rtda/thread.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # heap
-heap_test: heap_test.o utils.o $(HEAP_DEP) $(CLASSFILE_DEP) $(RTDA_DEP)
+heap_test: heap_test.o utils.o $(HEAP_DEP) $(CLASSFILE_DEP) $(CLASSPATH_DEP) $(RTDA_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@
 heap_test.o: heap/test.cpp 
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
-class_member.o: heap/class_member.cpp
+class.o: heap/class.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
+class_loader.o: heap/class_loader.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # instructions 

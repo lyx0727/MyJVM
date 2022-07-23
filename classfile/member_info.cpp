@@ -39,8 +39,19 @@ CodeAttribute* MemberInfo::getCodeAttribute() const {
     for(AttributeInfo* attr : attributes){
         uint8_t type = AttributeTypeMap.at(attr->getName());
         switch (type){
-        case AttributeType::Code:
-            return dynamic_cast<CodeAttribute*>(attr);
+            case AttributeType::Code:
+                return dynamic_cast<CodeAttribute*>(attr);
+        }
+    }
+    return nullptr;
+}
+
+ConstantValueAttribute* MemberInfo::getConstantValueAttribute() const {
+    for(AttributeInfo* attr : attributes){
+        uint8_t type = AttributeTypeMap.at(attr->getName());
+        switch (type){
+            case AttributeType::Code:
+                return dynamic_cast<ConstantValueAttribute*>(attr);
         }
     }
     return nullptr;

@@ -20,6 +20,7 @@ public:
     ~ConstantPool();
     ConstantPool& operator=(const ConstantPool& rhs) = delete;
 
+    size_t size() const { return constantInfos.size(); }
     void resize(size_t n){ constantInfos.resize(n); }
 
     ConstantInfo*& operator[](uint16_t index){ return constantInfos[index]; }

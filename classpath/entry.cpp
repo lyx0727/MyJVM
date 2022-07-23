@@ -23,9 +23,7 @@ ostream& operator<<(ostream& os, const Entry& entry){
 /*
  * DirEntry
  */
-DirEntry::DirEntry(const std::string& path){
-    absDir = getAbsPath(path);
-}
+DirEntry::DirEntry(const std::string& path): absDir(getAbsPath(path)) {}
 
 vector<Byte> DirEntry::readClass(const std::string& className){
     string fileName = this->absDir + "/" + className + ".class";
@@ -38,9 +36,7 @@ vector<Byte> DirEntry::readClass(const std::string& className){
 /*
  * ZipEntry
  */
-ZipEntry::ZipEntry(const std::string& path){
-    absDir = getAbsPath(path);
-}
+ZipEntry::ZipEntry(const std::string& path):absDir(getAbsPath(path)){}
 
 vector<Byte> ZipEntry::readClass(const std::string& className){
     // TODO

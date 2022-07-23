@@ -21,7 +21,7 @@ void Frame::branch(int offset){ nextPc = thread->getPc() + offset; }
 
 const string LocalVars::toString() const {
     string str;
-    for(Slot var : vars){
+    for(Slot var : slots){
         str += "(" + to_string(var.num) + ")\n";
     }
     return str;

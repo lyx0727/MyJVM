@@ -23,7 +23,7 @@ void testClasspath(){
     Classpath cp("", "");
     cout << cp.toString() << endl;
     string className = "java.lang.Object";
-    vector<Byte> bytes = cp.readClass(className);
+    vector<Byte> bytes = cp.readClass(className).first;
     cout << "\n----------" << className << "----------" << endl;
     print(bytes);
 }
