@@ -4,6 +4,8 @@
 #include "class.h"
 #include "../classpath/classpath.h"
 
+class Class;
+
 class ClassLoader{
 private:
     Classpath* cp;

@@ -69,7 +69,9 @@ void verify(Class* _class){
 }
 
 void prepare(Class* _class){
-
+    calcInstanceFieldSlotIds(_class);
+    calcStaticFieldSlotIds(_class);
+    allocAndInitStaticVars(_class);
 }
 
 void link(Class* _class){
@@ -108,25 +110,25 @@ void allocAndInitStaticVars(Class* _class){
 
 void initStaticFinalVar(Class* _class, Field* field){
     Slots& vars = _class->staticVars;
-    ConstantPool& cp = _class->constantPool;
+    ConstantPool* cp = _class->constantPool;
     unsigned int cpIndex = field->constValueIndex;
     unsigned int slotId = field->slotId;
     if(cpIndex > 0){
         string& d = field->descriptor;
         if(d == "Z" || d == "B" || d == "C" || d == "S" || d == "I"){
-            int val = cp.getConstant(cpIndex).intVal;
+            int val = cp->getConstant(cpIndex).intVal;
             vars.set(slotId, val);
         }
         else if(d == "J"){
-            long val = cp.getConstant(cpIndex).longVal;
+            long val = cp->getConstant(cpIndex).longVal;
             vars.set(slotId, val);
         }
         else if(d == "F"){
-            float val = cp.getConstant(cpIndex).floatVal;
+            float val = cp->getConstant(cpIndex).floatVal;
             vars.set(slotId, val);
         }
         else if(d == "D"){
-            double val = cp.getConstant(cpIndex).doubleVal;
+            double val = cp->getConstant(cpIndex).doubleVal;
             vars.set(slotId, val);
         }
         else if(d == "Ljava/lang/String;"){
