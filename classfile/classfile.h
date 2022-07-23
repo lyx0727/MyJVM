@@ -35,7 +35,7 @@ public:
 
     const uint16_t getMinorVersion() const { return minorVersion; }
     const uint16_t getMajorVersion() const { return majorVersion; }
-    const ConstantPool& getConstantPool() const { return constantPool; }
+    ConstantPool& getConstantPool() { return constantPool; }
     const uint16_t getAccessFlags() const { return accessFlags; } 
     const std::vector<MemberInfo*>&  getFields() const { return fields; } 
     const std::vector<MemberInfo*>&  getMethods() const { return methods; } 

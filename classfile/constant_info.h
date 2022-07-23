@@ -7,22 +7,24 @@
 
 class ConstantPool;
 
-enum ConstantType {
-    Class              = 7,   
-    Fieldref           = 9,      
-    Methodref          = 10,       
-    InterfaceMethodref = 11,                
-    String             = 8,    
-    Integer            = 3,     
-    Float              = 4,   
-    Long               = 5,  
-    Double             = 6,    
-    NameAndType        = 12,         
-    Utf8               = 1,  
-    MethodHandle       = 15,          
-    MethodType         = 16,        
-    InvokeDynamic      = 18           
-};
+namespace ConstantType{
+    enum ConstantType {
+        Class              = 7,   
+        Fieldref           = 9,      
+        Methodref          = 10,       
+        InterfaceMethodref = 11,                
+        String             = 8,    
+        Integer            = 3,     
+        Float              = 4,   
+        Long               = 5,  
+        Double             = 6,    
+        NameAndType        = 12,         
+        Utf8               = 1,  
+        MethodHandle       = 15,          
+        MethodType         = 16,        
+        InvokeDynamic      = 18           
+    };
+}
 
 struct ConstantInfo{
     virtual uint8_t getTag() = 0;

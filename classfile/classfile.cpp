@@ -14,7 +14,7 @@ void Classfile::read(ClassReader& reader){
 
     fields = readMembers(reader, constantPool);
     methods = readMembers(reader, constantPool);
-    // attributes = readAttributes(reader, constantPool);
+    attributes = readAttributes(reader, constantPool);
 }
 
 void Classfile::readAndCheckMagic(ClassReader& reader){
