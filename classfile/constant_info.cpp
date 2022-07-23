@@ -2,6 +2,7 @@
 #include <iostream>
 using namespace std;
 
+namespace classfile{
 const string ConstantUtf8Info::decodeMUTF8(const vector<Byte>& bytes){
     // TODO
     // decode Modified UTF8
@@ -56,4 +57,5 @@ const std::string ConstantMemberrefInfo::getClassName() const {
 
 const std::pair<std::string, std::string> ConstantMemberrefInfo::getNameAndDescriptor() const{
     return cp.getNameAndType(nameAndTypeIndex);
+}
 }

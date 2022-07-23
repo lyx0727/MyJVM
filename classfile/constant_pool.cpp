@@ -2,6 +2,7 @@
 #include "constant_pool.h"
 using namespace std;
 
+namespace classfile{
 void readConstantPool(ClassReader& cr, ConstantPool& cp){
     uint16_t n = cr.readUint16();
     cp.resize(n);
@@ -55,4 +56,5 @@ ConstantPool::~ConstantPool(){
     for(ConstantInfo* c : constantInfos){
         if(c) delete c;
     }
+}
 }

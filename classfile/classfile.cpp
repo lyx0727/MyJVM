@@ -2,6 +2,7 @@
 #include <iostream>
 using namespace std;
 
+namespace classfile{
 void Classfile::read(ClassReader& reader){
     readAndCheckMagic(reader);
     readAndCheckVersion(reader);
@@ -101,4 +102,5 @@ Classfile::~Classfile(){
     for(AttributeInfo* attr : attributes){
         delete attr;
     }
+}
 }

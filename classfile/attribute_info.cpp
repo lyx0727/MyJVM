@@ -1,6 +1,7 @@
 #include "attribute_info.h"
 using namespace std;
 
+namespace classfile{
 AttributeInfo* getAttributeInfo(const std::string& attrName, uint32_t attrlen, ConstantPool& cp){
     uint8_t tag;
     if(AttributeTypeMap.count(attrName)){
@@ -80,4 +81,5 @@ vector<LocalVariableTableEntry> readLocalVariableTable(ClassReader& cr){
         );
     }
     return localVariableTable;
+}
 }

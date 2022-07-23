@@ -4,6 +4,7 @@
 #include <cstdint>
 #include "../utils/utils.h"
 
+namespace classfile{
 class ClassReader{
 private:
     std::vector<Byte> bytes;
@@ -17,5 +18,6 @@ public:
     const std::vector<uint16_t> readUint16s();
     const std::vector<Byte> readBytes(uint32_t n);
 };
+}
 
 #endif

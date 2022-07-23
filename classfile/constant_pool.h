@@ -5,6 +5,7 @@
 #include "class_reader.h"
 #include "constant_info.h"
 
+namespace classfile{
 // forward declaraction to replace defination 
 class ConstantInfo;
 struct ConstantNameAndTypeInfo;
@@ -37,5 +38,5 @@ public:
 };
 
 void readConstantPool(ClassReader& cr, ConstantPool& cp);
-
+}
 #endif

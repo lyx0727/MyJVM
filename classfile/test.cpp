@@ -2,6 +2,7 @@
 #include <fstream>
 #include "classfile.h"
 using namespace std;
+using namespace classfile;
 
 int main(){
     // ifstream in("src/com/lyx/Test.class");

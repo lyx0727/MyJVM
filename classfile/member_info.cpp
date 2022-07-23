@@ -1,6 +1,7 @@
 #include "member_info.h"
 using namespace std;
 
+namespace classfile{
 MemberInfo::~MemberInfo(){ 
     for(AttributeInfo* attr : attributes){
         delete attr;
@@ -43,4 +44,5 @@ CodeAttribute* MemberInfo::getCodeAttribute() const {
         }
     }
     return nullptr;
+}
 }

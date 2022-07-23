@@ -1,6 +1,7 @@
 #include "class_reader.h"
 using namespace std;
 
+namespace classfile{
 const uint8_t ClassReader::readUint8(){
     uint8_t val = bytes[cur];
     cur++;
@@ -55,4 +56,5 @@ const vector<Byte> ClassReader::readBytes(uint32_t n){
         vals.push_back(readUint8());
     }
     return vals;
+}
 }

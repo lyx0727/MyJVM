@@ -9,6 +9,7 @@
 #include "member_info.h"
 #include "attribute_info.h"
 
+namespace classfile{
 class Classfile{
 private:
     uint32_t                    magic;
@@ -53,5 +54,6 @@ public:
 
     const std::string toString() const; 
 };
+}
 
 #endif

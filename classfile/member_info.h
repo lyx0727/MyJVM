@@ -6,6 +6,7 @@
 #include "constant_pool.h"
 #include "attribute_info.h"
 
+namespace classfile{
 struct MemberInfo{
 private:
     ConstantPool&               cp;
@@ -28,5 +29,5 @@ public:
 std::vector<MemberInfo*> readMembers(ClassReader& cr, ConstantPool& cp);
 
 MemberInfo* readMember(ClassReader& cr, ConstantPool& cp);
-
+}
 #endif

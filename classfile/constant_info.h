@@ -5,6 +5,7 @@
 #include "class_reader.h"
 #include "constant_pool.h"
 
+namespace classfile{
 class ConstantPool;
 
 namespace ConstantType{
@@ -156,5 +157,5 @@ struct ConstantInvokeDynamicInfo : public ConstantInfo {
 
 ConstantInfo* readConstantInfo(ClassReader& cr, ConstantPool& cp);
 ConstantInfo* getConstantInfo(uint8_t tag);
-
+}
 #endif

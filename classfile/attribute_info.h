@@ -6,6 +6,7 @@
 #include "class_reader.h"
 #include "constant_pool.h"
 
+namespace classfile{
 enum AttributeType{
     Code,
     ConstantValue,
@@ -168,4 +169,5 @@ struct UnparsedAttribute : public AttributeInfo{
     const std::string getName() const { return name; }
     const std::string toString() const { return "[" + getName() + "]: " + std::to_string(length); }
 };
+}
 #endif
