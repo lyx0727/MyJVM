@@ -42,3 +42,13 @@ Frame* Stack::pop(){
     size--;
     return top;
 }
+
+const string OperandStack::toString() const{
+    stack<Slot> st(slots);
+    string str;
+    while(!st.empty()){
+        str += "(" + to_string((unsigned long)st.top().ref) +")\n";
+        st.pop();
+    }
+    return str;
+}

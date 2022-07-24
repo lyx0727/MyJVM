@@ -42,10 +42,10 @@ typedef STORE_N<double, 1U> DSTORE_1;
 typedef STORE_N<double, 2U> DSTORE_2;
 typedef STORE_N<double, 3U> DSTORE_3;
 // ref
-typedef LOAD<Ref>           ASTORE;
-typedef LOAD_N<Ref, 0U>     ASTORE_0;
-typedef LOAD_N<Ref, 1U>     ASTORE_1;
-typedef LOAD_N<Ref, 2U>     ASTORE_2;
-typedef LOAD_N<Ref, 3U>     ASTORE_3;
+typedef STORE<Ref>           ASTORE;
+typedef STORE_N<Ref, 0U>     ASTORE_0;
+typedef STORE_N<Ref, 1U>     ASTORE_1;
+typedef STORE_N<Ref, 2U>     ASTORE_2;
+typedef STORE_N<Ref, 3U>     ASTORE_3;
 
 #endif

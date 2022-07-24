@@ -14,7 +14,8 @@ struct NEW : public Index16Instruction{
             std::cerr << "java.lang.InstantiationError" << std::endl;
             exit(1);
         }  
-        Ref ref = (Ref)new Object(_class);
+        Object* obj = new Object(_class);
+        Ref ref = (Ref)obj;
         frame->push(ref); 
     }
 };
@@ -28,26 +29,36 @@ namespace FIELD_OP{
 template<int OP, bool IS_STATIC>
 struct FIELD : public Index16Instruction{
 private:
-    template<typename T> void operate(Frame* frame, Slots& slots, unsigned int slotId){
+    template<typename T> void operate(Frame* frame, Slots* slots, unsigned int slotId){
+        T val;
         if(OP == FIELD_OP::PUT){
-            slots.set(slotId, frame->pop<T>());
+            val = frame->pop<T>();
+        }
+        if(!IS_STATIC){
+            // pop ref of its instance
+            Ref ref = frame->pop<Ref>();
+            
+            if(ref == nullptr){
+                std::cerr << "java.lang.NullPointerException" << std::endl;
+                exit(1);
+            }
+            Object* obj = (Object*)ref;
+            slots = &(obj->fields);
+        }
+        if(OP == FIELD_OP::PUT){
+            slots->set(slotId, val);
         }
         else if(OP == FIELD_OP::GET){
-            frame->push(slots.get<T>(slotId));
+            frame->push(slots->get<T>(slotId));
         }
     }
 public:
     void execute(Frame* frame){
-        using namespace std;
-        try{
         Method* currentMethod = frame->method;
-        cout << "1 " << currentMethod->name << endl;
         Class* currentClass = currentMethod->_class;
-        cout << "2 " <<  currentClass->name << endl;
         ConstantPool* cp = currentClass->constantPool;
         FieldRef* fieldRef = (FieldRef*)cp->getConstant(index).getVal<Ref>();
         Field* field = fieldRef->resolvedFeild();
-        cout << "3 " <<  field->name << endl;
         if(field->isStatic() != IS_STATIC){
             std::cerr << "java.lang.IncompatibleClassChangeError" << std::endl;
             exit(1);
@@ -61,23 +72,9 @@ public:
             }
         }
 
-        cout << "4 " << _class->name << endl;
         std::string& descriptor = field->descriptor;
         unsigned int slotId = field->slotId;
-        Slots slots = _class->staticVars;
-        
-        if(!IS_STATIC){
-            cout << "\t" << field->name << endl;
-            // pop ref of its instance
-            Ref ref = frame->pop<Ref>();
-            if(ref == nullptr){
-                std::cerr << "java.lang.NullPointerException" << std::endl;
-                exit(1);
-            }
-            cout << "\tslots: " << ((Object*)ref)->fields.toString() << endl;
-            slots = ((Object*)ref)->fields;
-        }   
-        cout << "5 " << field->name << endl;
+        Slots* slots = &(_class->staticVars);
 
         switch(descriptor[0]){
             case 'Z': case 'B': case 'C': case 'S': case 'I': operate<int>(frame, slots, slotId); break;
@@ -86,7 +83,6 @@ public:
             case 'D': operate<double>(frame, slots, slotId); break;
             case 'L': case '[': operate<Ref>(frame, slots, slotId); break;
         }
-        }catch(const exception& e){ cout << e.what() << endl;}
     }
 };
 
@@ -181,16 +177,18 @@ struct INVOKE_VIRTUAL : public Index16Instruction{
         MethodRef* methodRef = (MethodRef*)cp->getConstant(index).getVal<Ref>();
         if(methodRef->name == "println"){
             std::string& d = methodRef->descriptor;
-            if(d == "(Z)V"){ std::cout << (frame->pop<int>() != 0) << std::endl; }
-            else if(d == "(C)V"){ std::cout << (char)frame->pop<int>() << std::endl; }
-            else if(d == "(B)V" || d == "(S)V" || d == "(I)V"){ std::cout << (char)frame->pop<int>() << std::endl; }
-            else if(d == "(J)V"){ std::cout << frame->pop<long>() << std::endl; }
-            else if(d == "(F)V"){ std::cout << frame->pop<float>() << std::endl; }
-            else if(d == "(D)V"){ std::cout << frame->pop<double>() << std::endl; }
+            std::string str;
+            if(d == "(Z)V"){ str = std::to_string(frame->pop<int>() != 0); }
+            else if(d == "(C)V"){ str = std::string(1, (char)frame->pop<int>()); }
+            else if(d == "(B)V" || d == "(S)V" || d == "(I)V"){ str = std::to_string(frame->pop<int>()); }
+            else if(d == "(J)V"){ str = std::to_string(frame->pop<long>()); }
+            else if(d == "(F)V"){ str = std::to_string(frame->pop<float>()); }
+            else if(d == "(D)V"){ str = std::to_string(frame->pop<double>()); }
             else{
                 std::cerr << "println: " << d << std::endl;
                 exit(1);
             }
+            std::cout << str << std::endl;
             frame->pop<Ref>();
         }
     }

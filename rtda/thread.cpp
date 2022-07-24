@@ -22,10 +22,10 @@ void Frame::branch(int offset){ nextPc = thread->getPc() + offset; }
 Frame::Frame(Thread* thread, Method* method)
         : lower(nullptr), localVars(method->maxLocals), operandStack(method->maxStack), thread(thread), nextPc(0), method(method) {}
 
-const string LocalVars::toString() const {
+const string Slots::toString() const {
     string str;
     for(Slot var : slots){
-        str += "(" + to_string(var.num) + ")\n";
+        str += "(" + to_string((unsigned long)(var.ref)) + ")\n";
     }
     return str;
 }   

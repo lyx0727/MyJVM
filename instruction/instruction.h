@@ -5,6 +5,7 @@
 #include "../rtda/frame.h"
 
 struct Instruction{
+    static std::string name;
     virtual void fetchOperands(BytecodeReader& br) = 0;
     virtual void execute(Frame* frame) = 0;
 };
@@ -45,5 +46,6 @@ struct Index16Instruction : public Instruction{
 void branch(Frame* frame, int offset);
 
 Instruction* getInstrucion(uint8_t opCode);
+const std::string getInstrucionName(uint8_t opCode);
 
 #endif

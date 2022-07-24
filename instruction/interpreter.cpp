@@ -16,13 +16,18 @@ void interpret(MemberInfo* memberInfo){
 void interpret(Method* method){
     Thread thread;
     Frame* frame = thread.newFrame(method);
-    cout << method->name << ":" << to_string(method->maxLocals) << " " << to_string(method->maxStack) << endl;
     thread.pushFrame(frame);
     loop(thread, method->code);
 }
 
 void catchErr(Frame* frame){
-    cout << frame->localVars.toString() << endl;
+    #ifdef DEBUG
+        cout << "---------------local vars----------------" << endl;
+        cout << frame->localVars.toString() << endl;
+        cout << "-------------operand stack---------------" << endl;
+        cout << frame->operandStack.toString() << endl;
+        cout << "-----------------------------------------" << endl;
+    #endif
     exit(1);
 }
 
@@ -42,9 +47,14 @@ void loop(Thread& thread, const std::vector<Byte>& code){
         inst->fetchOperands(reader);
         frame->nextPc = reader.getPc();
         // execute
-        cout << "pc: " << pc << " inst: " << typeid(*inst).name() << endl;
-        try{
-            inst->execute(frame);
-        }catch(const exception& e){ cout << e.what() << endl;}
+        inst->execute(frame);
+        cout << "pc: " << pc << " inst: " << getInstrucionName(opCode) << endl;
+        #ifdef DEBUG
+            cout << "---------------local vars----------------" << endl;
+            cout << frame->localVars.toString() << endl;
+            cout << "-------------operand stack---------------" << endl;
+            cout << frame->operandStack.toString() << endl;
+            cout << "-----------------------------------------" << endl;
+        #endif
     }
 }

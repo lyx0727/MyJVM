@@ -26,6 +26,8 @@ public:
     Slot popSlot(){ Slot slot = slots.top(); slots.pop(); return slot; }
 
     template<typename T> T pop();
+
+    const std::string toString() const;
 };
 
 template<> inline int OperandStack::pop<int>(){ return popInt(); }
