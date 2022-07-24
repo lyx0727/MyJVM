@@ -5,6 +5,7 @@
 #include "../classpath/classpath.h"
 
 class Class;
+struct Field;
 
 class ClassLoader{
 private:

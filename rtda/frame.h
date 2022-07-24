@@ -16,8 +16,7 @@ struct Frame{
     int nextPc;
     Method* method;
 
-    Frame(Thread* thread, unsigned int maxLocals, unsigned int maxStack)
-        : lower(nullptr), localVars(maxLocals), operandStack(maxStack), thread(thread) {}
+    Frame(Thread* thread, Method* method);
 
     // load T from local variable
     template<typename T> void load(unsigned int index){

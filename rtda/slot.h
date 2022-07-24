@@ -15,8 +15,9 @@ class Slots{
 private:
     std::vector<Slot> slots;
 public:
-    Slots(unsigned int maxLocals = 0): slots(std::vector<Slot>(maxLocals)){}
+    Slots(unsigned int maxLocals = 0U): slots(std::vector<Slot>(maxLocals)){}
 
+    size_t size() const { return slots.size(); }
     void set(size_t index, int val){ slots[index].num = val; }
     void set(size_t index, float val){ slots[index].num = to<int>(val); }
     void set(size_t index, long val){ slots[index].num = (int)val; slots[index + 1].num = (int)(val >> 32); }

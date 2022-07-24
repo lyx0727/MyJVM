@@ -37,10 +37,12 @@ const string MemberInfo::toString() const {
 
 CodeAttribute* MemberInfo::getCodeAttribute() const {
     for(AttributeInfo* attr : attributes){
-        uint8_t type = AttributeTypeMap.at(attr->getName());
-        switch (type){
-            case AttributeType::Code:
-                return dynamic_cast<CodeAttribute*>(attr);
+        if(AttributeTypeMap.count(attr->getName())){
+            uint8_t type = AttributeTypeMap.at(attr->getName());
+            switch (type){
+                case AttributeType::Code:
+                    return dynamic_cast<CodeAttribute*>(attr);
+            }
         }
     }
     return nullptr;

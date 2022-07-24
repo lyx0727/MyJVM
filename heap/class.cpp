@@ -2,15 +2,26 @@
 #include "sym_ref.h"
 using namespace std;
 
-Class::Class(classfile::Classfile& cf){
+Class::Class(classfile::Classfile& cf)
+    : constantPool(new ConstantPool(this, cf.getConstantPool())), classLoader(nullptr), superClass(nullptr){
     accessFlag = cf.getAccessFlags();
     name = cf.getClassName();
     superClassName = cf.getSuperClassName();
     interfaceNames = cf.getInterfacesNames();
-    
-    constantPool = new ConstantPool(this, cf.getConstantPool());
     fields = getFields(this, cf.getFields());
     methods = getMethods(this, cf.getMethods());
+}
+
+Class::~Class(){ 
+    delete constantPool;     
+}
+
+Method* Class::getStaticMethod(const string& name, const string& descriptor) const{
+    for(Method* method : methods){
+        if(method->isStatic() && method->name == name && method->descriptor == descriptor)
+            return method;
+    }
+    return nullptr;
 }
 
 const string Class::getPackageName() const {
@@ -65,45 +76,6 @@ vector<Method*> getMethods(Class* _class, const std::vector<classfile::MemberInf
         methods[i] = new Method(_class, method);
     }
     return methods;
-}
-
-ConstantPool::ConstantPool(Class* _class, classfile::ConstantPool& cp){
-    unsigned int cpCount = cp.size();
-    consts = vector<Constant>(cpCount);
-    for(size_t i = 0; i < cpCount; i++){
-        classfile::ConstantInfo* cpInfo = cp[i];
-        switch(cpInfo->getTag()){
-            case classfile::ConstantType::Integer: 
-                consts[i].intVal = dynamic_cast<classfile::ConstantIntegerInfo*>(cpInfo)->val;
-                break;
-            case classfile::ConstantType::Float:
-                consts[i].floatVal = dynamic_cast<classfile::ConstantFloatInfo*>(cpInfo)->val;
-                break;
-            case classfile::ConstantType::Long:
-                consts[i].longVal = dynamic_cast<classfile::ConstantLongInfo*>(cpInfo)->val;
-                i++;
-                break;
-            case classfile::ConstantType::Double:
-                consts[i].doubleVal = dynamic_cast<classfile::ConstantDoubleInfo*>(cpInfo)->val;
-                i++;
-                break;
-            case classfile::ConstantType::String:
-                strcpy((char*)consts[i].ref, dynamic_cast<classfile::ConstantStringInfo*>(cpInfo)->getString().c_str());
-                break;
-            case classfile::ConstantType::Class:
-                consts[i].ref = new ClassRef(this, dynamic_cast<classfile::ConstantClassInfo*>(cpInfo));
-                break;
-            case classfile::ConstantType::Fieldref:
-                consts[i].ref = new FieldRef(this, dynamic_cast<classfile::ConstantFieldrefInfo*>(cpInfo));
-                break;
-            case classfile::ConstantType::Methodref:
-                consts[i].ref = new MemberRef(this, dynamic_cast<classfile::ConstantMemberrefInfo*>(cpInfo));
-                break;
-            case classfile::ConstantType::InterfaceMethodref:
-                consts[i].ref = new InterfaceMethodRef(this, dynamic_cast<classfile::ConstantInterfaceMethodrefInfo*>(cpInfo));
-                break;
-        }
-    }
 }
 
 Field* lookupField(Class* _class, const string& name, const string& descriptor){

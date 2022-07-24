@@ -34,13 +34,13 @@ void Classpath::parseUserClasspath(const std::string& cpOption){ this->userClass
 pair<vector<Byte>, Entry*> Classpath::readClass(const string& className){
     vector<Byte> bytes;
     string cls = replace(className, '.', '/');
-    bytes = this->bootClasspath->readClass(cls);
-    if(!bytes.empty()){
-        return make_pair(bytes, this->bootClasspath);
+    auto p = this->bootClasspath->readClass(cls);
+    if(!p.first.empty()){
+        return p;
     }
-    bytes = this->extClasspath->readClass(cls);
-    if(!bytes.empty()){
-        return make_pair(bytes, this->extClasspath);
+    p = this->extClasspath->readClass(cls);
+    if(!p.first.empty()){
+        return p;
     }
-    return make_pair(this->userClasspath->readClass(cls), this->userClasspath);
+    return this->userClasspath->readClass(cls);
 }

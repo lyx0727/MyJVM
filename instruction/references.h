@@ -8,7 +8,7 @@
 struct NEW : public Index16Instruction{
     void execute(Frame* frame){
         ConstantPool* cp = frame->method->_class->constantPool;
-        ClassRef* classRef =  (ClassRef*)cp->getConstant(index).ref;
+        ClassRef* classRef =  (ClassRef*)cp->getConstant(index).getVal<Ref>();
         Class* _class = classRef->resolvedClass();
         if(_class->isAbstract() || _class->isInterface()){
             std::cerr << "java.lang.InstantiationError" << std::endl;
@@ -38,11 +38,16 @@ private:
     }
 public:
     void execute(Frame* frame){
+        using namespace std;
+        try{
         Method* currentMethod = frame->method;
+        cout << "1 " << currentMethod->name << endl;
         Class* currentClass = currentMethod->_class;
+        cout << "2 " <<  currentClass->name << endl;
         ConstantPool* cp = currentClass->constantPool;
-        FieldRef* fieldRef = (FieldRef*)cp->getConstant(index).ref;
+        FieldRef* fieldRef = (FieldRef*)cp->getConstant(index).getVal<Ref>();
         Field* field = fieldRef->resolvedFeild();
+        cout << "3 " <<  field->name << endl;
         if(field->isStatic() != IS_STATIC){
             std::cerr << "java.lang.IncompatibleClassChangeError" << std::endl;
             exit(1);
@@ -56,18 +61,23 @@ public:
             }
         }
 
+        cout << "4 " << _class->name << endl;
         std::string& descriptor = field->descriptor;
         unsigned int slotId = field->slotId;
-        Slots& slots = _class->staticVars;
+        Slots slots = _class->staticVars;
+        
         if(!IS_STATIC){
+            cout << "\t" << field->name << endl;
             // pop ref of its instance
             Ref ref = frame->pop<Ref>();
             if(ref == nullptr){
                 std::cerr << "java.lang.NullPointerException" << std::endl;
                 exit(1);
             }
+            cout << "\tslots: " << ((Object*)ref)->fields.toString() << endl;
             slots = ((Object*)ref)->fields;
         }   
+        cout << "5 " << field->name << endl;
 
         switch(descriptor[0]){
             case 'Z': case 'B': case 'C': case 'S': case 'I': operate<int>(frame, slots, slotId); break;
@@ -76,6 +86,7 @@ public:
             case 'D': operate<double>(frame, slots, slotId); break;
             case 'L': case '[': operate<Ref>(frame, slots, slotId); break;
         }
+        }catch(const exception& e){ cout << e.what() << endl;}
     }
 };
 
@@ -97,7 +108,7 @@ struct INSTANCE_OF : public Index16Instruction{
             return ;
         }
         ConstantPool* cp = frame->method->_class->constantPool;
-        ClassRef* classRef = (ClassRef*)cp->getConstant(index).ref;
+        ClassRef* classRef = (ClassRef*)cp->getConstant(index).getVal<Ref>();
         Class* _class = classRef->resolvedClass();
         if(((Object*)ref)->isInstanceOf(_class)){
             frame->push(1);
@@ -118,11 +129,69 @@ struct CHECK_CAST : public Index16Instruction{
         frame->push(ref);
         if(ref == nullptr) return ;
         ConstantPool* cp = frame->method->_class->constantPool;
-        ClassRef* classRef = (ClassRef*)cp->getConstant(index).ref;
+        ClassRef* classRef = (ClassRef*)cp->getConstant(index).getVal<Ref>();
         Class* _class = classRef->resolvedClass();
         if(!((Object*)ref)->isInstanceOf(_class)){
             std::cerr << "java.lang.ClassCastException" << std::endl;
             exit(1);
+        }
+    }
+};
+
+
+inline void ldc(Frame* frame, unsigned int index){
+    ConstantPool* cp = frame->method->_class->constantPool;
+    Constant c = cp->getConstant(index);
+    switch(c.type){
+        case ConstantType::Int: frame->push(c.getVal<int>()); break;
+        case ConstantType::Float: frame->push(c.getVal<float>()); break;
+        // TODO
+        // case ConstantType::String: break;
+        // case ConstantType::ClassRef: break;
+        default:
+            std::cerr << "ldc to do" << std::endl;
+            exit(1);
+    }
+}
+
+struct LDC : public Index8Instruction{ void execute(Frame* frame){ ldc(frame, (unsigned int)index); } };
+struct LDC_W : public Index16Instruction{ void execute(Frame* frame){ ldc(frame, (unsigned int)index); } };
+struct LDC2_W : public Index16Instruction{
+    void execute(Frame* frame){
+        ConstantPool* cp = frame->method->_class->constantPool;
+        Constant c = cp->getConstant(index);
+        switch(c.type){
+            case ConstantType::Long: frame->push(c.getVal<long>()); break;
+            case ConstantType::Double: frame->push(c.getVal<double>()); break;
+            default:
+                std::cerr << "java.lang.ClassFormatError" << std::endl;
+                exit(1);
+        }
+    }
+};
+
+// TODO
+struct INVOKE_SPECIAL : public Index16Instruction{
+    void execute(Frame* frame){ frame->pop<Ref>(); }
+};
+
+struct INVOKE_VIRTUAL : public Index16Instruction{
+    void execute(Frame* frame){
+        ConstantPool* cp = frame->method->_class->constantPool;
+        MethodRef* methodRef = (MethodRef*)cp->getConstant(index).getVal<Ref>();
+        if(methodRef->name == "println"){
+            std::string& d = methodRef->descriptor;
+            if(d == "(Z)V"){ std::cout << (frame->pop<int>() != 0) << std::endl; }
+            else if(d == "(C)V"){ std::cout << (char)frame->pop<int>() << std::endl; }
+            else if(d == "(B)V" || d == "(S)V" || d == "(I)V"){ std::cout << (char)frame->pop<int>() << std::endl; }
+            else if(d == "(J)V"){ std::cout << frame->pop<long>() << std::endl; }
+            else if(d == "(F)V"){ std::cout << frame->pop<float>() << std::endl; }
+            else if(d == "(D)V"){ std::cout << frame->pop<double>() << std::endl; }
+            else{
+                std::cerr << "println: " << d << std::endl;
+                exit(1);
+            }
+            frame->pop<Ref>();
         }
     }
 };

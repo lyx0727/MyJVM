@@ -5,6 +5,7 @@
 #include <vector>
 #include "../classfile/classfile.h"
 #include "../rtda/thread.h"
+#include "../rtda/slot.h"
 #include "constant_pool.h"
 #include "class_loader.h"
 
@@ -38,6 +39,7 @@ inline bool isInterface(uint16_t accessFlag){ return (accessFlag & ACC_INTERFACE
 struct Field;
 struct Method;
 class ClassLoader;
+class ConstantPool;
 
 struct Class{
     uint16_t                 accessFlag;
@@ -55,8 +57,10 @@ struct Class{
     Slots                    staticVars;      
 
     Class(classfile::Classfile& cf);
-    ~Class(){ delete constantPool; }
+    ~Class();
 
+    Method* getStaticMethod(const std::string& name, const std::string& descriptor) const;
+    Method* getMainMethod() const { return getStaticMethod("main", "([Ljava/lang/String;)V"); }
     const std::string getPackageName() const;
 
     bool isSubClassOf(Class* c) const;
@@ -124,9 +128,11 @@ struct Method : public ClassMember{
     std::vector<Byte> code;
     Method(Class* _class, classfile::MemberInfo* methodInfo): ClassMember(_class, methodInfo){
         classfile::CodeAttribute* codeAttr = methodInfo->getCodeAttribute();
-        code = codeAttr->code;
-        maxLocals = codeAttr->maxLocals;
-        maxStack = codeAttr->maxStack;
+        if(codeAttr != nullptr){
+            code = codeAttr->code;
+            maxLocals = codeAttr->maxLocals;
+            maxStack = codeAttr->maxStack;
+        }
     }
 };
 

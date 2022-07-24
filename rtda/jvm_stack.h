@@ -10,7 +10,7 @@ private:
     unsigned int size;
     Frame* _top;
 public:
-    Stack(unsigned int maxSize): maxSize(maxSize){}
+    Stack(unsigned int maxSize): maxSize(maxSize), size(0U), _top(nullptr){}
     ~Stack();
     void push(Frame* frame);
     Frame* top();

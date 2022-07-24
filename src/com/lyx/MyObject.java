@@ -1,7 +1,6 @@
 package com.lyx;
 
-public class MyObject {
-    public static int staticVar;
+public class MyObject {public static int staticVar;
     public int instanceVar;
     public static void main(String[] args) {
         int x = 32768;                      // ldc
@@ -13,6 +12,7 @@ public class MyObject {
         Object obj = myObj;
         if (obj instanceof MyObject) {      // instanceof
             myObj = (MyObject) obj;         // checkcast
+            System.out.println(myObj.instanceVar);
         }
     }
 }

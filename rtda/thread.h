@@ -2,6 +2,7 @@
 #define THREAD_GUARD
 #include <cstdint>
 #include "jvm_stack.h"
+#include "../heap/class.h"
 
 struct Frame;
 struct Stack;
@@ -16,7 +17,7 @@ public:
     int getPc(){ return pc; }
     void setPc(int pc){ this->pc = pc; }
     void pushFrame(Frame* frame);
-    Frame* newFrame(unsigned int maxLocals, unsigned int maxStack);
+    Frame* newFrame(Method* method);
     Frame* popFrame();
     Frame* getCurrentFrame();
 };

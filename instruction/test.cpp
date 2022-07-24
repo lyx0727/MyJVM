@@ -17,16 +17,7 @@ void GaussTest(){
     interpret(main);
 }
 
-void MyObjectTest(){
-    ifstream in("src/com/lyx/MyObject.class");
-    vector<Byte> bytes((istreambuf_iterator<char>(in)), istreambuf_iterator<char>());     
-    Classfile cf(bytes);
-    MemberInfo* main = cf.getMainMethod();    
-    interpret(main);
-}
-
 int main(){
-    // GaussTest();
-    MyObjectTest();
+    GaussTest();
     return 0;
 }

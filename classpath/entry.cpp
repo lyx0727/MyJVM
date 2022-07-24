@@ -25,12 +25,12 @@ ostream& operator<<(ostream& os, const Entry& entry){
  */
 DirEntry::DirEntry(const std::string& path): absDir(getAbsPath(path)) {}
 
-vector<Byte> DirEntry::readClass(const std::string& className){
+pair<std::vector<Byte>, Entry*> DirEntry::readClass(const std::string& className){
     string fileName = this->absDir + "/" + className + ".class";
     ifstream classFile;
     classFile.open(fileName, ios::in);
     vector<Byte> bytes((istreambuf_iterator<char>(classFile)), istreambuf_iterator<char>());
-    return bytes;
+    return make_pair(bytes, this);
 }
 
 /*
@@ -38,9 +38,9 @@ vector<Byte> DirEntry::readClass(const std::string& className){
  */
 ZipEntry::ZipEntry(const std::string& path):absDir(getAbsPath(path)){}
 
-vector<Byte> ZipEntry::readClass(const std::string& className){
+pair<std::vector<Byte>, Entry*> ZipEntry::readClass(const std::string& className){
     // TODO
-    return vector<Byte>();
+    return make_pair(vector<Byte>(), this);
 }
 
 /*
@@ -60,15 +60,14 @@ const string CompositeEntry::toString() const{
     return s;
 }
 
-vector<Byte> CompositeEntry::readClass(const string& className){
-    vector<Byte> bytes;
+pair<std::vector<Byte>, Entry*> CompositeEntry::readClass(const string& className){
     for(Entry* entry : entrys){
-        bytes = entry->readClass(className);
-        if(!bytes.empty()){
-            return bytes;
+        auto p = entry->readClass(className);
+        if(!p.first.empty()){
+            return p;
         }
     }
-    return bytes;
+    return make_pair(vector<Byte>(), this);
 } 
 
 CompositeEntry::~CompositeEntry(){
@@ -105,15 +104,14 @@ const string WildcardEntry::toString() const{
     return s;
 }
 
-vector<Byte> WildcardEntry::readClass(const string& className){
-    vector<Byte> bytes;
+pair<std::vector<Byte>, Entry*> WildcardEntry::readClass(const string& className){
     for(Entry* entry : entrys){
-        bytes = entry->readClass(className);
-        if(!bytes.empty()){
-            return bytes;
+        auto p = entry->readClass(className);
+        if(!p.first.empty()){
+            return p;
         }
     }
-    return bytes;
+    return make_pair(vector<Byte>(), this);
 } 
 
 WildcardEntry::~WildcardEntry(){

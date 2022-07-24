@@ -7,7 +7,7 @@
 
 class Entry{
 public:
-    virtual std::vector<Byte> readClass(const std::string& className) = 0;
+    virtual std::pair<std::vector<Byte>, Entry*> readClass(const std::string& className) = 0;
     virtual const std::string toString() const = 0; 
     virtual ~Entry(){};
 };
@@ -20,7 +20,7 @@ private:
     std::string absDir;
 public:
     DirEntry(const std::string& path);
-    std::vector<Byte> readClass(const std::string& className); 
+    std::pair<std::vector<Byte>, Entry*> readClass(const std::string& className); 
     const std::string toString() const { return this->absDir; }
     ~DirEntry(){}
 };
@@ -33,7 +33,7 @@ private:
     std::string absDir;
 public:
     ZipEntry(const std::string& path);
-    std::vector<Byte> readClass(const std::string& className); 
+    std::pair<std::vector<Byte>, Entry*> readClass(const std::string& className); 
     const std::string toString() const { return this->absDir; }
     ~ZipEntry(){}
 };
@@ -46,7 +46,7 @@ private:
     std::vector<Entry*> entrys;
 public:
     CompositeEntry(const std::vector<std::string>& paths);
-    std::vector<Byte> readClass(const std::string& className); 
+    std::pair<std::vector<Byte>, Entry*> readClass(const std::string& className); 
     const std::string toString() const;
     ~CompositeEntry();
 };
@@ -60,7 +60,7 @@ private:
 public:
     WildcardEntry(const std::string& path);
     void addEntry(Entry* entry){ entrys.push_back(entry); }
-    std::vector<Byte> readClass(const std::string& className); 
+    std::pair<std::vector<Byte>, Entry*> readClass(const std::string& className); 
     const std::string toString() const;
     ~WildcardEntry();
 };

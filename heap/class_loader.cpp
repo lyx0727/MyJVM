@@ -26,7 +26,8 @@ Class* ClassLoader::parseClass(const std::vector<Byte>& data){
         return new Class(cf);
     }
     catch(const exception& e){
-        cerr << "java.lang.ClassFormatError" << endl;
+        cerr << "class_loader.cpp: java.lang.ClassFormatError: ";
+        cerr << e.what() << endl;
         exit(1);
     }
 }
@@ -51,9 +52,11 @@ Class* ClassLoader::loadNonArrayClass(const string& name){
 }
 
 void resolveSuperClass(Class* _class){
-    if(_class->name != "java/lang/Object"){
-        _class->superClass = _class->classLoader->loadClass(_class->superClassName);
+    if(_class->name == "java/lang/Object"){
+        _class->superClass = nullptr;
+        return;
     }
+    _class->superClass = _class->classLoader->loadClass(_class->superClassName);
 }
 
 void resolveInterfaces(Class* _class){
@@ -111,24 +114,25 @@ void allocAndInitStaticVars(Class* _class){
 void initStaticFinalVar(Class* _class, Field* field){
     Slots& vars = _class->staticVars;
     ConstantPool* cp = _class->constantPool;
+    
     unsigned int cpIndex = field->constValueIndex;
     unsigned int slotId = field->slotId;
     if(cpIndex > 0){
         string& d = field->descriptor;
         if(d == "Z" || d == "B" || d == "C" || d == "S" || d == "I"){
-            int val = cp->getConstant(cpIndex).intVal;
+            int val = cp->getConstant(cpIndex).getVal<int>();
             vars.set(slotId, val);
         }
         else if(d == "J"){
-            long val = cp->getConstant(cpIndex).longVal;
+            long val = cp->getConstant(cpIndex).getVal<long>();
             vars.set(slotId, val);
         }
         else if(d == "F"){
-            float val = cp->getConstant(cpIndex).floatVal;
+            float val = cp->getConstant(cpIndex).getVal<float>();
             vars.set(slotId, val);
         }
         else if(d == "D"){
-            double val = cp->getConstant(cpIndex).doubleVal;
+            double val = cp->getConstant(cpIndex).getVal<double>();
             vars.set(slotId, val);
         }
         else if(d == "Ljava/lang/String;"){

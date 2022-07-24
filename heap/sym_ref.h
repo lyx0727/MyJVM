@@ -8,7 +8,7 @@ struct SymRef{
     std::string   className;
     Class*       _class;
     SymRef(ConstantPool* cp, const std::string& className)
-    : cp(cp), className(className){}
+    : cp(cp), className(className), _class(nullptr){}
 
     Class* resolvedClass(){
         if(_class == nullptr){

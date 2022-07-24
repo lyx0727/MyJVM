@@ -8,14 +8,17 @@ using namespace std;
 using namespace classfile;
 
 void interpret(MemberInfo* memberInfo){
-    CodeAttribute* codeAttr = memberInfo->getCodeAttribute();   
-    unsigned int maxLocals = codeAttr->maxLocals;
-    unsigned int maxStack = codeAttr->maxStack;
-    vector<Byte> code = codeAttr->code;
+    Method* method = new Method(nullptr, memberInfo);
+    interpret(method);
+    delete method;
+}
+
+void interpret(Method* method){
     Thread thread;
-    Frame* frame = thread.newFrame(maxLocals, maxStack);
+    Frame* frame = thread.newFrame(method);
+    cout << method->name << ":" << to_string(method->maxLocals) << " " << to_string(method->maxStack) << endl;
     thread.pushFrame(frame);
-    loop(thread, code);
+    loop(thread, method->code);
 }
 
 void catchErr(Frame* frame){
@@ -40,6 +43,8 @@ void loop(Thread& thread, const std::vector<Byte>& code){
         frame->nextPc = reader.getPc();
         // execute
         cout << "pc: " << pc << " inst: " << typeid(*inst).name() << endl;
-        inst->execute(frame);
+        try{
+            inst->execute(frame);
+        }catch(const exception& e){ cout << e.what() << endl;}
     }
 }
