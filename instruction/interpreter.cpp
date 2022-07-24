@@ -5,6 +5,7 @@
 #include "bytecode_reader.h"
 #include "instruction.h"
 using namespace std;
+using namespace classfile;
 
 void interpret(MemberInfo* memberInfo){
     CodeAttribute* codeAttr = memberInfo->getCodeAttribute();   

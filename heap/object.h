@@ -6,7 +6,10 @@
 struct Object{
     Class* _class;
     Slots fields;
-};
 
+    Object(Class* _class): _class(_class), fields(Slots(_class->instanceSlotCount)){}
+
+    bool isInstanceOf(Class* _class) const { return true; }
+};
 
 #endif

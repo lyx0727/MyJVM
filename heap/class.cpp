@@ -13,7 +13,7 @@ Class::Class(classfile::Classfile& cf){
     methods = getMethods(this, cf.getMethods());
 }
 
-const string Class::getPackageName() const{
+const string Class::getPackageName() const {
     size_t n = name.length();
     int i;
     for(i = n - 1; i > 0; i--)
@@ -22,6 +22,32 @@ const string Class::getPackageName() const{
         return name.substr(0, i - 1);
     }
     return "";
+}
+
+bool Class::isSubClassOf(Class* c) const {
+    for(const Class* t = this; t; t = superClass){
+        if(t == c) 
+            return true;
+    }
+    return false;
+}
+
+bool Class::isSubInterfaceOf(Class* iface) const {
+    for(const Class* const i : interfaces){
+        if(i == iface || i->isSubClassOf(iface))
+            return true;
+    }
+    return false;
+}
+
+bool Class::isImplements(Class* iface) const {
+    for(const Class* t = this; t; t = superClass){
+        for(Class* i : t->interfaces){
+            if(i == iface || i->isSubInterfaceOf(iface))
+                return true;
+        }
+    }
+    return false;
 }
 
 vector<Field*> getFields(Class* _class, const vector<classfile::MemberInfo*>& cfFields){
@@ -37,10 +63,6 @@ vector<Method*> getMethods(Class* _class, const std::vector<classfile::MemberInf
     for(size_t i = 0; i < cfMethods.size(); i++){
         classfile::MemberInfo* method = cfMethods[i];
         methods[i] = new Method(_class, method);
-        classfile::CodeAttribute* codeAttr = method->getCodeAttribute();
-        methods[i]->code = codeAttr->code;
-        methods[i]->maxLocals = codeAttr->maxLocals;
-        methods[i]->maxStack = codeAttr->maxStack;
     }
     return methods;
 }

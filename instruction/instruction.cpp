@@ -6,6 +6,7 @@
 #include "stores.h"
 #include "comparisons.h"
 #include "conversions.h"
+#include "references.h"
 using namespace std;
 
 // TODO
@@ -108,13 +109,14 @@ const unordered_map<uint8_t, Instruction*> Instructions = {
 	// { 0xb8, new &InvokeStatic{} },
 	// { 0xb9, new &InvokeInterface{} },
 	// { 0xba, new &InvokeDynamic{} },
-	// { 0xbb, new &New{} },
+	// references
+	{ 0xbb, new NEW },
 	// { 0xbc, new &NewArray{} },
 	// { 0xbd, new &ANewArray{} },
 	// { 0xbe, new arraylength },
 	// { 0xbf, new athrow },
-	// { 0xc0, new &CheckCast{} },
-	// { 0xc1, new &InstanceOf{} },
+	{ 0xc0, new CHECK_CAST },
+	{ 0xc1, new INSTANCE_OF },
 	// { 0xc2, new monitorenter },
 	// { 0xc3, new monitorexit },
 	// { 0xc4, new &Wide{} },

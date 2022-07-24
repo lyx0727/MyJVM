@@ -8,6 +8,6 @@ void catchErr(Frame* frame);
 
 void loop(Thread& thread, const std::vector<Byte>& code);
 
-void interpret(MemberInfo* memberInfo);
+void interpret(classfile::MemberInfo* memberInfo);
 
 #endif

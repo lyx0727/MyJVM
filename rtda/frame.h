@@ -3,8 +3,10 @@
 #include "thread.h"
 #include "local_vars.h"
 #include "operand_stack.h"
+#include "../heap/class.h"
 
 class Thread;
+struct Method;
 
 struct Frame{
     Frame* lower;
@@ -12,6 +14,7 @@ struct Frame{
     OperandStack operandStack;
     Thread* thread;
     int nextPc;
+    Method* method;
 
     Frame(Thread* thread, unsigned int maxLocals, unsigned int maxStack)
         : lower(nullptr), localVars(maxLocals), operandStack(maxStack), thread(thread) {}

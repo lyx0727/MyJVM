@@ -32,6 +32,8 @@ inline bool isProtected(uint16_t accessFlag){ return (accessFlag & ACC_PROTECTED
 inline bool isPrivate(uint16_t accessFlag){ return (accessFlag & ACC_PRIVATE) != 0; } 
 inline bool isStatic(uint16_t accessFlag){ return (accessFlag & ACC_STATIC) != 0; } 
 inline bool isFinal(uint16_t accessFlag){ return (accessFlag & ACC_FINAL) != 0; } 
+inline bool isAbstract(uint16_t accessFlag){ return (accessFlag & ACC_ABSTRACT) != 0; } 
+inline bool isInterface(uint16_t accessFlag){ return (accessFlag & ACC_INTERFACE) != 0; } 
 
 struct Field;
 struct Method;
@@ -57,9 +59,23 @@ struct Class{
 
     const std::string getPackageName() const;
 
-    bool isSubClassOf(Class* c) const { return superClass == c; }
-    bool isPublic() const { return (accessFlag & ACC_PUBLIC) != 0; } 
+    bool isSubClassOf(Class* c) const;
+    bool isSubInterfaceOf(Class* iface) const;
+    bool isImplements(Class* iface) const;
+
+    bool isPublic() const { return ::isPublic(accessFlag); } 
+    bool isAbstract() const { return ::isAbstract(accessFlag); }
+    bool isInterface() const { return ::isInterface(accessFlag); }
     bool isAccessibleTo(Class* other) const { return isPublic() || getPackageName() == other->getPackageName(); }      
+    bool isAssignableFrom(Class* other) const {
+        if(this == other) return true;
+        if(other->isInterface()){
+            return isImplements(other);
+        }
+        else{
+            return isSubClassOf(other);
+        }
+    }
 };
 
 struct ClassMember{
@@ -95,8 +111,8 @@ struct ClassMember{
 struct Field : public ClassMember{ 
     unsigned int slotId;
     unsigned int constValueIndex;
-    Field(Class* _class, classfile::MemberInfo* memberInfo): ClassMember(_class, memberInfo){
-        classfile::ConstantValueAttribute* valAttr = memberInfo->getConstantValueAttribute();
+    Field(Class* _class, classfile::MemberInfo* fieldInfo): ClassMember(_class, fieldInfo){
+        classfile::ConstantValueAttribute* valAttr = fieldInfo->getConstantValueAttribute();
         if(valAttr != nullptr){
             constValueIndex = (unsigned int)valAttr->constantValueIndex;
         }
@@ -106,7 +122,12 @@ struct Method : public ClassMember{
     uint32_t          maxStack;
     uint32_t          maxLocals;
     std::vector<Byte> code;
-    Method(Class* _class, classfile::MemberInfo* memberInfo): ClassMember(_class, memberInfo){}
+    Method(Class* _class, classfile::MemberInfo* methodInfo): ClassMember(_class, methodInfo){
+        classfile::CodeAttribute* codeAttr = methodInfo->getCodeAttribute();
+        code = codeAttr->code;
+        maxLocals = codeAttr->maxLocals;
+        maxStack = codeAttr->maxStack;
+    }
 };
 
 std::vector<Field*> getFields(Class* _class, const std::vector<classfile::MemberInfo*>& cfFields);

@@ -90,7 +90,7 @@ class_loader.o: heap/class_loader.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # instructions 
-instruction_test: instruction_test.o utils.o $(INSTRUCTION_DEP) $(CLASSFILE_DEP) $(RTDA_DEP)
+instruction_test: instruction_test.o utils.o $(INSTRUCTION_DEP) $(CLASSPATH_DEP) $(CLASSFILE_DEP) $(RTDA_DEP) $(HEAP_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@
 instruction_test.o: instruction/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
