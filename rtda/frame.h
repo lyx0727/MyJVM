@@ -7,6 +7,7 @@
 
 class Thread;
 struct Method;
+class ConstantPool;
 
 struct Frame{
     Frame* lower;
@@ -17,6 +18,8 @@ struct Frame{
     Method* method;
 
     Frame(Thread* thread, Method* method);
+
+    ConstantPool* getConstantPool() const;
 
     // load T from local variable
     template<typename T> void load(unsigned int index){

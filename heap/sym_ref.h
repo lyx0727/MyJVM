@@ -10,18 +10,21 @@ struct SymRef{
     SymRef(ConstantPool* cp, const std::string& className)
     : cp(cp), className(className), _class(nullptr){}
 
-    Class* resolvedClass(){
+    Class* resolvedClass() {
         if(_class == nullptr){
-            resolveClassRef();
+            try{
+                resolveClassRef();
+            }catch(...){
+                throw;
+            }
         }
         return _class;
     }
-    void resolveClassRef(){
+    void resolveClassRef() {
         Class* d = cp->_class;
         Class* c = d->classLoader->loadClass(className);
         if(!c->isAccessibleTo(d)){
-            std::cerr << "java.lang.IllegalAccessError" << std::endl;
-            exit(1);
+            throw JavaLangIllegalAccessError(className, __FILE__, __LINE__);
         }
         _class = c;
     }
@@ -48,23 +51,25 @@ struct FieldRef : public MemberRef{
     FieldRef(ConstantPool* cp, classfile::ConstantFieldrefInfo* fieldInfo)
         : MemberRef(cp, fieldInfo){}
 
-    Field* resolvedFeild(){
+    Field* resolvedFeild() throw(JavaLangClassNoSuchFieldError, JavaLangIllegalAccessError){
         if(field == nullptr){
-            resolveFieldRef();
+            try{
+                resolveFieldRef();
+            }catch(...){
+                throw;
+            }
         }
         return field;
     }
-    void resolveFieldRef(){
+    void resolveFieldRef() throw(JavaLangClassNoSuchFieldError, JavaLangIllegalAccessError) {
         Class* d = cp->_class;
         Class* c = resolvedClass();
-        Field* field = lookupField(c, name, descriptor);
+        Field* field = c->lookupField(name, descriptor);
         if(field == nullptr){
-            std::cerr << "java.lang.NoSuchFieldError" << std::endl;
-            exit(1);
+            throw JavaLangClassNoSuchFieldError(name, __FILE__, __LINE__);
         }
         if(!field->isAccessibleTo(d)){
-            std::cerr << "java.lang.IllegalAccessError" << std::endl;
-            exit(1);
+            throw JavaLangIllegalAccessError(name, __FILE__, __LINE__);
         }
         this->field = field;
     }

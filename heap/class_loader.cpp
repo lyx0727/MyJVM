@@ -11,25 +11,17 @@ Class* ClassLoader::loadClass(const string& name){
     return loadNonArrayClass(name);
 }
 
-pair<vector<Byte>, Entry*> ClassLoader::readClass(const std::string& name){
+pair<vector<Byte>, Entry*> ClassLoader::readClass(const std::string& name) {
     pair<vector<Byte>, Entry*> p = cp->readClass(name);
     if(p.first.size() == 0){
-        cerr << "java.lang.ClassNotFoundException: " << name << endl;
-        exit(1);
+        throw JavaLangClassNotFoundException(name, __FILE__, __LINE__);
     }
     return p;
 }
 
 Class* ClassLoader::parseClass(const std::vector<Byte>& data){
-    try{
-        classfile::Classfile cf(data);
-        return new Class(cf);
-    }
-    catch(const exception& e){
-        cerr << "class_loader.cpp: java.lang.ClassFormatError: ";
-        cerr << e.what() << endl;
-        exit(1);
-    }
+    classfile::Classfile cf(data);
+    return new Class(cf);
 }
 
 Class* ClassLoader::defineClass(const std::vector<Byte>& data){

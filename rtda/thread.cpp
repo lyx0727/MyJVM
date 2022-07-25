@@ -29,3 +29,5 @@ const string Slots::toString() const {
     }
     return str;
 }   
+
+ConstantPool* Frame::getConstantPool() const{ return method->_class->constantPool; }

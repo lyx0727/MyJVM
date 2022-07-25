@@ -78,20 +78,20 @@ vector<Method*> getMethods(Class* _class, const std::vector<classfile::MemberInf
     return methods;
 }
 
-Field* lookupField(Class* _class, const string& name, const string& descriptor){
-    for(Field* field : _class->fields){
+Field* Class::lookupField(const string& name, const string& descriptor) const {
+    for(Field* field : fields){
         if(field->name == name && field->descriptor == descriptor){
             return field;
         }
     }
-    for(Class* interface : _class->interfaces){
-        Field* field = lookupField(interface, name, descriptor);
+    for(Class* interface : interfaces){
+        Field* field = interface->lookupField(name, descriptor);
         if(field != nullptr){
             return field;
         }
     }
-    if(_class->superClass != nullptr){
-        return lookupField(_class->superClass, name, descriptor);
+    if(superClass != nullptr){
+        return superClass->lookupField(name, descriptor);
     }
     return nullptr;
 }

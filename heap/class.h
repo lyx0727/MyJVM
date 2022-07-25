@@ -61,6 +61,9 @@ struct Class{
 
     Method* getStaticMethod(const std::string& name, const std::string& descriptor) const;
     Method* getMainMethod() const { return getStaticMethod("main", "([Ljava/lang/String;)V"); }
+
+    Field* lookupField(const std::string& name, const std::string& descriptor) const;
+    
     const std::string getPackageName() const;
 
     bool isSubClassOf(Class* c) const;

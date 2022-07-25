@@ -2,8 +2,10 @@
 #define UTILS_GUARD
 #include <cstring>
 #include <string>
+#include <stdio.h>
 #include <cmath>
 #include <vector>
+#include <exception>
 #include <iostream>
 
 typedef unsigned char Byte;
@@ -47,5 +49,39 @@ void print(const std::vector<T>& vec){
     }
     std::cout << std::endl;
 }
+
+// Exception
+struct JavaLangException : public std::exception {
+private:
+    std::string type;
+    std::string fileName;
+    unsigned int lineNumber;
+    char* msg;
+public:
+    JavaLangException(const std::string& type, const char* fileName, unsigned int lineNumber, const std::string& message)
+        : type(type), fileName(fileName), lineNumber(lineNumber){
+        std::string s = this->fileName + ":" + std::to_string(this->lineNumber) + ": java.lang." + type + ": " + message;
+        int len = s.length();
+        msg = new char[len + 1];
+        std::strcpy(msg, s.c_str());
+    }
+    virtual ~JavaLangException(){ delete msg; }
+    const char * what () const throw (){
+        return msg;
+    }
+};
+
+struct JavaLangClassNotFoundException : public JavaLangException {
+    JavaLangClassNotFoundException(const std::string& className, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("ClassNotFoundException", fileName, lineNumber, className){}
+};
+struct JavaLangClassNoSuchFieldError : public JavaLangException {
+    JavaLangClassNoSuchFieldError(const std::string& fieldName, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("ClassNoSuchFieldError", fileName, lineNumber, fieldName){}
+};
+struct JavaLangIllegalAccessError: public JavaLangException {
+    JavaLangIllegalAccessError(const std::string& name, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("IllegalAccessError", fileName, lineNumber, name){}
+};
 
 #endif
