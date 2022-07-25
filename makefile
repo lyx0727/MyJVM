@@ -8,7 +8,7 @@ RTDA_DEP = jvm_stack.o thread.o
 INSTRUCTION_DEP = interpreter.o instruction.o
 HEAP_DEP = class.o class_loader.o class_constant_pool.o
 
-jvm: utils.o main.o $(CMD_DEP) $(CLASSPATH_DEP) $(CLASSFILE_DEP) $(RTDA_DEP)
+jvm: utils.o main.o $(CMD_DEP) $(CLASSPATH_DEP) $(CLASSFILE_DEP) $(RTDA_DEP) $(INSTRUCTION_DEP) $(HEAP_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@	
 
 utils.o: utils/utils.cpp

@@ -7,6 +7,7 @@ dev env:
 
 ## Modules so far
 ```bash
+├── heap
 ├── rtda
 ├── classfile
 ├── classpath
@@ -19,15 +20,19 @@ dev env:
 Each module has a '**test.cpp**' (except module utils)    
 You can test each module use
 ```bash
-make ${module_name}_test
-./${module_name}_test
+$ make ${module_name}_test
+$ ./${module_name}_test
 ```
 
 ## Run JVM
 
 ```bash
-make
-./jvm -classpath src com.lyx.test
+$ make
+$ ./jvm [-Xjre ${jre_path} -classpath ${class_path}] ${class_name}
+```
+e.g.
+```bash
+$ ./jvm -classpath src com.lyx.test
 ```
 
 ## Reference

@@ -4,11 +4,16 @@ using namespace std;
 
 void startJVM(Cmd cmd){
     Classpath cp(cmd.XjreOption, cmd.cpOption);
-    vector<Byte> bytes = cp.readClass(cmd.Class);
-    cout << cp.toString() << endl;
-    cout << "\n----------" << cmd.Class << "----------" << endl;
-    Classfile cf(bytes);
-    cout << cf.toString() << endl;
+    ClassLoader classLoader(&cp);
+    string className = replace(cmd.Class, '.', '/');
+    Class* _class = classLoader.loadClass(className);    
+    Method* main = _class->getMainMethod();
+    if(main == nullptr){
+        cout << "Main method not found in class " << _class->name << endl;
+    }
+    else{
+        interpret(main);
+    }
 }
 
 int main(int argc, char* argv[]){
