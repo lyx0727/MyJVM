@@ -8,6 +8,7 @@
 #include "../rtda/slot.h"
 #include "constant_pool.h"
 #include "class_loader.h"
+#include "class_member.h"
 
 constexpr uint16_t ACC_PUBLIC       = 0x0001;  
 constexpr uint16_t ACC_PRIVATE      = 0x0002;
@@ -62,7 +63,14 @@ struct Class{
     Method* getStaticMethod(const std::string& name, const std::string& descriptor) const;
     Method* getMainMethod() const { return getStaticMethod("main", "([Ljava/lang/String;)V"); }
 
+    std::vector<Field*> getFields(const std::vector<classfile::MemberInfo*>& cfFields);
+    std::vector<Method*> getMethods(const std::vector<classfile::MemberInfo*>& cfMethods);
+
     Field* lookupField(const std::string& name, const std::string& descriptor) const;
+    Method* lookupMethodInClass(const std::string& name, const std::string& descriptor) const;
+    Method* lookupMethodInInterfaces(const std::string& name, const std::string& descriptor) const;
+    Method* lookupMethod(const std::string& name, const std::string& descriptor) const;
+    Method* lookupInterfaceMethod(const std::string& name, const std::string& descriptor) const;
     
     const std::string getPackageName() const;
 
@@ -85,63 +93,5 @@ struct Class{
     }
 };
 
-struct ClassMember{
-    uint16_t    accessFlag;
-    std::string name;
-    std::string descriptor;
-    Class*      _class;
-    bool isStatic() const { return ::isStatic(accessFlag); }
-    bool isFinal() const { return ::isFinal(accessFlag); }
-    bool isPublic() const { return ::isPublic(accessFlag); }
-    bool isProtected() const { return ::isProtected(accessFlag); }
-    bool isPrivate() const { return ::isPrivate(accessFlag); }
-    bool isLongOrDouble() const { return descriptor == "J" || descriptor == "D"; }
-    ClassMember(Class* _class, classfile::MemberInfo* memberInfo): _class(_class){
-        accessFlag = memberInfo->getAccessFlags();
-        name = memberInfo->getName();
-        descriptor = memberInfo->getDescriptor();
-    }
-
-    bool isAccessibleTo(Class* d){
-        if(isPublic()) return true;
-        Class* c = _class;
-        if(isProtected()){
-            return d == c || d->isSubClassOf(c) || c->getPackageName() == d->getPackageName();
-        }
-        if(!isPrivate()){
-            return c->getPackageName() == d->getPackageName();
-        }
-        return d == c;
-    }
-};
-
-struct Field : public ClassMember{ 
-    unsigned int slotId;
-    unsigned int constValueIndex;
-    Field(Class* _class, classfile::MemberInfo* fieldInfo): ClassMember(_class, fieldInfo){
-        classfile::ConstantValueAttribute* valAttr = fieldInfo->getConstantValueAttribute();
-        if(valAttr != nullptr){
-            constValueIndex = (unsigned int)valAttr->constantValueIndex;
-        }
-    } 
-};
-struct Method : public ClassMember{
-    uint32_t          maxStack;
-    uint32_t          maxLocals;
-    std::vector<Byte> code;
-    Method(Class* _class, classfile::MemberInfo* methodInfo): ClassMember(_class, methodInfo){
-        classfile::CodeAttribute* codeAttr = methodInfo->getCodeAttribute();
-        if(codeAttr != nullptr){
-            code = codeAttr->code;
-            maxLocals = codeAttr->maxLocals;
-            maxStack = codeAttr->maxStack;
-        }
-    }
-};
-
-std::vector<Field*> getFields(Class* _class, const std::vector<classfile::MemberInfo*>& cfFields);
-std::vector<Method*> getMethods(Class* _class, const std::vector<classfile::MemberInfo*>& cfMethods);
-
-Field* lookupField(Class* _class, const std::string& name, const std::string& descriptor);
 
 #endif

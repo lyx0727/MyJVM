@@ -23,12 +23,15 @@ public:
     void set(size_t index, long val){ slots[index].num = (int)val; slots[index + 1].num = (int)(val >> 32); }
     void set(size_t index, double val){ set(index, to<long>(val)); }
     void set(size_t index, Ref ref){ slots[index].ref = ref; }
+    void set(size_t index, Slot slot){ slots[index] = slot; }
+
     int getInt(size_t index){ return slots[index].num; }
     float getFloat(size_t index){ return to<float>(slots[index].num); }
     // operator preference: '|' > '<<' 
     long getLong(size_t index){ return (to<long>(slots[index + 1].num) << 32) | to<long>(slots[index].num); }
     double getDouble(size_t index){ return to<double>(getLong(index)); }
     Ref getRef(size_t index){ return slots[index].ref; }
+    Slot getSlot(size_t index){ return slots[index]; }
 
     template<typename T> T get(size_t index);
 
@@ -40,5 +43,6 @@ template<> inline float Slots::get(size_t index){ return getFloat(index); }
 template<> inline long Slots::get(size_t index){ return getLong(index); }
 template<> inline double Slots::get(size_t index){ return getDouble(index); }
 template<> inline Ref Slots::get(size_t index){ return getRef(index); }
+template<> inline Slot Slots::get(size_t index){ return getSlot(index); }
 
 #endif

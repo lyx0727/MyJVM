@@ -58,7 +58,7 @@ public:
         Class* currentClass = currentMethod->_class;
         ConstantPool* cp = currentClass->constantPool;
         FieldRef* fieldRef = (FieldRef*)cp->getConstant(index).getVal<Ref>();
-        Field* field = fieldRef->resolvedFeild();
+        Field* field = fieldRef->resolvedField();
         if(field->isStatic() != IS_STATIC){
             std::cerr << "java.lang.IncompatibleClassChangeError" << std::endl;
             exit(1);

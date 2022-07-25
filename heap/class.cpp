@@ -8,13 +8,11 @@ Class::Class(classfile::Classfile& cf)
     name = cf.getClassName();
     superClassName = cf.getSuperClassName();
     interfaceNames = cf.getInterfacesNames();
-    fields = getFields(this, cf.getFields());
-    methods = getMethods(this, cf.getMethods());
+    getFields(cf.getFields());
+    getMethods(cf.getMethods());
 }
 
-Class::~Class(){ 
-    delete constantPool;     
-}
+Class::~Class(){ delete constantPool; }
 
 Method* Class::getStaticMethod(const string& name, const string& descriptor) const{
     for(Method* method : methods){
@@ -61,19 +59,19 @@ bool Class::isImplements(Class* iface) const {
     return false;
 }
 
-vector<Field*> getFields(Class* _class, const vector<classfile::MemberInfo*>& cfFields){
-    vector<Field*> fields(cfFields.size());
+vector<Field*> Class::getFields(const vector<classfile::MemberInfo*>& cfFields){
+    fields = vector<Field*>(cfFields.size());
     for(size_t i = 0; i < cfFields.size(); i++){
-        fields[i] = new Field(_class, cfFields[i]);
+        fields[i] = new Field(this, cfFields[i]);
     }
     return fields;
 }
 
-vector<Method*> getMethods(Class* _class, const std::vector<classfile::MemberInfo*>& cfMethods){
-    vector<Method*> methods(cfMethods.size());
+vector<Method*> Class::getMethods(const std::vector<classfile::MemberInfo*>& cfMethods){
+    methods = vector<Method*>(cfMethods.size());
     for(size_t i = 0; i < cfMethods.size(); i++){
         classfile::MemberInfo* method = cfMethods[i];
-        methods[i] = new Method(_class, method);
+        methods[i] = new Method(this, method);
     }
     return methods;
 }
@@ -94,4 +92,47 @@ Field* Class::lookupField(const string& name, const string& descriptor) const {
         return superClass->lookupField(name, descriptor);
     }
     return nullptr;
+}
+
+Method* Class::lookupMethod(const string& name, const string& descriptor) const {
+    Method* method = lookupMethodInClass(name, descriptor);
+    if(method == nullptr){
+        method = lookupMethodInInterfaces(name, descriptor);
+    }  
+    return method; 
+}
+
+Method* Class::lookupMethodInClass(const string& name, const string& descriptor) const{
+    for(const Class* c = this; c; c = superClass){
+        for(Method* m : c->methods){
+            if(m->name == name && m->descriptor == descriptor){
+                return m;
+            }
+        }
+    }
+    return nullptr;
+}
+
+Method* Class::lookupMethodInInterfaces(const string& name, const string& descriptor) const{
+    for(const Class* iface : interfaces){
+        for(Method* m : iface->methods){
+            if(m->name == name && m->descriptor == descriptor){
+                return m;
+            }
+        }
+        Method* method = iface->lookupMethodInInterfaces(name, descriptor);
+        if(method){
+            return method;
+        }
+    }
+    return nullptr;
+}
+
+Method* Class::lookupInterfaceMethod(const string& name, const string& descriptor) const{
+    for(Method* m : methods){
+        if(m->name == name && m->descriptor == descriptor){
+            return m;
+        }
+    }
+    return lookupMethodInInterfaces(name, descriptor);
 }

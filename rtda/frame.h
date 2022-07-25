@@ -31,8 +31,12 @@ struct Frame{
         T var = operandStack.pop<T>();
         localVars.set(index, var);
     }
+    // operand stack
     template<typename T> void push(T var){ operandStack.push(var); }
     template<typename T> T pop(){ return operandStack.pop<T>(); }
+    // local vars
+    template<typename T> T get(unsigned int index){ return localVars.get<T>(index); }
+    template<typename T> void set(unsigned int index, T val){ return localVars.set(index, val); }
     // jump to brand statement
     void branch(int offset);
 };

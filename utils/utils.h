@@ -79,9 +79,16 @@ struct JavaLangClassNoSuchFieldError : public JavaLangException {
     JavaLangClassNoSuchFieldError(const std::string& fieldName, const char* fileName, unsigned int lineNumber)
     : JavaLangException("ClassNoSuchFieldError", fileName, lineNumber, fieldName){}
 };
+struct JavaLangNoSuchMethodError: public JavaLangException {
+    JavaLangNoSuchMethodError(const std::string& msg, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("NoSuchMethodError", fileName, lineNumber, msg){}
+};
 struct JavaLangIllegalAccessError: public JavaLangException {
     JavaLangIllegalAccessError(const std::string& name, const char* fileName, unsigned int lineNumber)
     : JavaLangException("IllegalAccessError", fileName, lineNumber, name){}
 };
-
+struct JavaLangIncompatibleClassChangeError: public JavaLangException {
+    JavaLangIncompatibleClassChangeError(const std::string& msg, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("IncompatibleClassChangeError", fileName, lineNumber, msg){}
+};
 #endif
