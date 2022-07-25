@@ -42,13 +42,14 @@ struct Method : public ClassMember{
     std::vector<Byte> code;
     uint32_t argSlotCount;
     Method(Class* _class, classfile::MemberInfo* methodInfo)
-        : ClassMember(_class, methodInfo), argSlotCount(0){
+        : ClassMember(_class, methodInfo){
         classfile::CodeAttribute* codeAttr = methodInfo->getCodeAttribute();
         if(codeAttr != nullptr){
             code = codeAttr->code;
             maxLocals = codeAttr->maxLocals;
             maxStack = codeAttr->maxStack;
         }
+        calcArgSlotCount();
     }
     uint32_t calcArgSlotCount();
     

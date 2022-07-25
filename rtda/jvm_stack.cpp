@@ -3,6 +3,7 @@
 using namespace std;
 
 void deleteFrame(Frame* frame){
+    if(!frame) return;
     if(frame->lower){
         deleteFrame(frame->lower);
     }
@@ -14,7 +15,7 @@ Stack::~Stack(){
 }
 
 void Stack::push(Frame* frame){
-    if(size >= maxSize){
+    if(sz >= maxSize){
         std::cerr << "java.lang.StackOverflowError" << std::endl;
         exit(1);
     }
@@ -22,7 +23,7 @@ void Stack::push(Frame* frame){
         frame->lower = _top;
     }
     _top = frame;
-    size++;
+    sz++;
 }
 Frame* Stack::top(){ 
     if(_top == nullptr){
@@ -39,7 +40,7 @@ Frame* Stack::pop(){
     Frame* top = _top;
     _top = top->lower;
     top->lower = nullptr;
-    size--;
+    sz--;
     return top;
 }
 

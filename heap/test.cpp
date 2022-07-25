@@ -23,7 +23,7 @@ void MyObjectTest(){
 }
 
 int main(){
-    // MyObjectTest();
-    testDescriptorParser();
+    MyObjectTest();
+    // testDescriptorParser();
     return 0;
 }

@@ -134,43 +134,19 @@ struct CHECK_CAST : public Index16Instruction{
     }
 };
 
+struct LDC : public Index8Instruction{ void execute(Frame* frame){ frame->ldc(index); } };
+struct LDC_W : public Index16Instruction{ void execute(Frame* frame){ frame->ldc(index); } };
+struct LDC2_W : public Index16Instruction{ void execute(Frame* frame){ frame->ldc_w(index); } };
 
-inline void ldc(Frame* frame, unsigned int index){
-    ConstantPool* cp = frame->method->_class->constantPool;
-    Constant c = cp->getConstant(index);
-    switch(c.type){
-        case ConstantType::Int: frame->push(c.getVal<int>()); break;
-        case ConstantType::Float: frame->push(c.getVal<float>()); break;
-        // TODO
-        // case ConstantType::String: break;
-        // case ConstantType::ClassRef: break;
-        default:
-            std::cerr << "ldc to do" << std::endl;
-            exit(1);
-    }
-}
-
-struct LDC : public Index8Instruction{ void execute(Frame* frame){ ldc(frame, (unsigned int)index); } };
-struct LDC_W : public Index16Instruction{ void execute(Frame* frame){ ldc(frame, (unsigned int)index); } };
-struct LDC2_W : public Index16Instruction{
-    void execute(Frame* frame){
-        ConstantPool* cp = frame->method->_class->constantPool;
-        Constant c = cp->getConstant(index);
-        switch(c.type){
-            case ConstantType::Long: frame->push(c.getVal<long>()); break;
-            case ConstantType::Double: frame->push(c.getVal<double>()); break;
-            default:
-                std::cerr << "java.lang.ClassFormatError" << std::endl;
-                exit(1);
-        }
-    }
-};
-
-// TODO
+// Invoke instance method; special handling for superclass, private,
+// and instance initialization method invocations
 struct INVOKE_SPECIAL : public Index16Instruction{
-    void execute(Frame* frame){ frame->pop<Ref>(); }
+    void execute(Frame* frame){ 
+        frame->pop<Ref>(); 
+    }
 };
 
+// Invoke instance method; dispatch based on class
 struct INVOKE_VIRTUAL : public Index16Instruction{
     void execute(Frame* frame){
         ConstantPool* cp = frame->method->_class->constantPool;

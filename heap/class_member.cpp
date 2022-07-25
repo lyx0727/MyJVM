@@ -26,6 +26,7 @@ uint32_t Method::calcArgSlotCount(){
             argSlotCount++;
         }
     }
+    return argSlotCount;
 }
 
 bool ClassMember::isStatic() const { return ::isStatic(accessFlag); }

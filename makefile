@@ -4,7 +4,7 @@ CFFLAGS = -lm -Wall -g
 CMD_DEP = cmd.o
 CLASSPATH_DEP = entry.o classpath.o
 CLASSFILE_DEP = attribute_info.o class_reader.o constant_pool.o member_info.o constant_info.o classfile.o
-RTDA_DEP = jvm_stack.o thread.o
+RTDA_DEP = jvm_stack.o thread.o frame.o
 INSTRUCTION_DEP = interpreter.o instruction.o
 HEAP_DEP = class.o class_loader.o class_constant_pool.o class_member.o descriptor_parser.o
 
@@ -75,6 +75,9 @@ jvm_stack.o: rtda/jvm_stack.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 thread.o: rtda/thread.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
+frame.o: rtda/frame.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # heap

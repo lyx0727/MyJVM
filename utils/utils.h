@@ -91,4 +91,9 @@ struct JavaLangIncompatibleClassChangeError: public JavaLangException {
     JavaLangIncompatibleClassChangeError(const std::string& msg, const char* fileName, unsigned int lineNumber)
     : JavaLangException("IncompatibleClassChangeError", fileName, lineNumber, msg){}
 };
+struct JavaLangClassFormatError: public JavaLangException {
+    JavaLangClassFormatError(const std::string& name, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("ClassFormatError", fileName, lineNumber, name){}
+};
+
 #endif

@@ -32,9 +32,9 @@ void catchErr(Frame* frame){
 }
 
 void loop(Thread& thread, const std::vector<Byte>& code){
-    Frame* frame = thread.popFrame();
     BytecodeReader reader;
     while(true){
+        Frame* frame = thread.getCurrentFrame();
         int pc = frame->nextPc;
         thread.setPc(pc);
         // decode
@@ -47,8 +47,8 @@ void loop(Thread& thread, const std::vector<Byte>& code){
         inst->fetchOperands(reader);
         frame->nextPc = reader.getPc();
         // execute
-        inst->execute(frame);
         cout << "pc: " << pc << " inst: " << getInstrucionName(opCode) << endl;
+        inst->execute(frame);
         #ifdef DEBUG
             cout << "---------------local vars----------------" << endl;
             cout << frame->localVars.toString() << endl;
@@ -56,5 +56,8 @@ void loop(Thread& thread, const std::vector<Byte>& code){
             cout << frame->operandStack.toString() << endl;
             cout << "-----------------------------------------" << endl;
         #endif
+        if(thread.empty()){
+            break;
+        }
     }
 }

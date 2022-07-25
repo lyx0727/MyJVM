@@ -39,6 +39,12 @@ struct Frame{
     template<typename T> void set(unsigned int index, T val){ return localVars.set(index, val); }
     // jump to brand statement
     void branch(int offset);
+    // load constant variable from constant pool 
+    void ldc(unsigned int index);
+    // load wide constant variable
+    void ldc_w(unsigned int index);
+    // invoke method
+    void invokeMethod(Method* method);
 };
 
 #endif
