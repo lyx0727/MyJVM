@@ -101,8 +101,8 @@ const unordered_map<uint8_t, Instruction*> Instructions = {
 	{ 0xb5, new PUT_FIELD },
 	{ 0xb6, new INVOKE_VIRTUAL},
 	{ 0xb7, new INVOKE_SPECIAL },
-	// { 0xb8, new &InvokeStatic{} },
-	// { 0xb9, new &InvokeInterface{} },
+	{ 0xb8, new INVOKE_STATIC },
+	{ 0xb9, new INVOKE_INTERFACE },
 	// { 0xba, new &InvokeDynamic{} },
 	// references
 	{ 0xbb, new NEW },

@@ -22,8 +22,18 @@ void MyObjectTest(){
     interpret(main);
 }
 
+void FibonacciTest(){
+    Classpath cp("jre", "src");
+    ClassLoader classLoader(&cp);
+    Class* FibonacciTest = classLoader.loadClass("com/lyx/FibonacciTest");    
+
+    Method* main = FibonacciTest->getMainMethod();
+    interpret(main);
+}
+
 int main(){
-    MyObjectTest();
+    // MyObjectTest();
     // testDescriptorParser();
+    FibonacciTest();
     return 0;
 }

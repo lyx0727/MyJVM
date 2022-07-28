@@ -43,11 +43,11 @@ const string ConstantPool::toString() const{
             str += "\t" + c->toString() + "\n";
             i++;
         }
-        // print 10 at most
-        if(i > 10){
-            str += "\t...\n";
-            break;
-        }
+        // // print 10 at most
+        // if(i > 10){
+        //     str += "\t...\n";
+        //     break;
+        // }
     }   
     return str;
 }

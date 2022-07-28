@@ -138,35 +138,163 @@ struct LDC : public Index8Instruction{ void execute(Frame* frame){ frame->ldc(in
 struct LDC_W : public Index16Instruction{ void execute(Frame* frame){ frame->ldc(index); } };
 struct LDC2_W : public Index16Instruction{ void execute(Frame* frame){ frame->ldc_w(index); } };
 
-// Invoke instance method; special handling for superclass, private,
-// and instance initialization method invocations
-struct INVOKE_SPECIAL : public Index16Instruction{
+// Invoke a class (static) method
+struct INVOKE_STATIC : public Index16Instruction {
     void execute(Frame* frame){ 
-        frame->pop<Ref>(); 
+        ConstantPool* cp = frame->getConstantPool();
+        MethodRef* methodRef = (MethodRef*)cp->getConstant(index).getVal<Ref>();
+        Class* resolvedClass = methodRef->resolvedClass();
+        Method* resolvedMethod = methodRef->resolvedMethod();
+        // constructor must be declared by its class
+        if(resolvedMethod->name == "<init>" && resolvedMethod->_class != resolvedClass){
+            throw JavaLangNoSuchMethodError(resolvedMethod->name, __FILE__, __LINE__);
+        }   
+        if(!resolvedMethod->isStatic()){
+            throw JavaLangIncompatibleClassChangeError(resolvedMethod->name + " is not static", __FILE__, __LINE__);
+        }
+        frame->invokeMethod(resolvedMethod);
     }
 };
+
+// Invoke instance method; 
+// special handling for superclass, private, and instance initialization method invocations
+struct INVOKE_SPECIAL : public Index16Instruction{
+    void execute(Frame* frame){ 
+        ConstantPool* cp = frame->getConstantPool();
+        Class* currentClass = frame->method->_class;
+        MethodRef* methodRef = (MethodRef*)cp->getConstant(index).getVal<Ref>();
+        Class* resolvedClass = methodRef->resolvedClass();
+        Method* resolvedMethod = methodRef->resolvedMethod();
+        // constructor must be declared by its class
+        if(resolvedMethod->name == "<init>" && resolvedMethod->_class != resolvedClass){
+            throw JavaLangNoSuchMethodError(resolvedMethod->name, __FILE__, __LINE__);
+        }   
+        if(resolvedMethod->isStatic()){
+            throw JavaLangIncompatibleClassChangeError(resolvedMethod->name + " is static", __FILE__, __LINE__);
+        }
+        // get 'this' pointer
+        Ref ref = frame->operandStack.getRefFromTop(resolvedMethod->argSlotCount); 
+        if(ref == nullptr){
+            throw JavaLangNullPointerException(ref, __FILE__, __LINE__);
+        }
+        // can be accessed or not
+        Object* obj = (Object*)ref;
+        if(resolvedMethod->isProtected() 
+        && resolvedMethod->_class->isSuperClassOf(currentClass)
+        && resolvedClass->getPackageName() != currentClass->getPackageName()
+        && obj->_class != currentClass
+        && !obj->_class->isSubClassOf(currentClass)){
+            throw JavaLangIllegalAccessError(resolvedMethod->name, __FILE__, __LINE__);
+        }
+        // invoke method of super class
+        Method* methodToBeInvoked = resolvedMethod;
+        if(currentClass->isSuper() 
+        && resolvedClass->isSuperClassOf(currentClass)
+        && resolvedMethod->name != "<init>"){
+            methodToBeInvoked = currentClass->superClass->lookupMethodInClass(methodRef->name, methodRef->descriptor);
+        }
+        if(methodToBeInvoked == nullptr || methodToBeInvoked->isAbstract()){
+            throw JavaLangAbstractMethodError(methodToBeInvoked ? methodToBeInvoked->name : "", __FILE__, __LINE__);
+        }
+        frame->invokeMethod(methodToBeInvoked);
+    }
+};
+
+// hack
+void println(Frame* frame, const std::string& descriptor){
+    const std::string& d = descriptor;
+    std::string str;
+    if(d == "(Z)V"){ str = std::to_string(frame->pop<int>() != 0); }
+    else if(d == "(C)V"){ str = std::string(1, (char)frame->pop<int>()); }
+    else if(d == "(B)V" || d == "(S)V" || d == "(I)V"){ str = std::to_string(frame->pop<int>()); }
+    else if(d == "(J)V"){ str = std::to_string(frame->pop<long>()); }
+    else if(d == "(F)V"){ str = std::to_string(frame->pop<float>()); }
+    else if(d == "(D)V"){ str = std::to_string(frame->pop<double>()); }
+    else{
+        std::cerr << "println: " << d << std::endl;
+        exit(1);
+    }
+    std::cout << str << std::endl;
+    frame->pop<Ref>();
+}
 
 // Invoke instance method; dispatch based on class
 struct INVOKE_VIRTUAL : public Index16Instruction{
     void execute(Frame* frame){
-        ConstantPool* cp = frame->method->_class->constantPool;
+        ConstantPool* cp = frame->getConstantPool();
+        Class* currentClass = frame->method->_class;
         MethodRef* methodRef = (MethodRef*)cp->getConstant(index).getVal<Ref>();
-        if(methodRef->name == "println"){
-            std::string& d = methodRef->descriptor;
-            std::string str;
-            if(d == "(Z)V"){ str = std::to_string(frame->pop<int>() != 0); }
-            else if(d == "(C)V"){ str = std::string(1, (char)frame->pop<int>()); }
-            else if(d == "(B)V" || d == "(S)V" || d == "(I)V"){ str = std::to_string(frame->pop<int>()); }
-            else if(d == "(J)V"){ str = std::to_string(frame->pop<long>()); }
-            else if(d == "(F)V"){ str = std::to_string(frame->pop<float>()); }
-            else if(d == "(D)V"){ str = std::to_string(frame->pop<double>()); }
-            else{
-                std::cerr << "println: " << d << std::endl;
-                exit(1);
-            }
-            std::cout << str << std::endl;
-            frame->pop<Ref>();
+        Class* resolvedClass = methodRef->resolvedClass();
+        Method* resolvedMethod = methodRef->resolvedMethod();
+        // constructor must be declared by its class
+        if(resolvedMethod->name == "<init>" && resolvedMethod->_class != resolvedClass){
+            throw JavaLangNoSuchMethodError(resolvedMethod->name, __FILE__, __LINE__);
+        }   
+        if(resolvedMethod->isStatic()){
+            throw JavaLangIncompatibleClassChangeError(resolvedMethod->name + " is static", __FILE__, __LINE__);
         }
+        // get 'this' pointer
+        Ref ref = frame->operandStack.getRefFromTop(resolvedMethod->argSlotCount - 1); 
+        if(ref == nullptr){
+            // hack System.out.println()
+            if(resolvedMethod->name == "println"){
+                println(frame, resolvedMethod->descriptor);
+                return;
+            }
+            throw JavaLangNullPointerException(ref, __FILE__, __LINE__);
+        }
+        // can be accessed or not
+        Object* obj = (Object*)ref;
+        if(resolvedMethod->isProtected() 
+        && resolvedMethod->_class->isSuperClassOf(currentClass)
+        && resolvedClass->getPackageName() != currentClass->getPackageName()
+        && obj->_class != currentClass
+        && !obj->_class->isSubClassOf(currentClass)){
+            throw JavaLangIllegalAccessError(resolvedMethod->name, __FILE__, __LINE__);
+        }
+        // 
+        Method* methodToBeInvoked = resolvedMethod;
+        methodToBeInvoked = obj->_class->lookupMethodInClass(methodRef->name, methodRef->descriptor);
+        if(methodToBeInvoked == nullptr || methodToBeInvoked->isAbstract()){
+            throw JavaLangAbstractMethodError(methodToBeInvoked ? methodToBeInvoked->name : "", __FILE__, __LINE__);
+        }
+        
+        frame->invokeMethod(methodToBeInvoked);
+    }
+};
+
+// Invoke interface method
+struct INVOKE_INTERFACE : public Instruction{
+    unsigned int index;
+    void fetchOperands(BytecodeReader& br){
+        index = (unsigned int)br.readUint16();
+        br.readUint8(); // count
+        br.readUint8(); // zero
+    }
+    void execute(Frame* frame){
+        ConstantPool* cp = frame->getConstantPool();
+        MethodRef* methodRef = (MethodRef*)cp->getConstant(index).getVal<Ref>();
+        Method* resolvedMethod = methodRef->resolvedMethod();
+        if(resolvedMethod->isStatic() || resolvedMethod->isPrivate()){
+            throw JavaLangIncompatibleClassChangeError(resolvedMethod->name, __FILE__, __LINE__);
+        }
+        // get 'this' pointer
+        Ref ref = frame->operandStack.getRefFromTop(resolvedMethod->argSlotCount - 1); 
+        if(ref == nullptr){
+            throw JavaLangNullPointerException(ref, __FILE__, __LINE__);
+        }
+        Object* obj = (Object*)ref;
+        if(!obj->_class->isImplements(methodRef->resolvedClass())){
+            throw JavaLangIncompatibleClassChangeError("no implements for " + resolvedMethod->name, __FILE__, __LINE__);
+        }
+        Method* methodToBeInvoked = obj->_class->lookupMethodInClass(methodRef->name, methodRef->descriptor);
+        if(methodToBeInvoked == nullptr || methodToBeInvoked->isAbstract()){
+            throw JavaLangAbstractMethodError(methodToBeInvoked ? methodToBeInvoked->name : "", __FILE__, __LINE__);
+        }
+        if(!methodToBeInvoked->isPublic()){
+            throw JavaLangIllegalAccessError(methodToBeInvoked->name + " is not public", __FILE__, __LINE__);
+        }
+        frame->invokeMethod(methodToBeInvoked);
     }
 };
 

@@ -4,11 +4,13 @@
 #include "class.h"
 
 struct SymRef{
+private:
+    Class* _class;
+public:
     ConstantPool* cp;
     std::string   className;
-    Class*       _class;
     SymRef(ConstantPool* cp, const std::string& className)
-    : cp(cp), className(className), _class(nullptr){}
+    : _class(nullptr), cp(cp), className(className){}
 
     Class* resolvedClass() {
         if(_class == nullptr){
@@ -47,7 +49,9 @@ struct MemberRef : public SymRef{
 };
 
 struct FieldRef : public MemberRef{
+private:
     Field* field;
+public:
     FieldRef(ConstantPool* cp, classfile::ConstantFieldrefInfo* fieldInfo)
         : MemberRef(cp, fieldInfo), field(nullptr){}
 
@@ -75,7 +79,9 @@ struct FieldRef : public MemberRef{
 };
 
 struct MethodRef : public MemberRef{
+private:
     Method* method;
+public:
     MethodRef(ConstantPool* cp, classfile::ConstantMethodrefInfo* methodRef)
         : MemberRef(cp, methodRef), method(nullptr){}
     Method* resolvedMethod(){
@@ -105,7 +111,9 @@ struct MethodRef : public MemberRef{
 };
 
 struct InterfaceMethodRef : public MemberRef{
+private:
     Method* method;
+public:
     InterfaceMethodRef(ConstantPool* cp, classfile::ConstantInterfaceMethodrefInfo* interfaceMethodRef)
         : MemberRef(cp, interfaceMethodRef){
     }

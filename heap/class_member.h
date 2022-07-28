@@ -12,6 +12,8 @@ struct ClassMember{
     Class*      _class;
     bool isStatic() const;
     bool isFinal() const;
+    bool isAbstract() const;
+
     bool isPublic() const;
     bool isProtected() const;
     bool isPrivate() const;

@@ -1,4 +1,5 @@
 #include "frame.h"
+#include "../heap/sym_ref.h"
 using namespace std;
 
 ConstantPool* Frame::getConstantPool() const{ return method->_class->constantPool; }

@@ -33,7 +33,7 @@ const string Class::getPackageName() const {
     return "";
 }
 
-bool Class::isSubClassOf(Class* c) const {
+bool Class::isSubClassOf(const Class* c) const {
     for(const Class* t = this; t; t = superClass){
         if(t == c) 
             return true;
@@ -41,7 +41,11 @@ bool Class::isSubClassOf(Class* c) const {
     return false;
 }
 
-bool Class::isSubInterfaceOf(Class* iface) const {
+bool Class::isSuperClassOf(const Class* c) const{
+    return c->isSubClassOf(this);
+}
+
+bool Class::isSubInterfaceOf(const Class* iface) const {
     for(const Class* const i : interfaces){
         if(i == iface || i->isSubClassOf(iface))
             return true;
@@ -49,7 +53,7 @@ bool Class::isSubInterfaceOf(Class* iface) const {
     return false;
 }
 
-bool Class::isImplements(Class* iface) const {
+bool Class::isImplements(const Class* iface) const {
     for(const Class* t = this; t; t = superClass){
         for(Class* i : t->interfaces){
             if(i == iface || i->isSubInterfaceOf(iface))

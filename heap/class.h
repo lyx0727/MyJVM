@@ -29,6 +29,7 @@ constexpr uint16_t ACC_SYNTHETIC    = 0x1000;
 constexpr uint16_t ACC_ANNOTATION   = 0x2000;
 constexpr uint16_t ACC_ENUM         = 0x4000;
 
+inline bool isSuper(uint16_t accessFlag){ return (accessFlag & ACC_SUPER) != 0; } 
 inline bool isPublic(uint16_t accessFlag){ return (accessFlag & ACC_PUBLIC) != 0; } 
 inline bool isProtected(uint16_t accessFlag){ return (accessFlag & ACC_PROTECTED) != 0; } 
 inline bool isPrivate(uint16_t accessFlag){ return (accessFlag & ACC_PRIVATE) != 0; } 
@@ -74,15 +75,17 @@ struct Class{
     
     const std::string getPackageName() const;
 
-    bool isSubClassOf(Class* c) const;
-    bool isSubInterfaceOf(Class* iface) const;
-    bool isImplements(Class* iface) const;
+    bool isSubClassOf(const Class* c) const;
+    bool isSuperClassOf(const Class* c) const;
+    bool isSubInterfaceOf(const Class* iface) const;
+    bool isImplements(const Class* iface) const;
 
+    bool isSuper() const { return ::isSuper(accessFlag); } 
     bool isPublic() const { return ::isPublic(accessFlag); } 
     bool isAbstract() const { return ::isAbstract(accessFlag); }
     bool isInterface() const { return ::isInterface(accessFlag); }
-    bool isAccessibleTo(Class* other) const { return isPublic() || getPackageName() == other->getPackageName(); }      
-    bool isAssignableFrom(Class* other) const {
+    bool isAccessibleTo(const Class* other) const { return isPublic() || getPackageName() == other->getPackageName(); }      
+    bool isAssignableFrom(const Class* other) const {
         if(this == other) return true;
         if(other->isInterface()){
             return isImplements(other);

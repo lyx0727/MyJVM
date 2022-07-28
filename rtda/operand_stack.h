@@ -25,6 +25,14 @@ public:
     Ref popRef(){ Ref ref = slots.top().ref; slots.pop(); return ref; }
     Slot popSlot(){ Slot slot = slots.top(); slots.pop(); return slot; }
 
+    Ref getRefFromTop(unsigned int n) const {
+        std::stack<Slot> slotsCopy(slots);
+        for(unsigned int i = 0; i < n; i++){
+            slotsCopy.pop();
+        }
+        return slotsCopy.top().ref;
+    }
+
     template<typename T> T pop();
 
     const std::string toString() const;

@@ -95,5 +95,13 @@ struct JavaLangClassFormatError: public JavaLangException {
     JavaLangClassFormatError(const std::string& name, const char* fileName, unsigned int lineNumber)
     : JavaLangException("ClassFormatError", fileName, lineNumber, name){}
 };
+struct JavaLangNullPointerException : public JavaLangException {
+    JavaLangNullPointerException(Ref ptr, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("NullPointerException", fileName, lineNumber, std::to_string((unsigned long)ptr)){}
+};
+struct JavaLangAbstractMethodError : public JavaLangException {
+    JavaLangAbstractMethodError(const std::string& name, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("AbstractMethodError", fileName, lineNumber, name){}
+};
 
 #endif
