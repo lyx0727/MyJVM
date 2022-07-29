@@ -7,55 +7,64 @@
 using namespace std;
 using namespace classfile;
 
-void interpret(MemberInfo* memberInfo){
+void interpret(MemberInfo* memberInfo, bool logInst){
     Method* method = new Method(nullptr, memberInfo);
-    interpret(method);
+    interpret(method, logInst);
     delete method;
 }
 
-void interpret(Method* method){
+void interpret(Method* method, bool logInst){
     Thread thread;
     Frame* frame = thread.newFrame(method);
     thread.pushFrame(frame);
-    loop(thread, method->code);
+    loop(thread, logInst);
 }
 
-void catchErr(Frame* frame){
-    #ifdef DEBUG
-        cout << "---------------local vars----------------" << endl;
-        cout << frame->localVars.toString() << endl;
-        cout << "-------------operand stack---------------" << endl;
-        cout << frame->operandStack.toString() << endl;
-        cout << "-----------------------------------------" << endl;
-    #endif
+void catchErr(Thread& thread){
+    logFrames(thread);
     exit(1);
 }
 
-void loop(Thread& thread, const std::vector<Byte>& code){
+void logFrames(Thread& thread){
+    while(!thread.empty()){
+        Frame* frame = thread.popFrame();
+        Method* method = frame->method;
+        const string& className = method->_class->name;
+        cout << ">> pc:" << frame->nextPc << " " << className << "." << method->name << method->descriptor << endl; 
+    }
+}
+
+void logInstruction(Frame* frame, uint8_t opCode){
+    Method* method = frame->method;
+    const string& methodName = method->name;
+    const string& className = method->_class->name;
+    int pc = frame->thread->getPc();
+    cout << className << "." << methodName << " #" << pc << " " << getInstrucionName(opCode) << endl;
+}
+
+void loop(Thread& thread, bool logInst){
     BytecodeReader reader;
     while(true){
         Frame* frame = thread.getCurrentFrame();
         int pc = frame->nextPc;
         thread.setPc(pc);
         // decode
-        reader.reset(code, pc);
+        reader.reset(frame->method->code, pc);
         uint8_t opCode = reader.readUint8();
         Instruction* inst = getInstrucion(opCode);
-        if(inst == nullptr){
-            catchErr(frame);
-        }
         inst->fetchOperands(reader);
         frame->nextPc = reader.getPc();
+        if(logInst){
+            logInstruction(frame, opCode);
+        }
         // execute
-        cout << "pc: " << pc << " inst: " << getInstrucionName(opCode) << endl;
-        inst->execute(frame);
-        #ifdef DEBUG
-            cout << "---------------local vars----------------" << endl;
-            cout << frame->localVars.toString() << endl;
-            cout << "-------------operand stack---------------" << endl;
-            cout << frame->operandStack.toString() << endl;
-            cout << "-----------------------------------------" << endl;
-        #endif
+        try{
+            inst->execute(frame);
+        }
+        catch(JavaLangException& e){
+            cerr << e.what() << endl;
+            catchErr(thread);
+        }
         if(thread.empty()){
             break;
         }

@@ -5,7 +5,6 @@
 #include "../rtda/frame.h"
 
 struct Instruction{
-    static std::string name;
     virtual void fetchOperands(BytecodeReader& br) = 0;
     virtual void execute(Frame* frame) = 0;
 };

@@ -103,5 +103,9 @@ struct JavaLangAbstractMethodError : public JavaLangException {
     JavaLangAbstractMethodError(const std::string& name, const char* fileName, unsigned int lineNumber)
     : JavaLangException("AbstractMethodError", fileName, lineNumber, name){}
 };
+struct JavaLangStackOverflowError : public JavaLangException {
+    JavaLangStackOverflowError(const char* fileName, unsigned int lineNumber)
+    : JavaLangException("StackOverflowError", fileName, lineNumber, ""){}
+};
 
 #endif

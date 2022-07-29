@@ -16,8 +16,7 @@ Stack::~Stack(){
 
 void Stack::push(Frame* frame){
     if(sz >= maxSize){
-        std::cerr << "java.lang.StackOverflowError" << std::endl;
-        exit(1);
+        throw JavaLangStackOverflowError(__FILE__, __LINE__);
     }
     if(_top != nullptr){
         frame->lower = _top;
