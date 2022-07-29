@@ -8,6 +8,7 @@
 class Thread;
 struct Method;
 class ConstantPool;
+struct Class;
 
 struct Frame{
     Frame* lower;
@@ -20,6 +21,8 @@ struct Frame{
     Frame(Thread* thread, Method* method);
 
     ConstantPool* getConstantPool() const;
+
+    void revertNextPC();
 
     // load T from local variable
     template<typename T> void load(unsigned int index){
@@ -45,6 +48,10 @@ struct Frame{
     void ldc_w(unsigned int index);
     // invoke method
     void invokeMethod(Method* method);
+    // initialize class
+    void initClass(Class* _class);
+    void scheduleClinit(Class* _class);
+    void initSuperClass(Class* _class);
 };
 
 #endif

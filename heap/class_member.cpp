@@ -32,6 +32,7 @@ uint32_t Method::calcArgSlotCount(){
 bool ClassMember::isStatic() const { return ::isStatic(accessFlag); }
 bool ClassMember::isFinal() const { return ::isFinal(accessFlag); }
 bool ClassMember::isAbstract() const { return ::isAbstract(accessFlag); }
+bool ClassMember::isNative() const { return ::isNative(accessFlag); }
 
 bool ClassMember::isPublic() const { return ::isPublic(accessFlag); }
 bool ClassMember::isProtected() const { return ::isProtected(accessFlag); }

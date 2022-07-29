@@ -10,9 +10,13 @@ struct NEW : public Index16Instruction{
         ConstantPool* cp = frame->method->_class->constantPool;
         ClassRef* classRef =  (ClassRef*)cp->getConstant(index).getVal<Ref>();
         Class* _class = classRef->resolvedClass();
+        if(!_class->initStarted){
+            frame->revertNextPC();
+            frame->initClass(_class);
+            return;
+        }
         if(_class->isAbstract() || _class->isInterface()){
-            std::cerr << "java.lang.InstantiationError" << std::endl;
-            exit(1);
+            throw JavaLangInstantiationError(_class->name, __FILE__, __LINE__);
         }  
         Object* obj = new Object(_class);
         Ref ref = (Ref)obj;
@@ -59,16 +63,19 @@ public:
         ConstantPool* cp = currentClass->constantPool;
         FieldRef* fieldRef = (FieldRef*)cp->getConstant(index).getVal<Ref>();
         Field* field = fieldRef->resolvedField();
-        if(field->isStatic() != IS_STATIC){
-            std::cerr << "java.lang.IncompatibleClassChangeError" << std::endl;
-            exit(1);
-        }
         Class* _class = field->_class;
+        if(!_class->initStarted){
+            frame->revertNextPC();
+            frame->initClass(_class);
+            return;
+        }
+        if(field->isStatic() != IS_STATIC){
+            throw JavaLangIncompatibleClassChangeError(field->name, __FILE__, __LINE__);
+        }
         if(OP == FIELD_OP::PUT && field->isFinal()){
             // final field can be initialized in <clinit>
             if(currentClass != _class || currentMethod->name != "<clinit>"){
-                std::cerr << "java.lang.IllegalAccessError" << std::endl;
-                exit(1);
+                throw JavaLangIllegalAccessError(field->name, __FILE__, __LINE__);
             }
         }
 
@@ -127,9 +134,9 @@ struct CHECK_CAST : public Index16Instruction{
         ConstantPool* cp = frame->method->_class->constantPool;
         ClassRef* classRef = (ClassRef*)cp->getConstant(index).getVal<Ref>();
         Class* _class = classRef->resolvedClass();
-        if(!((Object*)ref)->isInstanceOf(_class)){
-            std::cerr << "java.lang.ClassCastException" << std::endl;
-            exit(1);
+        Object* obj = (Object*)ref;
+        if(!(obj->isInstanceOf(_class))){
+            throw JavaLangClassCastException(obj->_class->name, __FILE__, __LINE__);
         }
     }
 };
@@ -145,6 +152,12 @@ struct INVOKE_STATIC : public Index16Instruction {
         MethodRef* methodRef = (MethodRef*)cp->getConstant(index).getVal<Ref>();
         Class* resolvedClass = methodRef->resolvedClass();
         Method* resolvedMethod = methodRef->resolvedMethod();
+        Class* _class = resolvedMethod->_class;
+        if(!_class->initStarted){
+            frame->revertNextPC();
+            frame->initClass(_class);
+            return;
+        }
         // constructor must be declared by its class
         if(resolvedMethod->name == "<init>" && resolvedMethod->_class != resolvedClass){
             throw JavaLangNoSuchMethodError(resolvedMethod->name, __FILE__, __LINE__);

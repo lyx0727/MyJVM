@@ -13,6 +13,7 @@ struct ClassMember{
     bool isStatic() const;
     bool isFinal() const;
     bool isAbstract() const;
+    bool isNative() const;
 
     bool isPublic() const;
     bool isProtected() const;

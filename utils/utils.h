@@ -107,5 +107,13 @@ struct JavaLangStackOverflowError : public JavaLangException {
     JavaLangStackOverflowError(const char* fileName, unsigned int lineNumber)
     : JavaLangException("StackOverflowError", fileName, lineNumber, ""){}
 };
+struct JavaLangInstantiationError : public JavaLangException {
+    JavaLangInstantiationError(const std::string& name, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("InstantiationError", fileName, lineNumber, name){}
+};
+struct JavaLangClassCastException : public JavaLangException {
+    JavaLangClassCastException(const std::string& name, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("ClassCastException", fileName, lineNumber, name){}
+};
 
 #endif

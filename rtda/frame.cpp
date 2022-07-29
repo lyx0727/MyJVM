@@ -7,6 +7,8 @@ ConstantPool* Frame::getConstantPool() const{ return method->_class->constantPoo
 Frame::Frame(Thread* thread, Method* method)
         : lower(nullptr), localVars(method->maxLocals), operandStack(method->maxStack), thread(thread), nextPc(0), method(method) {}
 
+void Frame::revertNextPC(){ nextPc = thread->getPc(); }
+
 void Frame::branch(int offset){ nextPc = thread->getPc() + offset; }             
 
 void Frame::ldc(unsigned int index){
@@ -44,6 +46,38 @@ void Frame::invokeMethod(Method* method){
         for(int i = argSlotCount - 1; i >= 0; i--){
             Slot slot = pop<Slot>();
             newFrame->set(i, slot);
+        }
+    }
+    // hack
+    if(method->name == "registerNatives"){
+        thread->popFrame();
+    }
+    else{
+        cerr << "native method: " << method->_class->name << "." << method->name << method->descriptor << endl;
+        exit(1);
+    }
+}
+
+void Frame::initClass(Class* _class){
+    // set 'initStarted' true to avoid dead loop
+    _class->startInit();
+    scheduleClinit(_class);
+    initSuperClass(_class);
+    
+}
+void Frame::scheduleClinit(Class* _class){
+    Method* clinit = _class->getClintMethod();
+    if(clinit != nullptr){
+        // exec <cinit>
+        Frame* newFrame = thread->newFrame(clinit);
+        thread->pushFrame(newFrame);
+    }
+}  
+void Frame::initSuperClass(Class* _class){
+    if(!_class->isInterface()){
+        Class* superClass = _class->superClass;
+        if(superClass != nullptr && !superClass->initStarted){
+            initClass(superClass);
         }
     }
 }

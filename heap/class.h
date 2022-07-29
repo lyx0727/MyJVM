@@ -37,6 +37,7 @@ inline bool isStatic(uint16_t accessFlag){ return (accessFlag & ACC_STATIC) != 0
 inline bool isFinal(uint16_t accessFlag){ return (accessFlag & ACC_FINAL) != 0; } 
 inline bool isAbstract(uint16_t accessFlag){ return (accessFlag & ACC_ABSTRACT) != 0; } 
 inline bool isInterface(uint16_t accessFlag){ return (accessFlag & ACC_INTERFACE) != 0; } 
+inline bool isNative(uint16_t accessFlag){ return (accessFlag & ACC_NATIVE) != 0; } 
 
 struct Field;
 struct Method;
@@ -56,13 +57,16 @@ struct Class{
     std::vector<Class*>      interfaces;
     uint32_t                 instanceSlotCount;             
     uint32_t                 staticSlotCount;             
-    Slots                    staticVars;      
+    Slots                    staticVars;     
+    //  has <cinit> started
+    bool                     initStarted; 
 
     Class(classfile::Classfile& cf);
     ~Class();
 
     Method* getStaticMethod(const std::string& name, const std::string& descriptor) const;
     Method* getMainMethod() const { return getStaticMethod("main", "([Ljava/lang/String;)V"); }
+    Method* getClintMethod() const { return getStaticMethod("<clinit>", "()V"); }
 
     std::vector<Field*> getFields(const std::vector<classfile::MemberInfo*>& cfFields);
     std::vector<Method*> getMethods(const std::vector<classfile::MemberInfo*>& cfMethods);
@@ -94,6 +98,8 @@ struct Class{
             return isSubClassOf(other);
         }
     }
+
+    void startInit() { initStarted = true; }
 };
 
 
