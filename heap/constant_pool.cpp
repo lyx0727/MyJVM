@@ -33,7 +33,7 @@ ConstantPool::ConstantPool(Class* _class, classfile::ConstantPool& cp): _class(_
                 consts[i] = Constant((Ref)new FieldRef(this, dynamic_cast<classfile::ConstantFieldrefInfo*>(cpInfo)));
                 break;
             case classfile::ConstantType::Methodref:
-                consts[i] = Constant((Ref)new MemberRef(this, dynamic_cast<classfile::ConstantMemberrefInfo*>(cpInfo)));
+                consts[i] = Constant((Ref)new MethodRef(this, dynamic_cast<classfile::ConstantMethodrefInfo*>(cpInfo)));
                 break;
             case classfile::ConstantType::InterfaceMethodref:
                 consts[i] = Constant((Ref)new InterfaceMethodRef(this, dynamic_cast<classfile::ConstantInterfaceMethodrefInfo*>(cpInfo)));

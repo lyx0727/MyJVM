@@ -10,6 +10,8 @@ struct Cmd
     std::string cpOption;
     std::string Class;
     std::string XjreOption;
+    bool verboseClassFlag = false;
+    bool verboseInstFlag = false;
     unsigned int Xss = 1024U;
     std::vector<std::string> args;
 };

@@ -21,10 +21,10 @@ uint32_t Method::calcArgSlotCount(){
         if(paramterType == "J" || paramterType == "D"){
             argSlotCount++;
         }
-        // non static method also has 'this'
-        if(!isStatic()){
-            argSlotCount++;
-        }
+    }
+    // non static method also has 'this'
+    if(!isStatic()){
+        argSlotCount++;
     }
     return argSlotCount;
 }

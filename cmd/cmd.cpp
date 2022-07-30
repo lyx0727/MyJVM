@@ -32,6 +32,14 @@ Cmd parseCmd(int argc, char* argv[]){
             else if(strcmp(arg, "Xss") == 0){
                 cmd.Xss = (unsigned int)atoi(argv[++i]);
             }
+            // -verbose:class / -verbose
+            else if(strcmp(arg, "verbose:class") == 0 || strcmp(arg, "verbose") == 0){
+                cmd.verboseClassFlag = true;
+            }
+            // -verbose:inst
+            else if(strcmp(arg, "verbose:inst") == 0){
+                cmd.verboseInstFlag = true;
+            }
             else{
                 break;
             }

@@ -11,8 +11,9 @@ class ClassLoader{
 private:
     Classpath* cp;
     std::map<std::string, Class*> classMap;
+    bool verboseFlag;
 public:
-    ClassLoader(Classpath* cp): cp(cp){}
+    ClassLoader(Classpath* cp, bool verboseFlag = false): cp(cp), verboseFlag(verboseFlag) {}
     Class* loadClass(const std::string& name);
     Class* loadNonArrayClass(const std::string& name);
     Class* defineClass(const std::vector<Byte>& data);

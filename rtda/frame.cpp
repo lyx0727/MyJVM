@@ -49,12 +49,14 @@ void Frame::invokeMethod(Method* method){
         }
     }
     // hack
-    if(method->name == "registerNatives"){
-        thread->popFrame();
-    }
-    else{
-        cerr << "native method: " << method->_class->name << "." << method->name << method->descriptor << endl;
-        exit(1);
+    if(method->isNative()){
+        if(method->name == "registerNatives"){
+            thread->popFrame();
+        }
+        else{
+            cerr << "native method: " << method->_class->name << "." << method->name << method->descriptor << endl;
+            exit(1);
+        }
     }
 }
 

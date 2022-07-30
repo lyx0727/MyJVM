@@ -39,7 +39,9 @@ Class* ClassLoader::loadNonArrayClass(const string& name){
     Entry* entry = p.second;
     Class* _class = defineClass(data);
     link(_class);
-    cout << "[Loaded ]" << name << " from " << entry->toString() << "]\n";
+    if(verboseFlag){
+        cout << "[Loaded ]" << name << " from " << entry->toString() << "]\n";
+    }
     return _class;
 }
 

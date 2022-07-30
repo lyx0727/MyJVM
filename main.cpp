@@ -4,7 +4,7 @@ using namespace std;
 
 void startJVM(Cmd cmd){
     Classpath cp(cmd.XjreOption, cmd.cpOption);
-    ClassLoader classLoader(&cp);
+    ClassLoader classLoader(&cp, cmd.verboseClassFlag);
     string className = replace(cmd.Class, '.', '/');
     Class* _class = classLoader.loadClass(className);    
     Method* main = _class->getMainMethod();
@@ -12,7 +12,7 @@ void startJVM(Cmd cmd){
         cout << "Main method not found in class " << _class->name << endl;
     }
     else{
-        interpret(main);
+        interpret(main, cmd.verboseInstFlag);
     }
 }
 
