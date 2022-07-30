@@ -43,8 +43,7 @@ private:
             Ref ref = frame->pop<Ref>();
             
             if(ref == nullptr){
-                std::cerr << "java.lang.NullPointerException" << std::endl;
-                exit(1);
+                throw JavaLangNullPointerException(ref, __FILE__, __LINE__);
             }
             Object* obj = (Object*)ref;
             slots = &(obj->fields);
@@ -186,7 +185,7 @@ struct INVOKE_SPECIAL : public Index16Instruction{
             throw JavaLangIncompatibleClassChangeError(resolvedMethod->name + " is static", __FILE__, __LINE__);
         }
         // get 'this' pointer
-        Ref ref = frame->operandStack.getRefFromTop(resolvedMethod->argSlotCount); 
+        Ref ref = frame->operandStack.getRefFromTop(resolvedMethod->argSlotCount - 1); 
         if(ref == nullptr){
             throw JavaLangNullPointerException(ref, __FILE__, __LINE__);
         }
