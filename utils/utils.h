@@ -115,5 +115,13 @@ struct JavaLangClassCastException : public JavaLangException {
     JavaLangClassCastException(const std::string& name, const char* fileName, unsigned int lineNumber)
     : JavaLangException("ClassCastException", fileName, lineNumber, name){}
 };
+struct JavaLangNegativeArraySizeException : public JavaLangException {
+    JavaLangNegativeArraySizeException(int size, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("NegativeArraySizeException", fileName, lineNumber, std::to_string(size)){}
+};
+struct JavaLangArrayIndexOutOfBoundsException : public JavaLangException {
+    JavaLangArrayIndexOutOfBoundsException(int index, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("ArrayIndexOutOfBoundsException", fileName, lineNumber, std::to_string(index)){}
+};
 
 #endif

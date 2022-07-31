@@ -31,8 +31,7 @@ ConstantInfo* getConstantInfo(uint8_t tag, ConstantPool& cp){
         // case ConstantType::MethodHandle: return new ConstantMethodHandleInfo;
         // case ConstantType::InvokeDynamic: return new ConstantInvokeDynamicInfo;
         default:
-            cerr << "java.lang.ClassFormatError: constant pool tag!" << endl;
-            exit(1);
+            throw JavaLangClassFormatError(to_string(tag), __FILE__, __LINE__);
     }
 }
 

@@ -35,6 +35,16 @@ Object* Class::newObject(){
     return new Object(this);
 }
 
+Class* Class::getArrayClass(){ return classLoader->loadClass("[" + toDescriptor(name) ); }
+
+const string toDescriptor(const string& className){
+    if(className[0] == '[') return className;
+    if(primitiveTypeMap.count(className)){
+        return primitiveTypeMap.at(className);
+    }
+    return "L" + className + ";";
+}
+
 Method* Class::getStaticMethod(const string& name, const string& descriptor) const{
     for(Method* method : methods){
         if(method->isStatic() && method->name == name && method->descriptor == descriptor)

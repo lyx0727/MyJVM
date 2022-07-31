@@ -2,6 +2,7 @@
 #define CLASS_GUARD
 #include <cstdint>
 #include <string>
+#include <map>
 #include <vector>
 #include "../classfile/classfile.h"
 #include "../rtda/thread.h"
@@ -69,6 +70,8 @@ struct Class{
 
     Object* newArray(unsigned int count);
     Object* newObject();
+
+    Class* getArrayClass();
     
     // type
     bool isArray() const { return name[0] == '['; }
@@ -118,5 +121,19 @@ struct Class{
     void allocAndInitStaticVars();
     void initStaticFinalVar(Field* field);
 };
+
+const std::map<std::string, std::string> primitiveTypeMap = {
+    {"void",    "V"},
+    {"boolean", "Z"},
+    {"byte",    "B"},
+    {"short",   "S"},
+    {"int",     "I"},
+    {"long",    "J"},
+    {"char",    "C"},
+    {"float",   "F"},
+    {"double",  "D"},
+};
+
+const std::string toDescriptor(const std::string& className);
 
 #endif

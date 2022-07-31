@@ -3,6 +3,7 @@
 using namespace std;
 
 ConstantPool* Frame::getConstantPool() const{ return method->_class->constantPool; }
+ClassLoader* Frame::getClassLoader() const{ return method->_class->classLoader; }
 
 Frame::Frame(Thread* thread, Method* method)
         : lower(nullptr), localVars(method->maxLocals), operandStack(method->maxStack), thread(thread), nextPc(0), method(method) {}

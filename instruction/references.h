@@ -310,4 +310,51 @@ struct INVOKE_INTERFACE : public Instruction{
     }
 };
 
+// Create new array of primitive
+struct NEW_ARRAY : public Instruction { 
+    uint8_t atype; 
+    void fetchOperands(BytecodeReader& br){
+        atype = br.readUint8();
+    }
+    void execute(Frame* frame){
+        int count = frame->pop<int>();
+        if(count < 0){
+            throw JavaLangNegativeArraySizeException(count, __FILE__, __LINE__);
+        }
+        ClassLoader* classLoader = frame->getClassLoader();
+        Class* arrClass = classLoader->getPrimitiveArrayClass(atype);
+        Ref arr = (Ref)arrClass->newArray(count);
+        frame->push(arr);
+    }
+};
+
+// Create new array of reference
+struct ANEW_ARRAY : public Index16Instruction{
+    void execute(Frame* frame){
+        ConstantPool* cp = frame->getConstantPool();
+        ClassRef* classRef = (ClassRef*)cp->getConstant(index).getVal<Ref>();
+        Class* componentClass = classRef->resolvedClass();
+        int count = frame->pop<int>();
+        if(count < 0){
+            throw JavaLangNegativeArraySizeException(count, __FILE__, __LINE__);
+        }
+        Class* arrClass = componentClass->getArrayClass();
+        Ref arr = (Ref)arrClass->newArray(count);
+        frame->push(arr);
+    }
+};
+
+// Get length of array
+struct ARRAY_LENGTH : public NoOperandsInstruction{
+    void execute(Frame* frame){
+        Ref ref = frame->pop<Ref>(); 
+        if(ref == nullptr){
+            throw JavaLangNullPointerException(ref, __FILE__, __LINE__);
+        }
+        Object* arrRef = (Object*)ref;
+        int arrLen = arrRef->length;
+        frame->push(arrLen);
+    }
+};
+
 #endif

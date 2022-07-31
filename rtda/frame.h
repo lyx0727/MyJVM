@@ -9,6 +9,7 @@ class Thread;
 struct Method;
 class ConstantPool;
 struct Class;
+struct ClassLoader;
 
 struct Frame{
     Frame* lower;
@@ -21,6 +22,7 @@ struct Frame{
     Frame(Thread* thread, Method* method);
 
     ConstantPool* getConstantPool() const;
+    ClassLoader* getClassLoader() const;
 
     void revertNextPC();
 

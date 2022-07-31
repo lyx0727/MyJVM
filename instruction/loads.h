@@ -48,4 +48,31 @@ typedef LOAD_N<Ref, 1U>    ALOAD_1;
 typedef LOAD_N<Ref, 2U>    ALOAD_2;
 typedef LOAD_N<Ref, 3U>    ALOAD_3;
 
+template<typename T> struct TALOAD : public NoOperandsInstruction {
+    void execute(Frame* frame){
+        int index = frame->pop<int>();
+        Ref ref = frame->pop<Ref>();
+        if(ref == nullptr){
+            throw JavaLangNullPointerException(ref, __FILE__, __LINE__);
+        }
+        Object* arrRef = (Object*)ref;
+        int arrLen = arrRef->length;
+        if(index < 0 || index >= arrLen){
+            throw JavaLangArrayIndexOutOfBoundsException(index, __FILE__, __LINE__);
+        }
+        T* arr = (T*)arrRef->data;
+        T val = arr[index];
+        frame->push(val);
+    }
+};
+
+typedef TALOAD<Ref>      AALOAD;
+typedef TALOAD<Byte>     BALOAD;
+typedef TALOAD<uint16_t> CALOAD;
+typedef TALOAD<double>   DALOAD;
+typedef TALOAD<float>    FALOAD;
+typedef TALOAD<int>      IALOAD;
+typedef TALOAD<long>     LALOAD;
+typedef TALOAD<short>    SALOAD;
+
 #endif

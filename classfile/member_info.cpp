@@ -50,10 +50,12 @@ CodeAttribute* MemberInfo::getCodeAttribute() const {
 
 ConstantValueAttribute* MemberInfo::getConstantValueAttribute() const {
     for(AttributeInfo* attr : attributes){
-        uint8_t type = AttributeTypeMap.at(attr->getName());
-        switch (type){
-            case AttributeType::Code:
-                return dynamic_cast<ConstantValueAttribute*>(attr);
+        if(AttributeTypeMap.count(attr->getName())){
+            uint8_t type = AttributeTypeMap.at(attr->getName());
+            switch (type){
+                case AttributeType::Code:
+                    return dynamic_cast<ConstantValueAttribute*>(attr);
+            }
         }
     }
     return nullptr;

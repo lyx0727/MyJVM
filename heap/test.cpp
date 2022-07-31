@@ -13,27 +13,32 @@ void testDescriptorParser(){
     }
 }
 
-void MyObjectTest(){
+void ClassTest(const string& className, bool verboseClass = false, bool verboseInst = false){
     Classpath cp("jre", "src");
-    ClassLoader classLoader(&cp);
-    Class* myObject = classLoader.loadClass("com/lyx/MyObject");    
+    ClassLoader classLoader(&cp, verboseClass);
+    Class* FibonacciTest = classLoader.loadClass(className);    
 
-    Method* main = myObject->getMainMethod();
-    interpret(main);
+    Method* main = FibonacciTest->getMainMethod();
+    interpret(main, verboseInst);
+}
+
+void MyObjectTest(){
+    ClassTest("com/lyx/MyObject");
 }
 
 void FibonacciTest(){
-    Classpath cp("jre", "src");
-    ClassLoader classLoader(&cp);
-    Class* FibonacciTest = classLoader.loadClass("com/lyx/FibonacciTest");    
+    ClassTest("com/lyx/FibonacciTest");
+}
 
-    Method* main = FibonacciTest->getMainMethod();
-    interpret(main);
+void ArrayTest(){
+    ClassTest("com/lyx/ArrayTest", true, true);
 }
 
 int main(){
     // MyObjectTest();
     // testDescriptorParser();
-    FibonacciTest();
+    // FibonacciTest();
+    ArrayTest();
+
     return 0;
 }

@@ -59,11 +59,27 @@ Class* ClassLoader::loadArrayClass(const string& name){
     _class->classLoader = this;
     _class->superClass = loadClass("java/lang/Object");
     _class->interfaces.push_back(loadClass("java/lang/Cloneable"));
-    _class->interfaces.push_back(loadClass("java/lang/Serializable"));
+    _class->interfaces.push_back(loadClass("java/io/Serializable"));
     _class->initStarted = true;
     if(verboseFlag){
         cout << "[Loaded " << name << "]\n";
     }
     classMap[name] = _class;
     return _class;
+}
+
+Class* ClassLoader::getPrimitiveArrayClass(uint8_t atype){
+    switch(atype){
+        case AT_BOOLEAN: return loadClass("[Z");
+        case AT_BYTE:    return loadClass("[B");
+        case AT_CHAR:    return loadClass("[C");
+        case AT_SHORT:   return loadClass("[S");
+        case AT_INT:     return loadClass("[I");
+        case AT_LONG:    return loadClass("[J");
+        case AT_FLOAT:   return loadClass("[F");
+        case AT_DOUBLE:  return loadClass("[D");
+    }
+    cerr << "Invalid atype: " << to_string(atype) << endl;
+    exit(1);
+    return nullptr;  
 }

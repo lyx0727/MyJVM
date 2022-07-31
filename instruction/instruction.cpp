@@ -28,14 +28,8 @@ const unordered_map<uint8_t, Instruction*> Instructions = {
 	{ 0x22, new FLOAD_0 }, { 0x23, new FLOAD_1 }, { 0x24, new FLOAD_2 }, { 0x25, new FLOAD_3 },
 	{ 0x26, new DLOAD_0 }, { 0x27, new DLOAD_1 }, { 0x28, new DLOAD_2 }, { 0x29, new DLOAD_3 },
 	{ 0x2a, new ALOAD_0 }, { 0x2b, new ALOAD_1 }, { 0x2c, new ALOAD_2 }, { 0x2d, new ALOAD_3 },
-	// { 0x2e, new IALOAD },
-	// { 0x2f, new LALOAD },
-	// { 0x30, new FALOAD },
-	// { 0x31, new DALOAD },
-	// { 0x32, new AALOAD },
-	// { 0x33, new BALOAD },
-	// { 0x34, new CALOAD },
-	// { 0x35, new SALOAD },
+	// load array
+	{ 0x2e, new IALOAD }, { 0x2f, new LALOAD }, { 0x30, new FALOAD }, { 0x31, new DALOAD }, { 0x32, new AALOAD }, { 0x33, new BALOAD }, { 0x34, new CALOAD }, { 0x35, new SALOAD },
 	// stores
 	{ 0x36, new ISTORE }, { 0x37, new LSTORE }, { 0x38, new FSTORE }, { 0x39, new DSTORE }, { 0x3a, new ASTORE },
 	{ 0x3b, new ISTORE_0 }, { 0x3c, new ISTORE_1 }, { 0x3d, new ISTORE_2 }, { 0x3e, new ISTORE_3 },
@@ -43,14 +37,8 @@ const unordered_map<uint8_t, Instruction*> Instructions = {
 	{ 0x43, new FSTORE_0 }, { 0x44, new FSTORE_1 }, { 0x45, new FSTORE_2 }, { 0x46, new FSTORE_3 },
 	{ 0x47, new DSTORE_0 }, { 0x48, new DSTORE_1 }, { 0x49, new DSTORE_2 }, { 0x4a, new DSTORE_3 },
 	{ 0x4b, new ASTORE_0 }, { 0x4c, new ASTORE_1 }, { 0x4d, new ASTORE_2 }, { 0x4e, new ASTORE_3 },
-	// { 0x4f, new IASTORE },
-	// { 0x50, new LASTORE },
-	// { 0x51, new FASTORE },
-	// { 0x52, new DASTORE },
-	// { 0x53, new AASTORE },
-	// { 0x54, new BASTORE },
-	// { 0x55, new CASTORE },
-	// { 0x56, new SASTORE },
+	// store array
+	{ 0x4f, new IASTORE }, { 0x50, new LASTORE }, { 0x51, new FASTORE }, { 0x52, new DASTORE }, { 0x53, new AASTORE }, { 0x54, new BASTORE }, { 0x55, new CASTORE }, { 0x56, new SASTORE },
 	// stack
 	{ 0x57, new POP }, { 0x58, new POP2 },
 	{ 0x59, new DUP },
@@ -106,12 +94,10 @@ const unordered_map<uint8_t, Instruction*> Instructions = {
 	// { 0xba, new &InvokeDynamic{} },
 	// references
 	{ 0xbb, new NEW },
-	// { 0xbc, new &NewArray{} },
-	// { 0xbd, new &ANewArray{} },
-	// { 0xbe, new arraylength },
+	// array
+	{ 0xbc, new NEW_ARRAY }, { 0xbd, new ANEW_ARRAY }, { 0xbe, new ARRAY_LENGTH },
 	// { 0xbf, new athrow },
-	{ 0xc0, new CHECK_CAST },
-	{ 0xc1, new INSTANCE_OF },
+	{ 0xc0, new CHECK_CAST }, { 0xc1, new INSTANCE_OF },
 	// { 0xc2, new monitorenter },
 	// { 0xc3, new monitorexit },
 	// { 0xc4, new &Wide{} },
@@ -124,7 +110,6 @@ const unordered_map<uint8_t, Instruction*> Instructions = {
 	// { 0xfe, new invoke_native },	// impdep1
 	// { 0xff, new &Bootstrap{} }, 	// impdep2
 };
-
 
 const unordered_map<uint8_t, string> InstructionNames = {
 	// constants
@@ -203,7 +188,7 @@ const unordered_map<uint8_t, string> InstructionNames = {
 	// references
 	{ 0xbb, "NEW"},
 	{ 0xbc, "NEW_ARRAY"},
-	{ 0xbd, "ANEW_ARRAT"},
+	{ 0xbd, "ANEW_ARRAY"},
 	{ 0xbe, "ARRAY_LENGTH"},
 	{ 0xbf, "ATHROW"},
 	{ 0xc0, "CHECK_CAST"},
