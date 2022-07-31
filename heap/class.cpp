@@ -12,7 +12,28 @@ Class::Class(classfile::Classfile& cf)
     getMethods(cf.getMethods());
 }
 
-Class::~Class(){ delete constantPool; }
+Class::~Class(){ 
+    delete constantPool; 
+    delete staticVars;
+}
+
+Object* Class::newArray(unsigned int count){
+    if(!isArray()){
+        cerr << "Not array class: " + name << endl;
+        exit(1);
+    }
+    if(name == "[Z" || name == "[B") return new Object(this, ObjectType::ByteArr, count);
+    else if(name == "[C") return new Object(this, ObjectType::CharArr, count);
+    else if(name == "[S") return new Object(this, ObjectType::ShortArr, count);
+    else if(name == "[I") return new Object(this, ObjectType::IntArr, count);
+    else if(name == "[F") return new Object(this, ObjectType::FloatArr, count);
+    else if(name == "[J") return new Object(this, ObjectType::LongArr, count);
+    else if(name == "[D") return new Object(this, ObjectType::DoubleArr, count);
+    return new Object(this, ObjectType::RefArr, count);
+}
+Object* Class::newObject(){
+    return new Object(this);
+}
 
 Method* Class::getStaticMethod(const string& name, const string& descriptor) const{
     for(Method* method : methods){
@@ -139,4 +160,95 @@ Method* Class::lookupInterfaceMethod(const string& name, const string& descripto
         }
     }
     return lookupMethodInInterfaces(name, descriptor);
+}
+
+void Class::resolveSuperClass(){
+    if(name == "java/lang/Object"){
+        superClass = nullptr;
+        return;
+    }
+    superClass = classLoader->loadClass(superClassName);
+}
+
+void Class::resolveInterfaces(){
+    size_t interfaceCount = interfaceNames.size();
+    interfaces = vector<Class*>(interfaceCount);
+    for(size_t i = 0; i < interfaceCount; i++){
+        interfaces[i] = classLoader->loadClass(interfaceNames[i]);
+    }
+}
+
+void Class::verify(){
+    // TODO
+}
+
+void Class::prepare(){
+    calcInstanceFieldSlotIds();
+    calcStaticFieldSlotIds();
+    allocAndInitStaticVars();
+}
+
+void Class::link(){
+    verify();
+    prepare();
+}
+
+unsigned int Class::calcFieldSlotIds(bool staticOrNot){
+    unsigned int slotId = 0;
+    if(!staticOrNot && superClass != nullptr){
+        slotId = superClass->instanceSlotCount;
+    }
+    for(Field* field : fields){
+        bool flag = (field->isStatic() == staticOrNot);
+        if(flag){
+            field->slotId = slotId;
+            slotId++;
+            if(field->isLongOrDouble()){
+                slotId++;
+            }
+        }
+    }
+    return slotId;
+}
+void Class::calcInstanceFieldSlotIds(){ instanceSlotCount = calcFieldSlotIds(false); }
+void Class::calcStaticFieldSlotIds(){ staticSlotCount = calcFieldSlotIds(true); }
+
+void Class::allocAndInitStaticVars(){
+    staticVars = new Slots(staticSlotCount);
+    for(Field* field : fields){
+        if(field->isStatic() && field->isFinal()){
+            initStaticFinalVar(field);
+        }
+    }
+}
+
+void Class::initStaticFinalVar(Field* field){
+    Slots* vars = staticVars;
+    ConstantPool* cp = constantPool;
+    
+    unsigned int cpIndex = field->constValueIndex;
+    unsigned int slotId = field->slotId;
+    if(cpIndex > 0){
+        string& d = field->descriptor;
+        if(d == "Z" || d == "B" || d == "C" || d == "S" || d == "I"){
+            int val = cp->getConstant(cpIndex).getVal<int>();
+            vars->set(slotId, val);
+        }
+        else if(d == "J"){
+            long val = cp->getConstant(cpIndex).getVal<long>();
+            vars->set(slotId, val);
+        }
+        else if(d == "F"){
+            float val = cp->getConstant(cpIndex).getVal<float>();
+            vars->set(slotId, val);
+        }
+        else if(d == "D"){
+            double val = cp->getConstant(cpIndex).getVal<double>();
+            vars->set(slotId, val);
+        }
+        else if(d == "Ljava/lang/String;"){
+            // TODO
+            cerr << "String TO DO" << endl;
+        }
+    }
 }

@@ -6,6 +6,7 @@
 #include "../classfile/classfile.h"
 #include "../rtda/thread.h"
 #include "../rtda/slot.h"
+#include "object.h"
 #include "constant_pool.h"
 #include "class_loader.h"
 #include "class_member.h"
@@ -43,6 +44,7 @@ struct Field;
 struct Method;
 class ClassLoader;
 class ConstantPool;
+struct Object;
 
 struct Class{
     uint16_t                 accessFlag;
@@ -57,37 +59,36 @@ struct Class{
     std::vector<Class*>      interfaces;
     uint32_t                 instanceSlotCount;             
     uint32_t                 staticSlotCount;             
-    Slots                    staticVars;     
+    Slots*                   staticVars;     
     //  has <cinit> started
     bool                     initStarted; 
 
+    Class(){}
     Class(classfile::Classfile& cf);
     ~Class();
 
+    Object* newArray(unsigned int count);
+    Object* newObject();
+    
+    // type
+    bool isArray() const { return name[0] == '['; }
+    // attribute
+    const std::string getPackageName() const;
     Method* getStaticMethod(const std::string& name, const std::string& descriptor) const;
     Method* getMainMethod() const { return getStaticMethod("main", "([Ljava/lang/String;)V"); }
     Method* getClintMethod() const { return getStaticMethod("<clinit>", "()V"); }
-
     std::vector<Field*> getFields(const std::vector<classfile::MemberInfo*>& cfFields);
     std::vector<Method*> getMethods(const std::vector<classfile::MemberInfo*>& cfMethods);
-
     Field* lookupField(const std::string& name, const std::string& descriptor) const;
     Method* lookupMethodInClass(const std::string& name, const std::string& descriptor) const;
     Method* lookupMethodInInterfaces(const std::string& name, const std::string& descriptor) const;
     Method* lookupMethod(const std::string& name, const std::string& descriptor) const;
     Method* lookupInterfaceMethod(const std::string& name, const std::string& descriptor) const;
-    
-    const std::string getPackageName() const;
-
+    // relation with another class
     bool isSubClassOf(const Class* c) const;
     bool isSuperClassOf(const Class* c) const;
     bool isSubInterfaceOf(const Class* iface) const;
     bool isImplements(const Class* iface) const;
-
-    bool isSuper() const { return ::isSuper(accessFlag); } 
-    bool isPublic() const { return ::isPublic(accessFlag); } 
-    bool isAbstract() const { return ::isAbstract(accessFlag); }
-    bool isInterface() const { return ::isInterface(accessFlag); }
     bool isAccessibleTo(const Class* other) const { return isPublic() || getPackageName() == other->getPackageName(); }      
     bool isAssignableFrom(const Class* other) const {
         if(this == other) return true;
@@ -98,9 +99,24 @@ struct Class{
             return isSubClassOf(other);
         }
     }
-
+    // access 
+    bool isSuper() const { return ::isSuper(accessFlag); } 
+    bool isPublic() const { return ::isPublic(accessFlag); } 
+    bool isAbstract() const { return ::isAbstract(accessFlag); }
+    bool isInterface() const { return ::isInterface(accessFlag); }
+    // init
     void startInit() { initStarted = true; }
+    // load
+    void resolveSuperClass();
+    void resolveInterfaces();
+    void verify();
+    void prepare();
+    void link();
+    unsigned int calcFieldSlotIds(bool staticOrNot);
+    void calcInstanceFieldSlotIds();
+    void calcStaticFieldSlotIds();
+    void allocAndInitStaticVars();
+    void initStaticFinalVar(Field* field);
 };
-
 
 #endif

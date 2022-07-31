@@ -3,11 +3,17 @@
 #include "class_loader.h"
 using namespace std;
 
+ClassLoader::~ClassLoader(){
+    for(auto it : classMap){
+        delete it.second;
+    }
+}
+
 Class* ClassLoader::loadClass(const string& name){
     if(classMap.count(name)){
         return classMap.at(name);
     }
-    // TODO
+    if(name[0] == '[') return loadArrayClass(name);
     return loadNonArrayClass(name);
 }
 
@@ -27,8 +33,8 @@ Class* ClassLoader::parseClass(const std::vector<Byte>& data){
 Class* ClassLoader::defineClass(const std::vector<Byte>& data){
     Class* _class = parseClass(data);
     _class->classLoader = this;
-    resolveSuperClass(_class);
-    resolveInterfaces(_class);
+    _class->resolveSuperClass();
+    _class->resolveInterfaces();
     classMap[_class->name] = _class;
     return _class;
 }
@@ -38,100 +44,26 @@ Class* ClassLoader::loadNonArrayClass(const string& name){
     vector<Byte>& data = p.first;
     Entry* entry = p.second;
     Class* _class = defineClass(data);
-    link(_class);
+    _class->link();
     if(verboseFlag){
-        cout << "[Loaded ]" << name << " from " << entry->toString() << "]\n";
+        cout << "[Loaded " << name << " from " << entry->toString() << "]\n";
     }
     return _class;
 }
 
-void resolveSuperClass(Class* _class){
-    if(_class->name == "java/lang/Object"){
-        _class->superClass = nullptr;
-        return;
-    }
-    _class->superClass = _class->classLoader->loadClass(_class->superClassName);
-}
-
-void resolveInterfaces(Class* _class){
-    size_t interfaceCount = _class->interfaceNames.size();
-    _class->interfaces = vector<Class*>(interfaceCount);
-    for(size_t i = 0; i < interfaceCount; i++){
-        _class->interfaces[i] = _class->classLoader->loadClass(_class->interfaceNames[i]);
-    }
-}
-
-void verify(Class* _class){
+Class* ClassLoader::loadArrayClass(const string& name){
+    Class* _class = new Class;
+    _class->name = name;
     // TODO
-}
-
-void prepare(Class* _class){
-    calcInstanceFieldSlotIds(_class);
-    calcStaticFieldSlotIds(_class);
-    allocAndInitStaticVars(_class);
-}
-
-void link(Class* _class){
-    verify(_class);
-    prepare(_class);
-}
-
-unsigned int calcFieldSlotIds(Class* _class, bool staticOrNot){
-    unsigned int slotId = 0;
-    if(!staticOrNot && _class->superClass != nullptr){
-        slotId = _class->superClass->instanceSlotCount;
+    _class->accessFlag = ACC_PUBLIC;
+    _class->classLoader = this;
+    _class->superClass = loadClass("java/lang/Object");
+    _class->interfaces.push_back(loadClass("java/lang/Cloneable"));
+    _class->interfaces.push_back(loadClass("java/lang/Serializable"));
+    _class->initStarted = true;
+    if(verboseFlag){
+        cout << "[Loaded " << name << "]\n";
     }
-    for(Field* field : _class->fields){
-        bool flag = (field->isStatic() == staticOrNot);
-        if(flag){
-            field->slotId = slotId;
-            slotId++;
-            if(field->isLongOrDouble()){
-                slotId++;
-            }
-        }
-    }
-    return slotId;
-}
-void calcInstanceFieldSlotIds(Class* _class){ _class->instanceSlotCount = calcFieldSlotIds(_class, false); }
-void calcStaticFieldSlotIds(Class* _class){ _class->staticSlotCount = calcFieldSlotIds(_class, true); }
-
-void allocAndInitStaticVars(Class* _class){
-    _class->staticVars = Slots(_class->staticSlotCount);
-    for(Field* field : _class->fields){
-        if(field->isStatic() && field->isFinal()){
-            initStaticFinalVar(_class, field);
-        }
-    }
-}
-
-void initStaticFinalVar(Class* _class, Field* field){
-    Slots& vars = _class->staticVars;
-    ConstantPool* cp = _class->constantPool;
-    
-    unsigned int cpIndex = field->constValueIndex;
-    unsigned int slotId = field->slotId;
-    if(cpIndex > 0){
-        string& d = field->descriptor;
-        if(d == "Z" || d == "B" || d == "C" || d == "S" || d == "I"){
-            int val = cp->getConstant(cpIndex).getVal<int>();
-            vars.set(slotId, val);
-        }
-        else if(d == "J"){
-            long val = cp->getConstant(cpIndex).getVal<long>();
-            vars.set(slotId, val);
-        }
-        else if(d == "F"){
-            float val = cp->getConstant(cpIndex).getVal<float>();
-            vars.set(slotId, val);
-        }
-        else if(d == "D"){
-            double val = cp->getConstant(cpIndex).getVal<double>();
-            vars.set(slotId, val);
-        }
-        else if(d == "Ljava/lang/String;"){
-            // TODO
-            cerr << "String TO DO" << endl;
-        }
-    }
+    classMap[name] = _class;
+    return _class;
 }

@@ -46,7 +46,7 @@ private:
                 throw JavaLangNullPointerException(ref, __FILE__, __LINE__);
             }
             Object* obj = (Object*)ref;
-            slots = &(obj->fields);
+            slots = obj->getFields();
         }
         if(OP == FIELD_OP::PUT){
             slots->set(slotId, val);
@@ -80,7 +80,7 @@ public:
 
         std::string& descriptor = field->descriptor;
         unsigned int slotId = field->slotId;
-        Slots* slots = &(_class->staticVars);
+        Slots* slots = _class->staticVars;
 
         switch(descriptor[0]){
             case 'Z': case 'B': case 'C': case 'S': case 'I': operate<int>(frame, slots, slotId); break;
