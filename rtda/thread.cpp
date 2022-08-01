@@ -12,7 +12,7 @@ const string Slots::toString() const {
 Thread::Thread(unsigned int maxSize):stack(new Stack(maxSize)){}
 Thread::~Thread(){ delete stack; }
 
-unsigned int Thread::size() const{
+unsigned int Thread::size() const {
     return stack->size();
 }
 

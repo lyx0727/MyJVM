@@ -2,10 +2,10 @@
 #include "sym_ref.h"
 using namespace std;
 
-Class::Class(classfile::Classfile& cf)
-    : constantPool(new ConstantPool(this, cf.getConstantPool())), classLoader(nullptr), superClass(nullptr){
+Class::Class(classfile::Classfile& cf): classLoader(nullptr), superClass(nullptr){
     accessFlag = cf.getAccessFlags();
     name = cf.getClassName();
+    constantPool = new ConstantPool(this, cf.getConstantPool());
     superClassName = cf.getSuperClassName();
     interfaceNames = cf.getInterfacesNames();
     getFields(cf.getFields());
@@ -13,11 +13,17 @@ Class::Class(classfile::Classfile& cf)
 }
 
 Class::~Class(){ 
-    delete constantPool; 
-    delete staticVars;
+    if(constantPool){
+        delete constantPool;
+        constantPool = nullptr;
+    } 
+    if(staticVars){
+        delete staticVars;
+        staticVars = nullptr;
+    }
 }
 
-Object* Class::newArray(unsigned int count){
+Object* Class::newArray(unsigned int count) {
     if(!isArray()){
         cerr << "Not array class: " + name << endl;
         exit(1);
@@ -31,11 +37,29 @@ Object* Class::newArray(unsigned int count){
     else if(name == "[D") return new Object(this, ObjectType::DoubleArr, count);
     return new Object(this, ObjectType::RefArr, count);
 }
-Object* Class::newObject(){
-    return new Object(this);
+Object* Class::newMultiDimensionalArray(int* counts, int dimensions){
+    unsigned int count = (unsigned int)counts[0];
+    Object* arr = newArray(count);
+    if(dimensions > 1){
+        Object** refs = arr->getRefs();
+        Class* componentClass = getComponentClass();
+        for(unsigned int i = 0; i < count; i++){
+            refs[i] = componentClass->newMultiDimensionalArray(counts + 1, dimensions - 1);
+        }
+    }
+    return arr;
 }
+Object* Class::newObject(){ return new Object(this); }
 
-Class* Class::getArrayClass(){ return classLoader->loadClass("[" + toDescriptor(name) ); }
+Class* Class::getArrayClass() const { return classLoader->loadClass("[" + toDescriptor(name) ); }
+Class* Class::getComponentClass() const {  
+    if(name[0] == '['){
+        return classLoader->loadClass(toClassName(name.substr(1)));
+    }
+    cerr << "Not array: " << name << endl;
+    exit(1);
+    return nullptr;
+}
 
 const string toDescriptor(const string& className){
     if(className[0] == '[') return className;
@@ -43,6 +67,18 @@ const string toDescriptor(const string& className){
         return primitiveTypeMap.at(className);
     }
     return "L" + className + ";";
+}
+const std::string toClassName(const std::string& descriptor){
+    if(descriptor[0] == '[') return descriptor;
+    if(descriptor[0] == 'L') return descriptor.substr(1, descriptor.length() - 2);
+    for(auto& it : primitiveTypeMap){
+        if(descriptor == it.second){
+            return it.first;
+        }
+    }
+    cerr << "Invalid descriptor: " << descriptor << endl;
+    exit(1);
+    return "";
 }
 
 Method* Class::getStaticMethod(const string& name, const string& descriptor) const{
@@ -71,18 +107,16 @@ bool Class::isSubClassOf(const Class* c) const {
     }
     return false;
 }
-
-bool Class::isSuperClassOf(const Class* c) const{
-    return c->isSubClassOf(this);
-}
+bool Class::isSuperClassOf(const Class* c) const{ return c->isSubClassOf(this); }
 
 bool Class::isSubInterfaceOf(const Class* iface) const {
     for(const Class* const i : interfaces){
-        if(i == iface || i->isSubClassOf(iface))
+        if(i == iface || i->isSubInterfaceOf(iface))
             return true;
     }
     return false;
 }
+bool Class::isSuperInterfaceOf(const Class* iface) const { return iface->isSubInterfaceOf(this); }
 
 bool Class::isImplements(const Class* iface) const {
     for(const Class* t = this; t; t = superClass){
@@ -92,6 +126,46 @@ bool Class::isImplements(const Class* iface) const {
         }
     }
     return false;
+}
+
+bool Class::isAssignableFrom(const Class* other) const {
+    const Class* s = other;
+    const Class* t = this;
+    if(s == t) return true;
+    if(!s->isArray()){
+        if(!s->isInterface()){
+            if(!t->isInterface()){
+                // both s and t are normal class
+                return s->isSubClassOf(t);
+            } else{
+                // s is class, t is interface
+                return s->isImplements(t);
+            }
+        } else{
+            // s is interface
+            if(!t->isInterface()){
+                return t->name == "java/lang/Object";
+            }else{
+                return t->isSuperInterfaceOf(s);
+            }
+        }
+    }else{
+        // s is array
+        if(!t->isArray()){
+            if(!t->isInterface()){
+                // array extends Object 
+                return t->name == "java/lang/Object";
+            }else{
+                // array implements Cloneable and Serializable
+                return t->name == "java/lang/Cloneable" || t->name == "java/io/Serializable";
+            }
+        }else{
+            // both s and t are array
+            Class* sc = s->getComponentClass();
+            Class* tc = t->getComponentClass();
+            return sc == tc || tc->isAssignableFrom(sc);
+        }
+    }
 }
 
 vector<Field*> Class::getFields(const vector<classfile::MemberInfo*>& cfFields){
@@ -258,7 +332,7 @@ void Class::initStaticFinalVar(Field* field){
         }
         else if(d == "Ljava/lang/String;"){
             // TODO
-            cerr << "String TO DO" << endl;
+            cerr << "class.cpp:261:  String TO DO" << endl;
         }
     }
 }

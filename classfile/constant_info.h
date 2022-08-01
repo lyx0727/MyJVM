@@ -8,8 +8,8 @@
 namespace classfile{
 class ConstantPool;
 
-namespace ConstantType{
-    enum ConstantType {
+namespace ConstantInfoType{
+    enum ConstantInfoType {
         Class              = 7,   
         Fieldref           = 9,      
         Methodref          = 10,       
@@ -36,7 +36,7 @@ struct ConstantInfo{
 };
 
 struct ConstantIntegerInfo : public ConstantInfo {  
-    uint8_t getTag(){ return ConstantType::Integer; }
+    uint8_t getTag(){ return ConstantInfoType::Integer; }
     int val; 
     void readInfo(ClassReader& cr){
         val = toInt(cr.readUint32());
@@ -44,7 +44,7 @@ struct ConstantIntegerInfo : public ConstantInfo {
     const std::string toString() const { return std::to_string(val); }
 };
 struct ConstantFloatInfo : public ConstantInfo {
-    uint8_t getTag(){ return ConstantType::Float; }
+    uint8_t getTag(){ return ConstantInfoType::Float; }
     float val;
     void readInfo(ClassReader& cr){
         val = toFloat(cr.readUint32());
@@ -52,7 +52,7 @@ struct ConstantFloatInfo : public ConstantInfo {
     const std::string toString() const { return std::to_string(val); }
 };
 struct ConstantLongInfo : public ConstantInfo {
-    uint8_t getTag(){ return ConstantType::Long; }
+    uint8_t getTag(){ return ConstantInfoType::Long; }
     long val;
     void readInfo(ClassReader& cr){
         val = toLong(cr.readUint64());
@@ -60,7 +60,7 @@ struct ConstantLongInfo : public ConstantInfo {
     const std::string toString() const { return std::to_string(val); }
 };
 struct ConstantDoubleInfo : public ConstantInfo {
-    uint8_t getTag(){ return ConstantType::Double; }
+    uint8_t getTag(){ return ConstantInfoType::Double; }
     double val;
     void readInfo(ClassReader& cr){
         val = toDouble(cr.readUint64());
@@ -68,7 +68,7 @@ struct ConstantDoubleInfo : public ConstantInfo {
     const std::string toString() const { return std::to_string(val); }
 };
 struct ConstantUtf8Info : public ConstantInfo {
-    uint8_t getTag(){ return ConstantType::Utf8; }
+    uint8_t getTag(){ return ConstantInfoType::Utf8; }
     std::string str;
     static const std::string decodeMUTF8(const std::vector<Byte>& bytes); 
     void readInfo(ClassReader& cr){
@@ -79,7 +79,7 @@ struct ConstantUtf8Info : public ConstantInfo {
     const std::string toString() const { return str; }
 };
 struct ConstantStringInfo : public ConstantInfo {
-    uint8_t getTag(){ return ConstantType::String; }
+    uint8_t getTag(){ return ConstantInfoType::String; }
     ConstantPool& cp;
     uint16_t stringIndex;
     ConstantStringInfo(ConstantPool& cp): cp(cp){}
@@ -90,7 +90,7 @@ struct ConstantStringInfo : public ConstantInfo {
     const std::string toString() const { return getString(); }
 };
 struct ConstantClassInfo : public ConstantInfo {
-    uint8_t getTag(){ return ConstantType::Class; }
+    uint8_t getTag(){ return ConstantInfoType::Class; }
     ConstantPool& cp;
     uint16_t nameIndex;
     ConstantClassInfo(ConstantPool& cp): cp(cp){}
@@ -101,7 +101,7 @@ struct ConstantClassInfo : public ConstantInfo {
     const std::string toString() const { return getName(); }
 };
 struct ConstantNameAndTypeInfo : public ConstantInfo {
-    uint8_t getTag(){ return ConstantType::NameAndType; }
+    uint8_t getTag(){ return ConstantInfoType::NameAndType; }
     uint16_t nameIndex;
     uint16_t descriptorIndex;
     void readInfo(ClassReader& cr){
@@ -128,30 +128,40 @@ struct ConstantMemberrefInfo : public ConstantInfo{
     }
 };
 struct ConstantFieldrefInfo : public ConstantMemberrefInfo {
-    ConstantFieldrefInfo(ConstantPool& cp): ConstantMemberrefInfo(cp, ConstantType::Fieldref){}
+    ConstantFieldrefInfo(ConstantPool& cp): ConstantMemberrefInfo(cp, ConstantInfoType::Fieldref){}
 };
 struct ConstantMethodrefInfo : public ConstantMemberrefInfo {
-    ConstantMethodrefInfo(ConstantPool& cp): ConstantMemberrefInfo(cp, ConstantType::Methodref){}
+    ConstantMethodrefInfo(ConstantPool& cp): ConstantMemberrefInfo(cp, ConstantInfoType::Methodref){}
 };
 struct ConstantInterfaceMethodrefInfo : public ConstantMemberrefInfo {
-    ConstantInterfaceMethodrefInfo(ConstantPool& cp): ConstantMemberrefInfo(cp, ConstantType::InterfaceMethodref){}
+    ConstantInterfaceMethodrefInfo(ConstantPool& cp): ConstantMemberrefInfo(cp, ConstantInfoType::InterfaceMethodref){}
 };
-// TODO
 struct ConstantMethodTypeInfo : public ConstantInfo {
-    uint8_t getTag(){ return ConstantType::MethodType; }
-    void readInfo(ClassReader& cr){}
+    uint16_t descriptorIndex;
+    uint8_t getTag(){ return ConstantInfoType::MethodType; }
+    void readInfo(ClassReader& cr){
+        descriptorIndex = cr.readUint16();
+    }
     const std::string toString() const { return ""; }
 };
-// TODO
 struct ConstantMethodHandleInfo : public ConstantInfo {
-    uint8_t getTag(){ return ConstantType::MethodHandle; }
-    void readInfo(ClassReader& cr){}
+    uint8_t  referenceKind;
+    uint16_t referenceIndex;
+    uint8_t getTag(){ return ConstantInfoType::MethodHandle; }
+    void readInfo(ClassReader& cr){
+        referenceKind = cr.readUint8();
+        referenceIndex = cr.readUint16();
+    }
     const std::string toString() const { return ""; }
 };
-// TODO
 struct ConstantInvokeDynamicInfo : public ConstantInfo {
-    uint8_t getTag(){ return ConstantType::InvokeDynamic; }
-    void readInfo(ClassReader& cr){}
+    uint16_t bootstrapMethodAttrIndex;
+    uint16_t nameAndTypeIndex;
+    uint8_t getTag(){ return ConstantInfoType::InvokeDynamic; }
+    void readInfo(ClassReader& cr){
+        bootstrapMethodAttrIndex = cr.readUint16();
+        nameAndTypeIndex = cr.readUint16();
+    }
     const std::string toString() const { return ""; }
 };
 

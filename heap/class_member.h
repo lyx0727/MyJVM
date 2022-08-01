@@ -37,6 +37,7 @@ struct Field : public ClassMember{
             constValueIndex = (unsigned int)valAttr->constantValueIndex;
         }
     } 
+    ~Field(){ std::cout << "\t\t\t~" << name << std::endl; }
 };
 
 struct Method : public ClassMember{

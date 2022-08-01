@@ -43,8 +43,8 @@ inline bool isNative(uint16_t accessFlag){ return (accessFlag & ACC_NATIVE) != 0
 
 struct Field;
 struct Method;
-class ClassLoader;
-class ConstantPool;
+struct ClassLoader;
+struct ConstantPool;
 struct Object;
 
 struct Class{
@@ -52,7 +52,7 @@ struct Class{
     std::string              name;
     std::string              superClassName;
     std::vector<std::string> interfaceNames;
-    ConstantPool*            constantPool;
+    ::ConstantPool*          constantPool;
     std::vector<Field*>      fields;
     std::vector<Method*>     methods;
     ClassLoader*             classLoader;
@@ -64,14 +64,16 @@ struct Class{
     //  has <cinit> started
     bool                     initStarted; 
 
-    Class(){}
+    Class(): constantPool(nullptr), classLoader(nullptr), superClass(nullptr), staticVars(nullptr){}
     Class(classfile::Classfile& cf);
     ~Class();
 
-    Object* newArray(unsigned int count);
     Object* newObject();
-
-    Class* getArrayClass();
+    // array
+    Object* newArray(unsigned int count);
+    Object* newMultiDimensionalArray(int* counts, int dimensions);
+    Class* getArrayClass() const;
+    Class* getComponentClass() const;
     
     // type
     bool isArray() const { return name[0] == '['; }
@@ -91,17 +93,10 @@ struct Class{
     bool isSubClassOf(const Class* c) const;
     bool isSuperClassOf(const Class* c) const;
     bool isSubInterfaceOf(const Class* iface) const;
+    bool isSuperInterfaceOf(const Class* iface) const;
     bool isImplements(const Class* iface) const;
     bool isAccessibleTo(const Class* other) const { return isPublic() || getPackageName() == other->getPackageName(); }      
-    bool isAssignableFrom(const Class* other) const {
-        if(this == other) return true;
-        if(other->isInterface()){
-            return isImplements(other);
-        }
-        else{
-            return isSubClassOf(other);
-        }
-    }
+    bool isAssignableFrom(const Class* other) const;
     // access 
     bool isSuper() const { return ::isSuper(accessFlag); } 
     bool isPublic() const { return ::isPublic(accessFlag); } 
@@ -123,17 +118,18 @@ struct Class{
 };
 
 const std::map<std::string, std::string> primitiveTypeMap = {
-    {"void",    "V"},
-    {"boolean", "Z"},
-    {"byte",    "B"},
-    {"short",   "S"},
-    {"int",     "I"},
-    {"long",    "J"},
-    {"char",    "C"},
-    {"float",   "F"},
-    {"double",  "D"},
+    { "void",    "V" },
+    { "boolean", "Z" },
+    { "byte",    "B" },
+    { "short",   "S" },
+    { "int",     "I" },
+    { "long",    "J" },
+    { "char",    "C" },
+    { "float",   "F" },
+    { "double",  "D" },
 };
 
 const std::string toDescriptor(const std::string& className);
+const std::string toClassName(const std::string& descriptor);
 
 #endif

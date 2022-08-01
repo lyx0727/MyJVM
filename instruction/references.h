@@ -357,4 +357,29 @@ struct ARRAY_LENGTH : public NoOperandsInstruction{
     }
 };
 
+// Create new multidimensional array
+struct MULTI_ANEW_ARRAY : public Instruction {
+    uint16_t index;
+    uint8_t  dimensions;
+    void fetchOperands(BytecodeReader& br){
+        index = br.readUint16();
+        dimensions = br.readUint8();
+    }
+    void execute(Frame* frame){
+        ConstantPool* cp = frame->getConstantPool();
+        ClassRef* classRef = (ClassRef*)cp->getConstant(index).getVal<Ref>();
+        Class* arrClass = classRef->resolvedClass();
+        int* counts = new int[dimensions];
+        for(int i = dimensions - 1; i >= 0; i--){
+            counts[i] = frame->pop<int>();
+            if(counts[i] < 0){
+                throw JavaLangNegativeArraySizeException(counts[i], __FILE__, __LINE__);
+            }
+        }
+        Ref arr = (Ref)arrClass->newMultiDimensionalArray(counts, dimensions);
+        delete[] counts;
+        frame->push(arr);
+    }
+};
+
 #endif

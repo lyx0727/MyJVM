@@ -16,14 +16,14 @@ void testDescriptorParser(){
 void ClassTest(const string& className, bool verboseClass = false, bool verboseInst = false){
     Classpath cp("jre", "src");
     ClassLoader classLoader(&cp, verboseClass);
-    Class* FibonacciTest = classLoader.loadClass(className);    
+    Class* test = classLoader.loadClass(className);    
 
-    Method* main = FibonacciTest->getMainMethod();
+    Method* main = test->getMainMethod();
     interpret(main, verboseInst);
 }
 
 void MyObjectTest(){
-    ClassTest("com/lyx/MyObject");
+    ClassTest("com/lyx/MyObject", true, true);
 }
 
 void FibonacciTest(){
@@ -34,11 +34,16 @@ void ArrayTest(){
     ClassTest("com/lyx/ArrayTest", true, true);
 }
 
+void BubbleSortTest(){
+    ClassTest("com/lyx/BubbleSortTest");
+}
+
 int main(){
     // MyObjectTest();
     // testDescriptorParser();
     // FibonacciTest();
-    ArrayTest();
+    // ArrayTest();
+    BubbleSortTest();
 
     return 0;
 }

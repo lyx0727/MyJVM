@@ -10,8 +10,8 @@ void readConstantPool(ClassReader& cr, ConstantPool& cp){
     for(uint16_t i = 1; i < n; i++){
         cp[i] = readConstantInfo(cr, cp);
         switch(cp[i]->getTag()){
-            case ConstantType::Long:
-            case ConstantType::Double:
+            case ConstantInfoType::Long:
+            case ConstantInfoType::Double:
             // take 2 places
                 i++;
         }

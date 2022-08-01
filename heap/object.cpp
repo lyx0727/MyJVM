@@ -23,6 +23,10 @@ Object::~Object(){
         case ObjectType::FloatArr:  delete (float*)data; break;
         case ObjectType::LongArr:   delete (long*)data; break;
         case ObjectType::DoubleArr: delete (double*)data; break;
-        case ObjectType::RefArr:    delete (Object*)data; break;
+        case ObjectType::RefArr:    delete (Object**)data; break;
     }
+}
+
+bool Object::isInstanceOf(Class* _class) const {
+    return _class->isAssignableFrom(this->_class);
 }

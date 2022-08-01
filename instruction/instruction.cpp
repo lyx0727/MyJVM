@@ -101,7 +101,7 @@ const unordered_map<uint8_t, Instruction*> Instructions = {
 	// { 0xc2, new monitorenter },
 	// { 0xc3, new monitorexit },
 	// { 0xc4, new &Wide{} },
-	// { 0xc5, new &MultiANewArray{} },
+	{ 0xc5, new MULTI_ANEW_ARRAY },
 	// { 0xc6, new NewIfNull() },
 	// { 0xc7, new NewIfNonNull() },
 	// { 0xc8, new &GotoW{} },
@@ -176,34 +176,20 @@ const unordered_map<uint8_t, string> InstructionNames = {
 	{ 0xa9, "RET"},
 	{ 0xaa, "TABLE_SWITCH "}, { 0xab, "LOOKUP_SWITCH "},
 	{ 0xac, "IRETURN "}, { 0xad, "LRETURN "}, { 0xae, "FRETURN "}, { 0xaf, "DRETURN "}, { 0xb0, "ARETURN "}, { 0xb1, "RETURN "},
-	{ 0xb2, "GET_STATIC "},
-	{ 0xb3, "PUT_STATIC "},
-	{ 0xb4, "GET_FIELD "},
-	{ 0xb5, "PUT_FIELD "},
-	{ 0xb6, "INVOKE_VIRTUAL"},
-	{ 0xb7, "INVOKE_SPECIAL "},
-	{ 0xb8, "INVOKE_STATIC"},
-	{ 0xb9, "INVOKE_INTERFACE"},
-	{ 0xba, "INVOKE_DYNAMIC"},
+	{ 0xb2, "GET_STATIC "}, { 0xb3, "PUT_STATIC "}, { 0xb4, "GET_FIELD "}, { 0xb5, "PUT_FIELD "},
+	{ 0xb6, "INVOKE_VIRTUAL"}, { 0xb7, "INVOKE_SPECIAL "}, { 0xb8, "INVOKE_STATIC"}, { 0xb9, "INVOKE_INTERFACE"}, { 0xba, "INVOKE_DYNAMIC"},
 	// references
-	{ 0xbb, "NEW"},
-	{ 0xbc, "NEW_ARRAY"},
-	{ 0xbd, "ANEW_ARRAY"},
-	{ 0xbe, "ARRAY_LENGTH"},
-	{ 0xbf, "ATHROW"},
-	{ 0xc0, "CHECK_CAST"},
-	{ 0xc1, "INSTANCE_OF"},
-	// { 0xc2, "monitorenter "},
-	// { 0xc3, "monitorexit "},
-	// { 0xc4, "&Wide{"} "},
-	// { 0xc5, "&MultiANewArray{"} "},
-	// { 0xc6, "NewIfNull() "},
-	// { 0xc7, "NewIfNonNull() "},
-	// { 0xc8, "&GotoW{"} "},
-	// { 0xc9, "&JSR_W{"} "},
+	{ 0xbb, "NEW"}, { 0xbc, "NEW_ARRAY"}, { 0xbd, "ANEW_ARRAY"}, { 0xbe, "ARRAY_LENGTH"}, { 0xbf, "ATHROW"},
+	{ 0xc0, "CHECK_CAST"}, { 0xc1, "INSTANCE_OF"},
+	{ 0xc2, "MONITOR_ENTER"}, { 0xc3, "MONITOR_EXIT"},
+	{ 0xc4, "WIDE"},
+	{ 0xc5, "MULTI_ANEW_ARRAY"},
+	{ 0xc6, "IF_NULL"}, { 0xc7, "IF_NON_NULL"},
+	{ 0xc8, "GOTO_W"},
+	{ 0xc9, "JSR_W"},
 	// // case 0xca: todo breakpoint
-	// { 0xfe, "invoke_native "},	// impdep1
-	// { 0xff, "&Bootstrap{"} "}, 	// impdep2
+	{ 0xfe, "INVOKE_NATIVE"},	// impdep1
+	{ 0xff, "boot_STRAP"}, 	// impdep2
 };
 
 Instruction* getInstrucion(uint8_t opCode){

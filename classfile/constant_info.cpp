@@ -16,20 +16,20 @@ const string ConstantUtf8Info::decodeMUTF8(const vector<Byte>& bytes){
 
 ConstantInfo* getConstantInfo(uint8_t tag, ConstantPool& cp){
     switch(tag){
-        case ConstantType::Integer: return new ConstantIntegerInfo;
-        case ConstantType::Float: return new ConstantFloatInfo;
-        case ConstantType::Long: return new ConstantLongInfo;
-        case ConstantType::Double: return new ConstantDoubleInfo;
-        case ConstantType::Utf8: return new ConstantUtf8Info;
-        case ConstantType::String: return new ConstantStringInfo(cp);
-        case ConstantType::Class: return new ConstantClassInfo(cp);
-        case ConstantType::Fieldref: return new ConstantFieldrefInfo(cp);
-        case ConstantType::Methodref: return new ConstantMethodrefInfo(cp);
-        case ConstantType::InterfaceMethodref: return new ConstantInterfaceMethodrefInfo(cp);
-        case ConstantType::NameAndType: return new ConstantNameAndTypeInfo;
-        // case ConstantType::MethodType: return new ConstantMethodTypeInfo;
-        // case ConstantType::MethodHandle: return new ConstantMethodHandleInfo;
-        // case ConstantType::InvokeDynamic: return new ConstantInvokeDynamicInfo;
+        case ConstantInfoType::Integer: return new ConstantIntegerInfo;
+        case ConstantInfoType::Float: return new ConstantFloatInfo;
+        case ConstantInfoType::Long: return new ConstantLongInfo;
+        case ConstantInfoType::Double: return new ConstantDoubleInfo;
+        case ConstantInfoType::Utf8: return new ConstantUtf8Info;
+        case ConstantInfoType::String: return new ConstantStringInfo(cp);
+        case ConstantInfoType::Class: return new ConstantClassInfo(cp);
+        case ConstantInfoType::Fieldref: return new ConstantFieldrefInfo(cp);
+        case ConstantInfoType::Methodref: return new ConstantMethodrefInfo(cp);
+        case ConstantInfoType::InterfaceMethodref: return new ConstantInterfaceMethodrefInfo(cp);
+        case ConstantInfoType::NameAndType: return new ConstantNameAndTypeInfo;
+        case ConstantInfoType::MethodType: return new ConstantMethodTypeInfo;
+        case ConstantInfoType::MethodHandle: return new ConstantMethodHandleInfo;
+        case ConstantInfoType::InvokeDynamic: return new ConstantInvokeDynamicInfo;
         default:
             throw JavaLangClassFormatError(to_string(tag), __FILE__, __LINE__);
     }

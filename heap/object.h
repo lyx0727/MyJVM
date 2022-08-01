@@ -21,7 +21,7 @@ struct Object{
     Object(Class* _class, uint8_t type, unsigned int count);
     ~Object();
     
-    bool isInstanceOf(Class* _class) { return true; }
+    bool isInstanceOf(Class* _class) const;
     Slots* getFields() { return (Slots*)data; }
     Byte* getBytes() { return (Byte*)data; }
     char* getChars() { return (char*)data; }
@@ -30,6 +30,7 @@ struct Object{
     float* getFloats() { return (float*)data; }
     long* getLongs() { return (long*)data; }
     double* getDoubles() { return (double*)data; }
+    Object** getRefs() { return (Object**)data; }
 };
 
 #endif

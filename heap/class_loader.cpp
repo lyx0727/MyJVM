@@ -4,8 +4,10 @@
 using namespace std;
 
 ClassLoader::~ClassLoader(){
-    for(auto it : classMap){
-        delete it.second;
+    for(auto it = classMap.begin(); it != classMap.end(); ){
+        delete it->second;
+        it->second = nullptr;
+        it = classMap.erase(it);
     }
 }
 
