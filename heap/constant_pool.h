@@ -47,7 +47,7 @@ public:
         this->val.r = s;
     } 
     
-    friend ConstantPool;
+    friend ::ConstantPool;
     template<typename T> T getVal() const;
     const std::string toString() const;
 };

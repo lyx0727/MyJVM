@@ -82,6 +82,7 @@ struct Class{
     Method* getStaticMethod(const std::string& name, const std::string& descriptor) const;
     Method* getMainMethod() const { return getStaticMethod("main", "([Ljava/lang/String;)V"); }
     Method* getClintMethod() const { return getStaticMethod("<clinit>", "()V"); }
+    Field* getField(const std::string& name, const std::string& descriptor, bool isStatic) const;
     std::vector<Field*> getFields(const std::vector<classfile::MemberInfo*>& cfFields);
     std::vector<Method*> getMethods(const std::vector<classfile::MemberInfo*>& cfMethods);
     Field* lookupField(const std::string& name, const std::string& descriptor) const;

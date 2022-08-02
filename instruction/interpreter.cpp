@@ -7,15 +7,17 @@
 using namespace std;
 using namespace classfile;
 
-void interpret(MemberInfo* memberInfo, bool logInst){
+void interpret(MemberInfo* memberInfo, bool logInst, const vector<string>& args){
     Method* method = new Method(nullptr, memberInfo);
     interpret(method, logInst);
     delete method;
 }
 
-void interpret(Method* method, bool logInst){
+void interpret(Method* method, bool logInst, const vector<string>& args){
     Thread thread;
     Frame* frame = thread.newFrame(method);
+    Object* jArgs = frame->getClassLoader()->createArgsArray(args);
+    frame->set(0, jArgs);
     thread.pushFrame(frame);
     loop(thread, logInst);
 }

@@ -11,9 +11,13 @@
 typedef unsigned char Byte;
 typedef void*         Ref;
 
+// string
 const std::string getSuffix(const std::string& s, size_t n);
 const std::string replace(const std::string& s, char oldVal, char newVal);
+const std::u16string utf8_to_utf16(const std::string& str);
+const std::string utf16_to_utf8(const std::u16string& str);
 
+// file
 bool isDir(const std::string& path);
 bool isZip(const std::string& path);
 bool isAbsPath(const std::string& path);

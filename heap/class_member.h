@@ -31,13 +31,13 @@ struct ClassMember{
 struct Field : public ClassMember{ 
     unsigned int slotId;
     unsigned int constValueIndex;
-    Field(Class* _class, classfile::MemberInfo* fieldInfo): ClassMember(_class, fieldInfo){
+    Field(Class* _class, classfile::MemberInfo* fieldInfo)
+    : ClassMember(_class, fieldInfo), slotId(0U), constValueIndex(0U){
         classfile::ConstantValueAttribute* valAttr = fieldInfo->getConstantValueAttribute();
         if(valAttr != nullptr){
             constValueIndex = (unsigned int)valAttr->constantValueIndex;
         }
     } 
-    ~Field(){ std::cout << "\t\t\t~" << name << std::endl; }
 };
 
 struct Method : public ClassMember{

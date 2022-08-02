@@ -4,8 +4,9 @@
 #include "class.h"
 #include "../classpath/classpath.h"
 
-class Class;
+struct Class;
 struct Field;
+struct Object;
 
 const uint8_t AT_BOOLEAN = 4;
 const uint8_t AT_CHAR    = 5;
@@ -20,6 +21,7 @@ class ClassLoader{
 private:
     Classpath* cp;
     std::map<std::string, Class*> classMap;
+    std::map<std::string, Object*> internedStrings;
     bool verboseFlag;
 public:
     ClassLoader(Classpath* cp, bool verboseFlag = false): cp(cp), verboseFlag(verboseFlag) {} 
@@ -32,6 +34,9 @@ public:
     Class* parseClass(const std::vector<Byte>& data);
     Class* defineClass(const std::vector<Byte>& data);
     Class* getPrimitiveArrayClass(uint8_t atype);
+
+    Object* JString(const std::string& str);
+    Object* createArgsArray(const std::vector<std::string>& args);
 };
 
 #endif

@@ -14,20 +14,20 @@ void testDescriptorParser(){
 }
 
 void ClassTest(const string& className, bool verboseClass = false, bool verboseInst = false){
+    cout << string(20, '-') << className << string(20, '-') << endl; 
     Classpath cp("jre", "src");
     ClassLoader classLoader(&cp, verboseClass);
     Class* test = classLoader.loadClass(className);    
-
     Method* main = test->getMainMethod();
     interpret(main, verboseInst);
 }
 
 void MyObjectTest(){
-    ClassTest("com/lyx/MyObject", true, true);
+    ClassTest("com/lyx/MyObject", true);
 }
 
 void FibonacciTest(){
-    ClassTest("com/lyx/FibonacciTest");
+    ClassTest("com/lyx/FibonacciTest", true);
 }
 
 void ArrayTest(){
@@ -35,11 +35,11 @@ void ArrayTest(){
 }
 
 void BubbleSortTest(){
-    ClassTest("com/lyx/BubbleSortTest");
+    ClassTest("com/lyx/BubbleSortTest", true);
 }
 
 int main(){
-    // MyObjectTest();
+    MyObjectTest();
     // testDescriptorParser();
     // FibonacciTest();
     // ArrayTest();

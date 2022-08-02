@@ -12,7 +12,7 @@ void startJVM(Cmd cmd){
         cout << "Main method not found in class " << _class->name << endl;
     }
     else{
-        interpret(main, cmd.verboseInstFlag);
+        interpret(main, cmd.verboseInstFlag, cmd.args);
     }
 }
 

@@ -1,5 +1,5 @@
 CC = g++
-CFFLAGS = -lm -Wall -g
+CFFLAGS = -lm -Wall -g -O0
 # dependency
 CMD_DEP = cmd.o
 CLASSPATH_DEP = entry.o classpath.o

@@ -222,6 +222,11 @@ void println(Frame* frame, const std::string& descriptor){
     else if(d == "(J)V"){ str = std::to_string(frame->pop<long>()); }
     else if(d == "(F)V"){ str = std::to_string(frame->pop<float>()); }
     else if(d == "(D)V"){ str = std::to_string(frame->pop<double>()); }
+    else if(d == "(Ljava/lang/String;)V"){
+        Object* jStr = (Object*)frame->pop<Ref>();
+        char16_t* chars = jStr->getRefVar("value", "[C")->getChars();
+        str = utf16_to_utf8(std::u16string(chars));
+    }
     else{
         std::cerr << "println: " << d << std::endl;
         exit(1);

@@ -11,9 +11,9 @@ void catchErr(Frame* frame);
 
 void loop(Thread& thread, bool logInst = false);
 
-void interpret(Method* method, bool logInst = false);
+void interpret(Method* method, bool logInst = false, const std::vector<std::string>& args = std::vector<std::string>());
 
 // for low version
-void interpret(classfile::MemberInfo* memberInfo, bool logInst = false);
+void interpret(classfile::MemberInfo* memberInfo, bool logInst = false, const std::vector<std::string>& args = std::vector<std::string>());
 
 #endif

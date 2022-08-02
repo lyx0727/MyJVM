@@ -13,13 +13,14 @@ void Frame::revertNextPC(){ nextPc = thread->getPc(); }
 void Frame::branch(int offset){ nextPc = thread->getPc() + offset; }             
 
 void Frame::ldc(unsigned int index){
+    ClassLoader* classLoader = getClassLoader();
     ConstantPool* cp = getConstantPool();
     Constant c = cp->getConstant(index);
     switch(c.type){
         case ConstantType::Int: push(c.getVal<int>()); break;
         case ConstantType::Float: push(c.getVal<float>()); break;
+        case ConstantType::String: push(classLoader->JString(c.getVal<string>())); break;
         // TODO
-        // case ConstantType::String: break;
         // case ConstantType::ClassRef: break;
         default:
             std::cerr << "ldc to do" << std::endl;

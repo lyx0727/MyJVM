@@ -1,6 +1,8 @@
 #include "utils.h"
 #include <dirent.h>
 #include <cstring>
+#include <codecvt>
+#include <locale> 
 #include <iostream>
 #include <unistd.h>
 using namespace std;
@@ -23,6 +25,13 @@ const string replace(const string& s, char oldVal, char newVal){
         }
     }
     return res;
+}
+
+const u16string utf8_to_utf16(const string& str){
+    return wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t>{}.from_bytes(str);
+}
+const string utf16_to_utf8(const u16string& str){
+    return wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t>{}.to_bytes(str);
 }
 
 bool isDir(const string& path){

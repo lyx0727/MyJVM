@@ -168,6 +168,17 @@ bool Class::isAssignableFrom(const Class* other) const {
     }
 }
 
+Field* Class::getField(const string& name, const string& descriptor, bool isStatic) const{
+    for(const Class* c = this; c; c = c->superClass){
+        for(Field* field : c->fields){
+            if(field->isStatic() == isStatic && field->name == name && field->descriptor == descriptor){
+                return field;
+            }
+        }
+    }
+    return nullptr;
+}
+
 vector<Field*> Class::getFields(const vector<classfile::MemberInfo*>& cfFields){
     fields = vector<Field*>(cfFields.size());
     for(size_t i = 0; i < cfFields.size(); i++){
@@ -277,13 +288,13 @@ void Class::link(){
     prepare();
 }
 
-unsigned int Class::calcFieldSlotIds(bool staticOrNot){
+unsigned int Class::calcFieldSlotIds(bool isStatic){
     unsigned int slotId = 0;
-    if(!staticOrNot && superClass != nullptr){
+    if(!isStatic && superClass != nullptr){
         slotId = superClass->instanceSlotCount;
     }
     for(Field* field : fields){
-        bool flag = (field->isStatic() == staticOrNot);
+        bool flag = (field->isStatic() == isStatic);
         if(flag){
             field->slotId = slotId;
             slotId++;
@@ -331,8 +342,8 @@ void Class::initStaticFinalVar(Field* field){
             vars->set(slotId, val);
         }
         else if(d == "Ljava/lang/String;"){
-            // TODO
-            cerr << "class.cpp:261:  String TO DO" << endl;
+            string str = cp->getConstant(cpIndex).getVal<string>();
+            vars->set(slotId, classLoader->JString(str));
         }
     }
 }

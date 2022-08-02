@@ -9,6 +9,11 @@ ClassLoader::~ClassLoader(){
         it->second = nullptr;
         it = classMap.erase(it);
     }
+    // for(auto it = internedStrings.begin(); it != internedStrings.end();){
+    //     delete it->second;
+    //     it->second = nullptr;
+    //     it = internedStrings.erase(it);
+    // }
 }
 
 Class* ClassLoader::loadClass(const string& name){
@@ -84,4 +89,32 @@ Class* ClassLoader::getPrimitiveArrayClass(uint8_t atype){
     cerr << "Invalid atype: " << to_string(atype) << endl;
     exit(1);
     return nullptr;  
+}
+
+Object* ClassLoader::JString(const string& str){
+    if(internedStrings.count(str)){
+        return internedStrings.at(str);
+    }
+    u16string u16str = utf8_to_utf16(str);
+    unsigned int len = u16str.length();
+    Object* jChars = loadClass("[C")->newArray(len);
+    char16_t* chars = jChars->getChars();
+    for(unsigned int i = 0; i < len; i++){
+        chars[i] = u16str[i];
+    }
+    // 'String' has a field: char[] value
+    Object* jStr = loadClass("java/lang/String")->newObject();
+    jStr->setRefVar("value", "[C", jChars);
+    internedStrings[str] = jStr;
+    return jStr;
+}
+
+Object* ClassLoader::createArgsArray(const vector<string>& args){
+    unsigned int len = args.size();
+    Object* argsArr = loadClass("java/lang/String")->getArrayClass()->newArray(len);
+    Object** refs = argsArr->getRefs();
+    for(unsigned int i = 0; i < len; i++){
+        refs[i] = JString(args[i]);
+    }
+    return argsArr;
 }

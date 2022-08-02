@@ -24,13 +24,16 @@ struct Object{
     bool isInstanceOf(Class* _class) const;
     Slots* getFields() { return (Slots*)data; }
     Byte* getBytes() { return (Byte*)data; }
-    char* getChars() { return (char*)data; }
+    char16_t* getChars() { return (char16_t*)data; }
     short* getShorts() { return (short*)data; }
     int* getInts() { return (int*)data; }
     float* getFloats() { return (float*)data; }
     long* getLongs() { return (long*)data; }
     double* getDoubles() { return (double*)data; }
     Object** getRefs() { return (Object**)data; }
+
+    void setRefVar(const std::string& name, const std::string& descriptor, Object* ref);
+    Object* getRefVar(const std::string& name, const std::string& descriptor);
 };
 
 #endif
