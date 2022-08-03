@@ -38,7 +38,7 @@ void Method::injectCodeAttribute(){
         case 'F': code = vector<Byte>{ 0xfe, 0xae }; break;   // FRETURN
         case 'J': code = vector<Byte>{ 0xfe, 0xad }; break;   // LRETURN
         case 'L': 
-        case '[': code = vector<Byte>{ 0xfe, 0xad }; break;   // ARETURN
+        case '[': code = vector<Byte>{ 0xfe, 0xb0 }; break;   // ARETURN
         default:  code = vector<Byte>{ 0xfe, 0xac }; break;   // IRETUEN
     }
 }

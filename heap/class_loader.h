@@ -24,17 +24,26 @@ private:
     std::map<std::string, Object*> internedStrings;
     bool verboseFlag;
 public:
-    ClassLoader(Classpath* cp, bool verboseFlag = false): cp(cp), verboseFlag(verboseFlag) {} 
+    ClassLoader(Classpath* cp, bool verboseFlag = false)
+    : cp(cp), verboseFlag(verboseFlag) {
+        loadBasicClasses();
+        loadPrimitiveClasses();
+    } 
     ~ClassLoader();
-    
+
+    std::pair<std::vector<Byte>, Entry*> readClass(const std::string& name);
+    Class* parseClass(const std::vector<Byte>& data);
+    // load
     Class* loadClass(const std::string& name);
     Class* loadNonArrayClass(const std::string& name);
     Class* loadArrayClass(const std::string& name);
-    std::pair<std::vector<Byte>, Entry*> readClass(const std::string& name);
-    Class* parseClass(const std::vector<Byte>& data);
+    Class* loadPrimitiveClass(const std::string& name);
+    void loadBasicClasses();
+    void loadPrimitiveClasses();
+    
     Class* defineClass(const std::vector<Byte>& data);
+    
     Class* getPrimitiveArrayClass(uint8_t atype);
-
     Object* JString(const std::string& str);
     Object* createArgsArray(const std::vector<std::string>& args);
 };

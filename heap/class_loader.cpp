@@ -9,19 +9,86 @@ ClassLoader::~ClassLoader(){
         it->second = nullptr;
         it = classMap.erase(it);
     }
-    // for(auto it = internedStrings.begin(); it != internedStrings.end();){
-    //     delete it->second;
-    //     it->second = nullptr;
-    //     it = internedStrings.erase(it);
-    // }
+    for(auto it = internedStrings.begin(); it != internedStrings.end();){
+        delete it->second;
+        it->second = nullptr;
+        it = internedStrings.erase(it);
+    }
+}
+
+void ClassLoader::loadBasicClasses(){
+    Class* jlClassClass = loadClass("java/lang/Class");
+    for(auto it : classMap){
+        Class* _class = it.second;
+        if(_class->jClass == nullptr){
+            _class->jClass = jlClassClass->newObject();
+            _class->jClass->extra = _class; 
+        }
+    }
+}
+
+void ClassLoader::loadPrimitiveClasses(){
+    for(auto it : primitiveTypeMap){
+        loadPrimitiveClass(it.first);
+    }
+}
+
+Class* ClassLoader::loadPrimitiveClass(const string& name){
+    Class* _class = new Class;
+    _class->name = name;
+    _class->accessFlag = ACC_PUBLIC;
+    _class->classLoader = this;
+    _class->initStarted = true;
+    _class->jClass = classMap["java/lang/Class"]->newObject();
+    _class->jClass->extra = _class;
+    classMap[name] = _class;
+    return _class;
 }
 
 Class* ClassLoader::loadClass(const string& name){
     if(classMap.count(name)){
         return classMap.at(name);
     }
-    if(name[0] == '[') return loadArrayClass(name);
-    return loadNonArrayClass(name);
+    Class* _class = nullptr;
+    if(name[0] == '['){ 
+        _class = loadArrayClass(name);
+    } else{
+        _class = loadNonArrayClass(name);
+    }
+    if(classMap.count("java/lang/Class")){
+        Class* jlClassClass = classMap.at("java/lang/Class");
+        _class->jClass = jlClassClass->newObject();
+        _class->jClass->extra = _class;
+    }
+    return _class;
+}
+
+Class* ClassLoader::loadNonArrayClass(const string& name){
+    pair<vector<Byte>, Entry*> p = readClass(name);
+    vector<Byte>& data = p.first;
+    Entry* entry = p.second;
+    Class* _class = defineClass(data);
+    _class->link();
+    if(verboseFlag){
+        cout << "[Loaded " << name << " from " << entry->toString() << "]\n";
+    }
+    return _class;
+}
+
+Class* ClassLoader::loadArrayClass(const string& name){
+    Class* _class = new Class;
+    _class->name = name;
+    _class->accessFlag = ACC_PUBLIC;    // TODO
+    _class->classLoader = this;
+    _class->superClass = loadClass("java/lang/Object");
+    _class->interfaces.push_back(loadClass("java/lang/Cloneable"));
+    _class->interfaces.push_back(loadClass("java/io/Serializable"));
+    _class->initStarted = true;
+    if(verboseFlag){
+        cout << "[Loaded " << name << "]\n";
+    }
+    classMap[name] = _class;
+    return _class;
 }
 
 pair<vector<Byte>, Entry*> ClassLoader::readClass(const std::string& name) {
@@ -43,35 +110,6 @@ Class* ClassLoader::defineClass(const std::vector<Byte>& data){
     _class->resolveSuperClass();
     _class->resolveInterfaces();
     classMap[_class->name] = _class;
-    return _class;
-}
-
-Class* ClassLoader::loadNonArrayClass(const string& name){
-    pair<vector<Byte>, Entry*> p = readClass(name);
-    vector<Byte>& data = p.first;
-    Entry* entry = p.second;
-    Class* _class = defineClass(data);
-    _class->link();
-    if(verboseFlag){
-        cout << "[Loaded " << name << " from " << entry->toString() << "]\n";
-    }
-    return _class;
-}
-
-Class* ClassLoader::loadArrayClass(const string& name){
-    Class* _class = new Class;
-    _class->name = name;
-    // TODO
-    _class->accessFlag = ACC_PUBLIC;
-    _class->classLoader = this;
-    _class->superClass = loadClass("java/lang/Object");
-    _class->interfaces.push_back(loadClass("java/lang/Cloneable"));
-    _class->interfaces.push_back(loadClass("java/io/Serializable"));
-    _class->initStarted = true;
-    if(verboseFlag){
-        cout << "[Loaded " << name << "]\n";
-    }
-    classMap[name] = _class;
     return _class;
 }
 

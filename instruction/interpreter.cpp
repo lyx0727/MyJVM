@@ -1,5 +1,6 @@
 #include <vector>
 #include <cstdint>
+#include <algorithm>
 #include "interpreter.h"
 #include "../rtda/thread.h"
 #include "bytecode_reader.h"
@@ -41,7 +42,9 @@ void logInstruction(Frame* frame, uint8_t opCode){
     const string& methodName = method->name;
     const string& className = method->_class->name;
     int pc = frame->thread->getPc();
-    cout << className << "." << methodName << " #" << pc << " " << getInstrucionName(opCode) << endl;
+    string instName = getInstrucionName(opCode);
+    instName = instName + string(max(10 - (int)instName.length(), 0), ' ');
+    cout << "#" << pc << "\t" << instName << "\t" << className << "." << methodName <<  endl;
 }
 
 void loop(Thread& thread, bool logInst){

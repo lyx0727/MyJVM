@@ -60,13 +60,15 @@ struct Class{
     std::vector<Class*>      interfaces;
     uint32_t                 instanceSlotCount;             
     uint32_t                 staticSlotCount;             
-    Slots*                   staticVars;     
-    //  has <cinit> started
-    bool                     initStarted; 
+    Slots*                   staticVars;
+    bool                     initStarted;           // has <cinit> started
+    Object*                  jClass;                // instance of java.lang.Class
 
-    Class(): constantPool(nullptr), classLoader(nullptr), superClass(nullptr), staticVars(nullptr){}
+    Class();
     Class(classfile::Classfile& cf);
     ~Class();
+
+    const std::string getJavaName() const { return replace(name, '/', '.'); }
 
     Object* newObject();
     // array

@@ -16,11 +16,14 @@ struct Object{
     Class* _class;
     unsigned int length;
     Ref data;
+    Ref extra;
     
     Object(Class* _class);
     Object(Class* _class, uint8_t type, unsigned int count);
     ~Object();
     
+    const std::string CString();
+
     bool isInstanceOf(Class* _class) const;
     Slots* getFields() { return (Slots*)data; }
     Byte* getBytes() { return (Byte*)data; }

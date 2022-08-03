@@ -72,8 +72,9 @@ public:
             throw JavaLangIncompatibleClassChangeError(field->name, __FILE__, __LINE__);
         }
         if(OP == FIELD_OP::PUT && field->isFinal()){
-            // final field can be initialized in <clinit>
-            if(currentClass != _class || currentMethod->name != "<clinit>"){
+            std::string constructorName = IS_STATIC ? "<clinit>" : "<init>";
+            // final field can be initialized in constructor
+            if(currentClass != _class || currentMethod->name != constructorName){
                 throw JavaLangIllegalAccessError(field->name, __FILE__, __LINE__);
             }
         }
@@ -149,7 +150,6 @@ struct INVOKE_STATIC : public Index16Instruction {
     void execute(Frame* frame){ 
         ConstantPool* cp = frame->getConstantPool();
         MethodRef* methodRef = (MethodRef*)cp->getConstant(index).getVal<Ref>();
-        Class* resolvedClass = methodRef->resolvedClass();
         Method* resolvedMethod = methodRef->resolvedMethod();
         Class* _class = resolvedMethod->_class;
         if(!_class->initStarted){
@@ -157,10 +157,6 @@ struct INVOKE_STATIC : public Index16Instruction {
             frame->initClass(_class);
             return;
         }
-        // constructor must be declared by its class
-        if(resolvedMethod->name == "<init>" && resolvedMethod->_class != resolvedClass){
-            throw JavaLangNoSuchMethodError(resolvedMethod->name, __FILE__, __LINE__);
-        }   
         if(!resolvedMethod->isStatic()){
             throw JavaLangIncompatibleClassChangeError(resolvedMethod->name + " is not static", __FILE__, __LINE__);
         }
@@ -224,8 +220,7 @@ void println(Frame* frame, const std::string& descriptor){
     else if(d == "(D)V"){ str = std::to_string(frame->pop<double>()); }
     else if(d == "(Ljava/lang/String;)V"){
         Object* jStr = (Object*)frame->pop<Ref>();
-        char16_t* chars = jStr->getRefVar("value", "[C")->getChars();
-        str = utf16_to_utf8(std::u16string(chars));
+        str = jStr->CString();
     }
     else{
         std::cerr << "println: " << d << std::endl;

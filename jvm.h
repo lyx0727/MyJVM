@@ -7,6 +7,7 @@
 #include "classfile/classfile.h"
 #include "heap/class.h"
 #include "instruction/interpreter.h"
+#include "native/registry.h"
 #include <iostream>
 
 #endif

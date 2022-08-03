@@ -1,6 +1,8 @@
 #include "registry.h"
 using namespace std;
 
+map<string, NativeMethod> nativeRegistry = map<string, NativeMethod>();
+
 void emptyNativeMethod(Frame* frame){
     // do nothing
 }
@@ -14,7 +16,7 @@ void registerNative(const string& className, const string& methodName, const str
     nativeRegistry[key] = method;
 }
 
-NativeMethod findNative(const string& className, const string& methodName, const string& methodDescriptor, NativeMethod method){
+NativeMethod findNative(const string& className, const string& methodName, const string& methodDescriptor){
     const string key = getNativeKey(className, methodName, methodDescriptor);
     if(nativeRegistry.count(key)){
         return nativeRegistry.at(key);

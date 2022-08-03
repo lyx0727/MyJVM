@@ -1,8 +1,10 @@
 #include "object.h"
 using namespace std;
 
-Object::Object(Class* _class): type(ObjectType::NonArr), _class(_class), length(0), data(new Slots(_class->instanceSlotCount)) {}
-Object::Object(Class* _class, uint8_t type, unsigned int count): type(type), _class(_class), length(count) {
+Object::Object(Class* _class)
+:type(ObjectType::NonArr), _class(_class), length(0), data(new Slots(_class->instanceSlotCount)), extra(nullptr) {}
+Object::Object(Class* _class, uint8_t type, unsigned int count)
+:type(type), _class(_class), length(count), extra(nullptr) {
     switch(type){
         case ObjectType::ByteArr:   data = new Byte[count]; break;
         case ObjectType::CharArr:   data = new char16_t[count + 1]; ((char16_t*)data)[count] = 0; break;
@@ -42,4 +44,9 @@ Object* Object::getRefVar(const string& name, const string& descriptor){
     Field* field = _class->getField(name, descriptor, false);
     Slots* slots = getFields();
     return (Object*)slots->get<Ref>(field->slotId);
+}
+
+const string Object::CString(){
+    char16_t* chars = getRefVar("value", "[C")->getChars();
+    return utf16_to_utf8(u16string(chars));
 }

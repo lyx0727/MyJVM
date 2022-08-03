@@ -65,19 +65,19 @@ struct RETURN : public NoOperandsInstruction{
     }
 };
 
-template<typename T> struct RETURN_T : public NoOperandsInstruction{
+template<typename T> struct TRETURN : public NoOperandsInstruction{
     void execute(Frame* frame){
         Frame* currentFrame = frame->thread->popFrame();
         Frame* invokerFrame = frame->thread->getCurrentFrame();
         T retVal = currentFrame->pop<T>();
-        invokerFrame->push(retVal);  
+        invokerFrame->push(retVal);
     }
 };
 
-typedef RETURN_T<Ref>    ARETURN;
-typedef RETURN_T<double> DRETURN;
-typedef RETURN_T<float>  FRETURN;
-typedef RETURN_T<int>    IRETURN;
-typedef RETURN_T<long>   LRETURN;
+typedef TRETURN<Ref>    ARETURN;
+typedef TRETURN<double> DRETURN;
+typedef TRETURN<float>  FRETURN;
+typedef TRETURN<int>    IRETURN;
+typedef TRETURN<long>   LRETURN;
 
 #endif

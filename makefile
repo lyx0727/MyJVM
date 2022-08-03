@@ -9,7 +9,7 @@ INSTRUCTION_DEP = interpreter.o instruction.o
 HEAP_DEP = class.o class_loader.o class_constant_pool.o class_member.o sym_ref.o descriptor_parser.o object.o
 NATIVE_DEP = registry.o
 
-jvm: utils.o main.o $(CMD_DEP) $(CLASSPATH_DEP) $(CLASSFILE_DEP) $(RTDA_DEP) $(INSTRUCTION_DEP) $(HEAP_DEP)
+jvm: utils.o main.o $(CMD_DEP) $(CLASSPATH_DEP) $(CLASSFILE_DEP) $(RTDA_DEP) $(INSTRUCTION_DEP) $(HEAP_DEP) $(NATIVE_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@	
 
 utils.o: utils/utils.cpp
@@ -82,7 +82,7 @@ frame.o: rtda/frame.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # heap
-heap_test: heap_test.o utils.o $(HEAP_DEP) $(CLASSFILE_DEP) $(CLASSPATH_DEP) $(RTDA_DEP) $(INSTRUCTION_DEP)
+heap_test: heap_test.o utils.o $(HEAP_DEP) $(CLASSFILE_DEP) $(CLASSPATH_DEP) $(RTDA_DEP) $(INSTRUCTION_DEP) $(NATIVE_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@
 heap_test.o: heap/test.cpp 
 	$(CC) $(CFFLAGS) -c $^ -o $@
@@ -110,7 +110,7 @@ object.o: heap/object.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # instructions 
-instruction_test: instruction_test.o utils.o $(INSTRUCTION_DEP) $(CLASSPATH_DEP) $(CLASSFILE_DEP) $(RTDA_DEP) $(HEAP_DEP)
+instruction_test: instruction_test.o utils.o $(INSTRUCTION_DEP) $(CLASSPATH_DEP) $(CLASSFILE_DEP) $(RTDA_DEP) $(HEAP_DEP) $(NATIVE_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@
 instruction_test.o: instruction/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
@@ -122,11 +122,10 @@ interpreter.o: instruction/interpreter.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # native
-native_test: native_test.o utils.o $(NATIVE_DEP) $(RTDA_DEP)
+native_test: native_test.o utils.o $(NATIVE_DEP) $(RTDA_DEP) $(CLASSPATH_DEP) $(CLASSFILE_DEP) $(HEAP_DEP) $(INSTRUCTION_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@
 native_test.o: native/test.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
-
 registry.o: native/registry.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 

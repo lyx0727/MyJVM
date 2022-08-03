@@ -8,6 +8,7 @@
 #include "conversions.h"
 #include "references.h"
 #include "reserved.h"
+#include "extended.h"
 using namespace std;
 
 // TODO
@@ -103,9 +104,8 @@ const unordered_map<uint8_t, Instruction*> Instructions = {
 	// { 0xc3, new monitorexit },
 	// { 0xc4, new &Wide{} },
 	{ 0xc5, new MULTI_ANEW_ARRAY },
-	// { 0xc6, new NewIfNull() },
-	// { 0xc7, new NewIfNonNull() },
-	// { 0xc8, new &GotoW{} },
+	// exntended
+	{ 0xc6, new IFNULL }, { 0xc7, new IFNONNULL }, { 0xc8, new GOTO_W },
 	// { 0xc9, new &JSR_W{} },
 	// // case 0xca: todo breakpoint
 	{ 0xfe, new INVOKE_NATIVE },	// impdep1
@@ -185,10 +185,10 @@ const unordered_map<uint8_t, string> InstructionNames = {
 	{ 0xc2, "MONITOR_ENTER"}, { 0xc3, "MONITOR_EXIT"},
 	{ 0xc4, "WIDE"},
 	{ 0xc5, "MULTI_ANEW_ARRAY"},
-	{ 0xc6, "IF_NULL"}, { 0xc7, "IF_NON_NULL"},
+	{ 0xc6, "IFNULL"}, { 0xc7, "IFNONNULL"},
 	{ 0xc8, "GOTO_W"},
 	{ 0xc9, "JSR_W"},
-	// // case 0xca: todo breakpoint
+	// case 0xca: todo breakpoint
 	{ 0xfe, "INVOKE_NATIVE"},	// impdep1
 	{ 0xff, "boot_STRAP"}, 	// impdep2
 };

@@ -41,7 +41,7 @@ void BubbleSortTest(){
 int main(){
     MyObjectTest();
     // testDescriptorParser();
-    // FibonacciTest();
+    FibonacciTest();
     // ArrayTest();
     BubbleSortTest();
 

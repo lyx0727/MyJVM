@@ -2,7 +2,11 @@
 #include "sym_ref.h"
 using namespace std;
 
-Class::Class(classfile::Classfile& cf): classLoader(nullptr), superClass(nullptr){
+Class::Class()
+: constantPool(nullptr), classLoader(nullptr), superClass(nullptr), staticVars(nullptr), jClass(nullptr){}
+
+Class::Class(classfile::Classfile& cf)
+: classLoader(nullptr), superClass(nullptr), jClass(nullptr){
     accessFlag = cf.getAccessFlags();
     name = cf.getClassName();
     constantPool = new ConstantPool(this, cf.getConstantPool());
@@ -101,7 +105,7 @@ const string Class::getPackageName() const {
 }
 
 bool Class::isSubClassOf(const Class* c) const {
-    for(const Class* t = this; t; t = superClass){
+    for(const Class* t = superClass; t; t = t->superClass){
         if(t == c) 
             return true;
     }
@@ -119,7 +123,7 @@ bool Class::isSubInterfaceOf(const Class* iface) const {
 bool Class::isSuperInterfaceOf(const Class* iface) const { return iface->isSubInterfaceOf(this); }
 
 bool Class::isImplements(const Class* iface) const {
-    for(const Class* t = this; t; t = superClass){
+    for(const Class* t = this; t; t = t->superClass){
         for(Class* i : t->interfaces){
             if(i == iface || i->isSubInterfaceOf(iface))
                 return true;
@@ -223,7 +227,7 @@ Method* Class::lookupMethod(const string& name, const string& descriptor) const 
 }
 
 Method* Class::lookupMethodInClass(const string& name, const string& descriptor) const{
-    for(const Class* c = this; c; c = superClass){
+    for(const Class* c = this; c; c = c->superClass){
         for(Method* m : c->methods){
             if(m->name == name && m->descriptor == descriptor){
                 return m;

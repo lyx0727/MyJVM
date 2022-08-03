@@ -16,12 +16,17 @@ void Frame::ldc(unsigned int index){
     ClassLoader* classLoader = getClassLoader();
     ConstantPool* cp = getConstantPool();
     Constant c = cp->getConstant(index);
+    Class* _class = nullptr;
     switch(c.type){
         case ConstantType::Int: push(c.getVal<int>()); break;
         case ConstantType::Float: push(c.getVal<float>()); break;
-        case ConstantType::String: push(classLoader->JString(c.getVal<string>())); break;
-        // TODO
-        // case ConstantType::ClassRef: break;
+        case ConstantType::String: 
+            push(classLoader->JString(c.getVal<string>())); 
+            break;
+        case ConstantType::ClassRef: 
+            _class = ((ClassRef*)c.getVal<Ref>())->resolvedClass();
+            push(_class->jClass);
+            break;
         default:
             std::cerr << "ldc to do" << std::endl;
             exit(1);
@@ -48,16 +53,6 @@ void Frame::invokeMethod(Method* method){
         for(int i = argSlotCount - 1; i >= 0; i--){
             Slot slot = pop<Slot>();
             newFrame->set(i, slot);
-        }
-    }
-    // hack
-    if(method->isNative()){
-        if(method->name == "registerNatives"){
-            thread->popFrame();
-        }
-        else{
-            cerr << "native method: " << method->_class->name << "." << method->name << method->descriptor << endl;
-            exit(1);
         }
     }
 }
