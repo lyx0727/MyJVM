@@ -7,6 +7,7 @@ CLASSFILE_DEP = attribute_info.o class_reader.o constant_pool.o member_info.o co
 RTDA_DEP = jvm_stack.o thread.o frame.o
 INSTRUCTION_DEP = interpreter.o instruction.o
 HEAP_DEP = class.o class_loader.o class_constant_pool.o class_member.o sym_ref.o descriptor_parser.o object.o
+NATIVE_DEP = registry.o
 
 jvm: utils.o main.o $(CMD_DEP) $(CLASSPATH_DEP) $(CLASSFILE_DEP) $(RTDA_DEP) $(INSTRUCTION_DEP) $(HEAP_DEP)
 	$(CC) $(CFFLAGS) $^ -o $@	
@@ -118,6 +119,15 @@ instruction.o: instruction/instruction.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 interpreter.o: instruction/interpreter.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
+# native
+native_test: native_test.o utils.o $(NATIVE_DEP) $(RTDA_DEP)
+	$(CC) $(CFFLAGS) $^ -o $@
+native_test.o: native/test.cpp
+	$(CC) $(CFFLAGS) -c $^ -o $@
+
+registry.o: native/registry.cpp
 	$(CC) $(CFFLAGS) -c $^ -o $@
 
 # test

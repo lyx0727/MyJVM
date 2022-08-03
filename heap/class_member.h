@@ -44,6 +44,7 @@ struct Method : public ClassMember{
     uint32_t          maxStack;
     uint32_t          maxLocals;
     std::vector<Byte> code;
+    MethodDescriptor  md;
     uint32_t argSlotCount;
     Method(Class* _class, classfile::MemberInfo* methodInfo)
         : ClassMember(_class, methodInfo){
@@ -53,10 +54,14 @@ struct Method : public ClassMember{
             maxLocals = codeAttr->maxLocals;
             maxStack = codeAttr->maxStack;
         }
+        md = MethodDescriptorParser(descriptor).parse();
         calcArgSlotCount();
+        if(isNative()){
+            injectCodeAttribute();
+        }
     }
     uint32_t calcArgSlotCount();
-    
+    void injectCodeAttribute();
 };
 
 #endif

@@ -6,6 +6,7 @@
 struct MethodDescriptor{
     std::vector<std::string> parameterTypes;
     std::string              returnType;
+    MethodDescriptor(){}
     MethodDescriptor(const std::vector<std::string>& parameterTypes, const std::string &returnType)
         :parameterTypes(parameterTypes), returnType(returnType){}
 };

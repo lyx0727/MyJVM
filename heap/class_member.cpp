@@ -15,8 +15,7 @@ bool ClassMember::isAccessibleTo(Class* d) const{
 
 uint32_t Method::calcArgSlotCount(){
     argSlotCount = 0;
-    MethodDescriptor parsedDescriptor = MethodDescriptorParser(descriptor).parse();
-    for(const string& paramterType : parsedDescriptor.parameterTypes){
+    for(const string& paramterType : md.parameterTypes){
         argSlotCount++;
         if(paramterType == "J" || paramterType == "D"){
             argSlotCount++;
@@ -27,6 +26,21 @@ uint32_t Method::calcArgSlotCount(){
         argSlotCount++;
     }
     return argSlotCount;
+}
+
+void Method::injectCodeAttribute(){
+    maxStack = 4;
+    maxLocals = argSlotCount;
+    switch(md.returnType[0]){
+        // 0xfe: INVOKE_NATIVE
+        case 'V': code = vector<Byte>{ 0xfe, 0xb1 }; break;   // RETURN
+        case 'D': code = vector<Byte>{ 0xfe, 0xaf }; break;   // DRETURN
+        case 'F': code = vector<Byte>{ 0xfe, 0xae }; break;   // FRETURN
+        case 'J': code = vector<Byte>{ 0xfe, 0xad }; break;   // LRETURN
+        case 'L': 
+        case '[': code = vector<Byte>{ 0xfe, 0xad }; break;   // ARETURN
+        default:  code = vector<Byte>{ 0xfe, 0xac }; break;   // IRETUEN
+    }
 }
 
 bool ClassMember::isStatic() const { return ::isStatic(accessFlag); }

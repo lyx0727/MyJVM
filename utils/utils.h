@@ -127,5 +127,9 @@ struct JavaLangArrayIndexOutOfBoundsException : public JavaLangException {
     JavaLangArrayIndexOutOfBoundsException(int index, const char* fileName, unsigned int lineNumber)
     : JavaLangException("ArrayIndexOutOfBoundsException", fileName, lineNumber, std::to_string(index)){}
 };
+struct JavaLangUnsatisfiedLinkError : public JavaLangException {
+    JavaLangUnsatisfiedLinkError(const std::string& info, const char* fileName, unsigned int lineNumber)
+    : JavaLangException("UnsatisfiedLinkError", fileName, lineNumber, info){}
+};
 
 #endif

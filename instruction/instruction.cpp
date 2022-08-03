@@ -7,6 +7,7 @@
 #include "comparisons.h"
 #include "conversions.h"
 #include "references.h"
+#include "reserved.h"
 using namespace std;
 
 // TODO
@@ -107,7 +108,7 @@ const unordered_map<uint8_t, Instruction*> Instructions = {
 	// { 0xc8, new &GotoW{} },
 	// { 0xc9, new &JSR_W{} },
 	// // case 0xca: todo breakpoint
-	// { 0xfe, new invoke_native },	// impdep1
+	{ 0xfe, new INVOKE_NATIVE },	// impdep1
 	// { 0xff, new &Bootstrap{} }, 	// impdep2
 };
 
