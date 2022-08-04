@@ -98,7 +98,7 @@ const unordered_map<uint8_t, Instruction*> Instructions = {
 	{ 0xbb, new NEW },
 	// array
 	{ 0xbc, new NEW_ARRAY }, { 0xbd, new ANEW_ARRAY }, { 0xbe, new ARRAY_LENGTH },
-	// { 0xbf, new athrow },
+	{ 0xbf, new ATHROW },
 	{ 0xc0, new CHECK_CAST }, { 0xc1, new INSTANCE_OF },
 	// { 0xc2, new monitorenter },
 	// { 0xc3, new monitorexit },

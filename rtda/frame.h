@@ -54,6 +54,7 @@ struct Frame{
     void initClass(Class* _class);
     void scheduleClinit(Class* _class);
     void initSuperClass(Class* _class);
+    
 };
 
 #endif

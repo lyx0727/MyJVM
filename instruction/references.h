@@ -382,4 +382,18 @@ struct MULTI_ANEW_ARRAY : public Instruction {
     }
 };
 
+// Throw exception or error
+struct ATHROW : public NoOperandsInstruction {
+    void execute(Frame* frame){
+        Ref ref = frame->pop<Ref>();
+        if(ref == nullptr){
+            throw JavaLangNullPointerException(ref, __FILE__, __LINE__);
+        }
+        Object* ex = (Object*)ref;
+        Thread* thread = frame->thread;
+        if(!thread->findAndGotoExceptionHandler(ex)){
+            thread->handleUncaughtException(ex);
+        }
+    }
+};
 #endif

@@ -6,6 +6,7 @@
 
 struct Frame;
 struct Stack;
+struct Object;
 
 class Thread{
 private:
@@ -17,6 +18,7 @@ public:
 
     unsigned int size() const;
     bool empty() const;
+    void clear();
 
     int getPc(){ return pc; }
     void setPc(int pc){ this->pc = pc; }
@@ -24,6 +26,10 @@ public:
     Frame* newFrame(Method* method);
     Frame* popFrame();
     Frame* getCurrentFrame();
+
+    // exception
+    bool findAndGotoExceptionHandler(Object* ex);
+    void handleUncaughtException(Object* ex);
 };
 
 #endif

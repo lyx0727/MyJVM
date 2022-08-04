@@ -10,6 +10,10 @@ private:
     std::stack<Slot> slots;
 public:
     OperandStack(size_t maxSize): maxSize(maxSize){}
+
+    size_t size() const { return slots.size(); }
+    bool empty() const { return size() == 0; }
+    void clear();
   
     void push(int val){ slots.push(Slot(val)); }
     void push(short val){ push((int)val); }

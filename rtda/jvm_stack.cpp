@@ -43,6 +43,12 @@ Frame* Stack::pop(){
     return top;
 }
 
+void Stack::clear(){
+    while(!empty()){
+        pop();
+    }
+}
+
 const string OperandStack::toString() const{
     stack<Slot> st(slots);
     string str;
@@ -51,4 +57,10 @@ const string OperandStack::toString() const{
         st.pop();
     }
     return str;
+}
+
+void OperandStack::clear(){
+    while(!empty()){
+        popSlot();
+    }
 }
