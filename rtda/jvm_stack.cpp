@@ -64,3 +64,11 @@ void OperandStack::clear(){
         popSlot();
     }
 }
+
+vector<Frame*> Stack::getFrames() const{
+    vector<Frame*> frames;
+    for(Frame* frame = _top; frame; frame = frame->lower){
+        frames.push_back(frame);
+    }
+    return frames;
+}

@@ -4,16 +4,9 @@
 
 namespace java_lang_Object{
     // public final native Class<?> getClass();
-    inline void getClass(Frame* frame){
-        Ref ref = frame->get<Ref>(0);
-        Object* _this = (Object*)ref;
-        Object* _class = _this->_class->jClass;
-        frame->push(_class);
-    }
+    void getClass(Frame* frame);
 
-    inline void init(){
-        registerNative("java/lang/Object", "getClass", "()Ljava/lang/Class;", getClass);
-    }
+    void init();
 }
 
 #endif

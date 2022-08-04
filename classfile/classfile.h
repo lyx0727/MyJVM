@@ -51,6 +51,8 @@ public:
     const std::vector<std::string> getInterfacesNames() const;
 
     MemberInfo* getMainMethod();
+    SourceFileAttribute* getSourceFileAttribute() const;
+    const std::string getSourceFile() const;
 
     const std::string toString() const; 
 };

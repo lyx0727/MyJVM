@@ -26,6 +26,7 @@ public:
     Frame* newFrame(Method* method);
     Frame* popFrame();
     Frame* getCurrentFrame();
+    std::vector<Frame*> getFrames() const;
 
     // exception
     bool findAndGotoExceptionHandler(Object* ex);

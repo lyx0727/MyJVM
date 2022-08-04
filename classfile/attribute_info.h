@@ -135,6 +135,7 @@ struct CodeAttribute : public AttributeInfo{
         exceptionTable = readExceptionTable(cr);
         attributes = readAttributes(cr, cp);
     }
+    LineNumberTableAttribute* getLineNumberTableAttribute() const;
     const std::string getName() const { return "Code"; }
     const std::string toString() const { return "[" + getName() + "]: " + std::to_string(code.size()); }
 };
@@ -144,6 +145,7 @@ struct LineNumberTableAttribute : public AttributeInfo{
     void readInfo(ClassReader& cr){
         lineNumberTable = readLineNumberTable(cr);
     }
+    int getLineNumber(int pc);
     const std::string getName() const { return "LineNumberTable"; }
     const std::string toString() const { return "[" + getName() + "]: " + std::to_string(lineNumberTable.size()); }
 };

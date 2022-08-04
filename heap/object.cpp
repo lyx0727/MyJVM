@@ -16,6 +16,13 @@ Object::Object(Class* _class, uint8_t type, unsigned int count)
         case ObjectType::RefArr:    data = new Ref[count]; break;
     }
 }
+
+void Object::setRef(java_lang_Throwable::StackTraceElements* stes){
+    extra = stes;
+    type = ObjectType::Throwable;
+}
+void Object::setRef(Class* _class){ extra = _class; }
+
 Object::~Object(){
     switch(type){
         case ObjectType::NonArr:    delete (Slots*)data; break;
@@ -27,6 +34,11 @@ Object::~Object(){
         case ObjectType::LongArr:   delete (long*)data; break;
         case ObjectType::DoubleArr: delete (double*)data; break;
         case ObjectType::RefArr:    delete (Object**)data; break;
+    }
+    if(extra){
+        if(type == ObjectType::Throwable){
+            delete (java_lang_Throwable::StackTraceElements*)extra;
+        }
     }
 }
 

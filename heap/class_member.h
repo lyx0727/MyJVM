@@ -43,18 +43,20 @@ struct Field : public ClassMember{
 };
 
 struct Method : public ClassMember{
-    uint32_t          maxStack;
-    uint32_t          maxLocals;
-    std::vector<Byte> code;
-    MethodDescriptor  md;
-    uint32_t          argSlotCount;
-    ExceptionTable*   exceptionTable;
+    uint32_t                             maxStack;
+    uint32_t                             maxLocals;
+    std::vector<Byte>                    code;
+    MethodDescriptor                     md;
+    uint32_t                             argSlotCount;
+    ExceptionTable*                      exceptionTable;
+    classfile::LineNumberTableAttribute* lineNumberTable;
     Method(Class* _class, classfile::MemberInfo* methodInfo);
     ~Method();
 
     uint32_t calcArgSlotCount();
     void injectCodeAttribute();
     int findExceptionHandler(Class* exClass, int pc);
+    int getLineNumber(int pc);
 };
 
 #endif

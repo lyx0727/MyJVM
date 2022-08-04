@@ -18,6 +18,8 @@ public:
     bool empty() const { return size() == 0; }
     void clear();
 
+    std::vector<Frame*> getFrames() const;
+
     Frame* top();
     Frame* pop();
 };

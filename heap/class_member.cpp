@@ -14,12 +14,13 @@ bool ClassMember::isAccessibleTo(Class* d) const{
 }
 
 Method::Method(Class* _class, classfile::MemberInfo* methodInfo)
-    : ClassMember(_class, methodInfo), exceptionTable(nullptr){
+    : ClassMember(_class, methodInfo), exceptionTable(nullptr), lineNumberTable(nullptr){
     classfile::CodeAttribute* codeAttr = methodInfo->getCodeAttribute();
     if(codeAttr != nullptr){
         code = codeAttr->code;
         maxLocals = codeAttr->maxLocals;
         maxStack = codeAttr->maxStack;
+        lineNumberTable = codeAttr->getLineNumberTableAttribute();
         exceptionTable = new ExceptionTable(codeAttr->exceptionTable, _class->constantPool);
     }
     md = MethodDescriptorParser(descriptor).parse();
@@ -27,6 +28,12 @@ Method::Method(Class* _class, classfile::MemberInfo* methodInfo)
     if(isNative()){
         injectCodeAttribute();
     }
+}
+
+int Method::getLineNumber(int pc){
+    if(isNative()) return -2;
+    if(lineNumberTable == nullptr) return -1;
+    return lineNumberTable->getLineNumber(pc);
 }
 
 Method::~Method(){

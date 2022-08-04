@@ -63,6 +63,7 @@ struct Class{
     Slots*                   staticVars;
     bool                     initStarted;           // has <cinit> started
     Object*                  jClass;                // instance of java.lang.Class
+    std::string              sourceFile;
 
     Class();
     Class(classfile::Classfile& cf);
@@ -100,6 +101,7 @@ struct Class{
     bool isImplements(const Class* iface) const;
     bool isAccessibleTo(const Class* other) const { return isPublic() || getPackageName() == other->getPackageName(); }      
     bool isAssignableFrom(const Class* other) const;
+    int distanceToObject() const;
     // access 
     bool isSuper() const { return ::isSuper(accessFlag); } 
     bool isPublic() const { return ::isPublic(accessFlag); } 

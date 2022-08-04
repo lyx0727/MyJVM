@@ -2,10 +2,11 @@
 #define OBJECT_GUARD
 #include "../rtda/slot.h"
 #include "class.h"
+#include "../native/java/lang/Throwable.h"
 
 namespace ObjectType{
     enum ObjectType{
-        NonArr, ByteArr, CharArr, ShortArr, IntArr, FloatArr, LongArr, DoubleArr, RefArr 
+        NonArr, ByteArr, CharArr, ShortArr, IntArr, FloatArr, LongArr, DoubleArr, RefArr, Throwable 
     };
 }
 
@@ -37,6 +38,8 @@ struct Object{
 
     void setRefVar(const std::string& name, const std::string& descriptor, Object* ref);
     Object* getRefVar(const std::string& name, const std::string& descriptor);
+    void setExtra(java_lang_Throwable::StackTraceElements* stes);
+    void setExtra(Class* _class);
 };
 
 #endif

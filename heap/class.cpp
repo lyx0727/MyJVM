@@ -14,6 +14,7 @@ Class::Class(classfile::Classfile& cf)
     interfaceNames = cf.getInterfacesNames();
     getFields(cf.getFields());
     getMethods(cf.getMethods());
+    sourceFile = cf.getSourceFile();
 }
 
 Class::~Class(){ 
@@ -350,4 +351,12 @@ void Class::initStaticFinalVar(Field* field){
             vars->set(slotId, classLoader->JString(str));
         }
     }
+}
+
+int Class::distanceToObject() const{
+    int dist = 0;
+    for(const Class* c = superClass; c; c = c->superClass){
+        dist++;
+    }
+    return dist;
 }

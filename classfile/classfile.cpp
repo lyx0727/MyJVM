@@ -32,13 +32,7 @@ void Classfile::readAndCheckVersion(ClassReader& reader){
     switch (majorVersion){
     case 45:
         return;
-    case 46:
-    case 47:
-    case 48:
-    case 49:    
-    case 50:    
-    case 51:    
-    case 52:    
+    case 46: case 47: case 48: case 49: case 50: case 51: case 52:    
         if(minorVersion == 0) return;
     }
     cerr << "java.lang.UnsupportedClassVersionError!" << endl;
@@ -61,6 +55,27 @@ MemberInfo* Classfile::getMainMethod(){
         }
     }
     return nullptr;
+}
+
+SourceFileAttribute* Classfile::getSourceFileAttribute() const{
+    for(AttributeInfo* attr : attributes){
+        string name = attr->getName();
+        if(AttributeTypeMap.count(name)){
+            uint8_t type = AttributeTypeMap.at(name);
+            if(type == AttributeType::SourceFile){
+                return dynamic_cast<SourceFileAttribute*>(attr);
+            }
+        }
+    }
+    return nullptr;
+}
+
+const string Classfile::getSourceFile() const{
+    SourceFileAttribute* sfAttr = getSourceFileAttribute();
+    if(sfAttr){
+        return sfAttr->getFileName();
+    }
+    return "Unknown";
 }
 
 const string Classfile::toString() const {

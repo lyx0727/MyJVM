@@ -82,4 +82,27 @@ vector<LocalVariableTableEntry> readLocalVariableTable(ClassReader& cr){
     }
     return localVariableTable;
 }
+
+LineNumberTableAttribute* CodeAttribute::getLineNumberTableAttribute() const{
+    for(AttributeInfo* attr : attributes){
+        string name = attr->getName();
+        if(AttributeTypeMap.count(name)){
+            uint8_t type = AttributeTypeMap.at(name);
+            if(type == AttributeType::LineNumberTable){
+                return dynamic_cast<LineNumberTableAttribute*>(attr);
+            }
+        }
+    }
+    return nullptr;
+}
+
+int LineNumberTableAttribute::getLineNumber(int pc){
+    for(int i = lineNumberTable.size() - 1; i >= 0; i--){
+        LineNumberTableEntry& entry = lineNumberTable[i];
+        if(pc >= entry.startPc){
+            return entry.lineNumber;
+        }
+    }
+    return -1;
+}
 }

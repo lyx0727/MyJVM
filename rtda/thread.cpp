@@ -1,5 +1,7 @@
 #include "thread.h"
+#include "../native/java/lang/Throwable.h"
 using namespace std;
+using namespace java_lang_Throwable;
 
 const string Slots::toString() const {
     string str;
@@ -20,18 +22,12 @@ bool Thread::empty() const { return size() == 0; }
 
 void Thread::clear(){ stack->clear(); }
 
-Frame* Thread::newFrame(Method* method){
-    return new Frame(this, method);
-}
-void Thread::pushFrame(Frame* frame){
-    stack->push(frame);
-}   
-Frame* Thread::popFrame(){
-    return stack->pop();
-}
-Frame* Thread::getCurrentFrame(){
-    return stack->top();
-}
+Frame* Thread::newFrame(Method* method){ return new Frame(this, method); }
+void Thread::pushFrame(Frame* frame){ stack->push(frame); }   
+Frame* Thread::popFrame(){ return stack->pop(); }
+Frame* Thread::getCurrentFrame(){ return stack->top(); }
+
+vector<Frame*> Thread::getFrames() const{ return stack->getFrames(); }
 
 bool Thread::findAndGotoExceptionHandler(Object* ex){
     while(!empty()){
@@ -53,5 +49,8 @@ void Thread::handleUncaughtException(Object* ex){
     Object* jMsg = ex->getRefVar("detailMessage", "Ljava/lang/String;");
     string cMsg = ex->CString();
     cout << ex->_class->getJavaName() << ": " << cMsg << endl;
-    // TODO  
+    StackTraceElements* stes = (StackTraceElements*)(ex->extra);
+    for(unsigned int i = 0; i < stes->size(); i++){
+        cout << "\tat " << stes->get(i).toString(); 
+    }
 }
