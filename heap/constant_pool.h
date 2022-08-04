@@ -5,10 +5,10 @@
 #include "class.h"
 #include "sym_ref.h"
 
-class Class;
+struct Class;
 struct Field;
 struct Method;
-class ClassRef;
+struct ClassRef;
 struct FieldRef;
 struct MethodRef;
 struct InterfaceMethodRef;
@@ -74,6 +74,7 @@ public:
     unsigned int size() const { return consts.size(); }
 
     Constant& getConstant(unsigned int index) { return consts[index]; }
+    ClassRef* getCatchType(unsigned int index);
 };
 
 #endif

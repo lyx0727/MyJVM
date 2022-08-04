@@ -77,3 +77,10 @@ ConstantPool::~ConstantPool(){
         c.type = ConstantType::Null;
     }
 }
+
+ClassRef* ConstantPool::getCatchType(unsigned int index){
+    if(index == 0){
+        return nullptr;
+    }
+    return (ClassRef*)getConstant(index).getVal<Ref>();
+}

@@ -18,4 +18,6 @@ const std::string getNativeKey(const std::string& className, const std::string& 
 void registerNative(const std::string& className, const std::string& methodName, const std::string& methodDescriptor, NativeMethod method);
 NativeMethod findNative(const std::string& className, const std::string& methodName, const std::string& methodDescriptor);
 
+void init();
+
 #endif

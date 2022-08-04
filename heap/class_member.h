@@ -2,8 +2,10 @@
 #define CLASS_MEMBER_GUARD
 #include "class.h"
 #include "descriptor_parser.h"
+#include "exception_table.h"
 
-class Class;
+struct Class;
+struct ExceptionTable;
 
 struct ClassMember{
     uint16_t    accessFlag;
@@ -45,23 +47,14 @@ struct Method : public ClassMember{
     uint32_t          maxLocals;
     std::vector<Byte> code;
     MethodDescriptor  md;
-    uint32_t argSlotCount;
-    Method(Class* _class, classfile::MemberInfo* methodInfo)
-        : ClassMember(_class, methodInfo){
-        classfile::CodeAttribute* codeAttr = methodInfo->getCodeAttribute();
-        if(codeAttr != nullptr){
-            code = codeAttr->code;
-            maxLocals = codeAttr->maxLocals;
-            maxStack = codeAttr->maxStack;
-        }
-        md = MethodDescriptorParser(descriptor).parse();
-        calcArgSlotCount();
-        if(isNative()){
-            injectCodeAttribute();
-        }
-    }
+    uint32_t          argSlotCount;
+    ExceptionTable*   exceptionTable;
+    Method(Class* _class, classfile::MemberInfo* methodInfo);
+    ~Method();
+
     uint32_t calcArgSlotCount();
     void injectCodeAttribute();
+    int findExceptionHandler(Class* exClass, int pc);
 };
 
 #endif

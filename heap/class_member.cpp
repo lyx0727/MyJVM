@@ -13,6 +13,28 @@ bool ClassMember::isAccessibleTo(Class* d) const{
     return d == c;
 }
 
+Method::Method(Class* _class, classfile::MemberInfo* methodInfo)
+    : ClassMember(_class, methodInfo), exceptionTable(nullptr){
+    classfile::CodeAttribute* codeAttr = methodInfo->getCodeAttribute();
+    if(codeAttr != nullptr){
+        code = codeAttr->code;
+        maxLocals = codeAttr->maxLocals;
+        maxStack = codeAttr->maxStack;
+        exceptionTable = new ExceptionTable(codeAttr->exceptionTable, _class->constantPool);
+    }
+    md = MethodDescriptorParser(descriptor).parse();
+    calcArgSlotCount();
+    if(isNative()){
+        injectCodeAttribute();
+    }
+}
+
+Method::~Method(){
+    if(exceptionTable){
+        delete exceptionTable;
+    }
+}
+
 uint32_t Method::calcArgSlotCount(){
     argSlotCount = 0;
     for(const string& paramterType : md.parameterTypes){
@@ -41,6 +63,17 @@ void Method::injectCodeAttribute(){
         case '[': code = vector<Byte>{ 0xfe, 0xb0 }; break;   // ARETURN
         default:  code = vector<Byte>{ 0xfe, 0xac }; break;   // IRETUEN
     }
+}
+
+int Method::findExceptionHandler(Class* exClass, int pc){
+    if(!exceptionTable){
+        return -1;
+    }
+    ExceptionHandler* handler = exceptionTable->findExceptionHandler(exClass, pc);
+    if(handler != nullptr){
+        return handler->handlerPc;
+    }
+    return -1;
 }
 
 bool ClassMember::isStatic() const { return ::isStatic(accessFlag); }

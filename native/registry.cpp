@@ -1,4 +1,7 @@
 #include "registry.h"
+#include "java/lang/Class.h"
+#include "java/lang/Object.h"
+#include "java/lang/Throwable.h"
 using namespace std;
 
 map<string, NativeMethod> nativeRegistry = map<string, NativeMethod>();
@@ -25,4 +28,10 @@ NativeMethod findNative(const string& className, const string& methodName, const
         return emptyNativeMethod;
     }
     return nullptr;
+}
+
+void init(){
+    java_lang_Class::init();
+    java_lang_Object::init();
+    java_lang_Throwable::init();
 }

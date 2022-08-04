@@ -1,6 +1,5 @@
 #include <iostream>
-#include "java/lang/Class.h"
-#include "java/lang/Object.h"
+#include "registry.h"
 #include "../heap/class.h"
 #include "../instruction/interpreter.h"
 using namespace std;
@@ -15,7 +14,6 @@ void ClassTest(const string& className, bool verboseClass = false, bool verboseI
 }
 
 int main(){
-    java_lang_Object::init();
-    java_lang_Class::init();
+    init();
     ClassTest("com.lyx.GetClassTest");
 }
