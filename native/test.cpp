@@ -15,6 +15,6 @@ void ClassTest(const string& className, bool verboseClass = false, bool verboseI
 
 int main(){
     init();
-    ClassTest("com.lyx.GetClassTest", true, true);
-    // ClassTest("com.lyx.ParseIntTest", true, true);
+    // ClassTest("com.lyx.GetClassTest", true, true);
+    ClassTest("com.lyx.ParseIntTest", true, true);
 }

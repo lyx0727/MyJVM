@@ -8,6 +8,7 @@ ConstantPool::ConstantPool(Class* _class, classfile::ConstantPool& cp): _class(_
     consts = vector<Constant>(cpCount, Constant());
     for(size_t i = 1; i < cpCount; i++){
         classfile::ConstantInfo* cpInfo = cp[i];
+
         switch(cpInfo->getTag()){
             case classfile::ConstantInfoType::Integer: 
                 consts[i] = Constant(dynamic_cast<classfile::ConstantIntegerInfo*>(cpInfo)->val);

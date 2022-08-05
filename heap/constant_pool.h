@@ -46,6 +46,7 @@ public:
         std::strcpy(s, str.c_str());
         this->val.r = s;
     } 
+    ~Constant(){}
     
     friend ::ConstantPool;
     template<typename T> T getVal() const;

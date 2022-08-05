@@ -19,6 +19,7 @@ ExceptionTable::~ExceptionTable(){
     for(ExceptionHandler* handler : handlers){
         if(handler){
             delete handler;
+            handler = nullptr;
         }
     }
 }
