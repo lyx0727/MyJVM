@@ -17,11 +17,11 @@ Object::Object(Class* _class, uint8_t type, unsigned int count)
     }
 }
 
-void Object::setRef(java_lang_Throwable::StackTraceElements* stes){
+void Object::setExtra(StackTraceElements* stes){
     extra = stes;
     type = ObjectType::Throwable;
 }
-void Object::setRef(Class* _class){ extra = _class; }
+void Object::setExtra(Class* _class){ extra = _class; }
 
 Object::~Object(){
     switch(type){
@@ -37,7 +37,7 @@ Object::~Object(){
     }
     if(extra){
         if(type == ObjectType::Throwable){
-            delete (java_lang_Throwable::StackTraceElements*)extra;
+            delete (StackTraceElements*)extra;
         }
     }
 }

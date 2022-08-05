@@ -1,5 +1,6 @@
 #ifndef JVM_STACK_GUARD
 #define JVM_STACK_GUARD
+#include <vector>
 #include "frame.h"
 
 struct Frame;

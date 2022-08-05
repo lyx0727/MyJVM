@@ -11,6 +11,7 @@ namespace ObjectType{
 }
 
 struct Class;
+struct StackTraceElements;
 
 struct Object{
     uint8_t type;
@@ -38,7 +39,7 @@ struct Object{
 
     void setRefVar(const std::string& name, const std::string& descriptor, Object* ref);
     Object* getRefVar(const std::string& name, const std::string& descriptor);
-    void setExtra(java_lang_Throwable::StackTraceElements* stes);
+    void setExtra(StackTraceElements* stes);
     void setExtra(Class* _class);
 };
 

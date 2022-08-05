@@ -119,6 +119,16 @@ struct ExceptionsAttribute : public AttributeInfo{
     const std::string toString() const { return "[" + getName() + "]: " + std::to_string(exceptionIndexTable.size()); }
 };
 
+struct LineNumberTableAttribute : public AttributeInfo{
+    std::vector<LineNumberTableEntry> lineNumberTable;
+    void readInfo(ClassReader& cr){
+        lineNumberTable = readLineNumberTable(cr);
+    }
+    int getLineNumber(int pc);
+    const std::string getName() const { return "LineNumberTable"; }
+    const std::string toString() const { return "[" + getName() + "]: " + std::to_string(lineNumberTable.size()); }
+};
+
 struct CodeAttribute : public AttributeInfo{
     ConstantPool&                    cp;
     uint16_t                         maxStack;
@@ -138,16 +148,6 @@ struct CodeAttribute : public AttributeInfo{
     LineNumberTableAttribute* getLineNumberTableAttribute() const;
     const std::string getName() const { return "Code"; }
     const std::string toString() const { return "[" + getName() + "]: " + std::to_string(code.size()); }
-};
-
-struct LineNumberTableAttribute : public AttributeInfo{
-    std::vector<LineNumberTableEntry> lineNumberTable;
-    void readInfo(ClassReader& cr){
-        lineNumberTable = readLineNumberTable(cr);
-    }
-    int getLineNumber(int pc);
-    const std::string getName() const { return "LineNumberTable"; }
-    const std::string toString() const { return "[" + getName() + "]: " + std::to_string(lineNumberTable.size()); }
 };
 
 struct LocalVariableTableAttribute : public AttributeInfo{

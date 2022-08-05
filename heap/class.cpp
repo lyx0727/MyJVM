@@ -3,10 +3,10 @@
 using namespace std;
 
 Class::Class()
-: constantPool(nullptr), classLoader(nullptr), superClass(nullptr), staticVars(nullptr), jClass(nullptr){}
+: constantPool(nullptr), classLoader(nullptr), superClass(nullptr), staticVars(nullptr), initStarted(false), jClass(nullptr){}
 
 Class::Class(classfile::Classfile& cf)
-: classLoader(nullptr), superClass(nullptr), jClass(nullptr){
+: classLoader(nullptr), superClass(nullptr), initStarted(false), jClass(nullptr){
     accessFlag = cf.getAccessFlags();
     name = cf.getClassName();
     constantPool = new ConstantPool(this, cf.getConstantPool());

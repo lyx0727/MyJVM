@@ -47,7 +47,7 @@ bool Thread::findAndGotoExceptionHandler(Object* ex){
 void Thread::handleUncaughtException(Object* ex){
     clear();
     Object* jMsg = ex->getRefVar("detailMessage", "Ljava/lang/String;");
-    string cMsg = ex->CString();
+    string cMsg = jMsg->CString();
     cout << ex->_class->getJavaName() << ": " << cMsg << endl;
     StackTraceElements* stes = (StackTraceElements*)(ex->extra);
     for(unsigned int i = 0; i < stes->size(); i++){
