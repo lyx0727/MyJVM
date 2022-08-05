@@ -12,10 +12,12 @@ public class ParseIntTest {
         }
     }
     private static void bar(String[] args) {
-    if (args.length == 0) {
-        throw new IndexOutOfBoundsException("no args!");
-    }
-        int x = Integer.parseInt(args[0]);
-        System.out.println(x);
+        if (args.length == 0) {
+            throw new IndexOutOfBoundsException("no args!");
+        }
+        else{
+            int x = Integer.parseInt(args[0]);
+            System.out.println(x);
+        }
     }
 }

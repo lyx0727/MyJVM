@@ -3,6 +3,7 @@
 using namespace std;
 
 void startJVM(Cmd cmd){
+    init();
     Classpath cp(cmd.XjreOption, cmd.cpOption);
     ClassLoader classLoader(&cp, cmd.verboseClassFlag);
     string className = replace(cmd.Class, '.', '/');

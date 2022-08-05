@@ -19,7 +19,7 @@ void readConstantPool(ClassReader& cr, ConstantPool& cp){
 }
 
 const pair<string, string> ConstantPool::getNameAndType(uint16_t index) const { 
-    ConstantNameAndTypeInfo* c = (ConstantNameAndTypeInfo*)getConstantInfo(index);
+    const ConstantNameAndTypeInfo* c = dynamic_cast<const ConstantNameAndTypeInfo*>(getConstantInfo(index));
     string name = getUtf8(c->nameIndex);
     string type = getUtf8(c->descriptorIndex);
     return std::make_pair(name, type);
@@ -43,11 +43,11 @@ const string ConstantPool::toString() const{
             str += "\t" + c->toString() + "\n";
             i++;
         }
-        // // print 10 at most
-        // if(i > 10){
-        //     str += "\t...\n";
-        //     break;
-        // }
+        // print 10 at most
+        if(i > 10){
+            str += "\t...\n";
+            break;
+        }
     }   
     return str;
 }
