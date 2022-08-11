@@ -26,6 +26,7 @@ struct ClassMember{
         name = memberInfo->getName();
         descriptor = memberInfo->getDescriptor();
     }
+    virtual ~ClassMember(){}
 
     bool isAccessibleTo(Class* d) const;
 };

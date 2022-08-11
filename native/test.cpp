@@ -10,11 +10,17 @@ void ClassTest(const string& className, bool verboseClass = false, bool verboseI
     ClassLoader classLoader(&cp, verboseClass);
     Class* test = classLoader.loadClass(className);    
     Method* main = test->getMainMethod();
-    interpret(main, verboseInst);
+    if(main){
+        interpret(main, verboseInst);
+    }
+    else{
+        cout << "No main method" << endl;
+    }
+    
 }
 
 int main(){
     init();
-    // ClassTest("com.lyx.GetClassTest", true, true);
-    ClassTest("com.lyx.ParseIntTest", true, true);
+    // ClassTest("com/lyx/GetClassTest", true, true);
+    ClassTest("com/lyx/ParseIntTest", true, true);
 }

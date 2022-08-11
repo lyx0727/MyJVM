@@ -42,8 +42,9 @@ public:
     Constant(FieldRef* val): type(ConstantType::FieldRef) { this->val.r = val; }
     Constant(InterfaceMethodRef* val): type(ConstantType::InterfaceMethodRef) { this->val.r = val; }
     Constant(const std::string& str): type(ConstantType::String) { 
-        char* s = new char[str.length()];
+        char* s = new char[str.length() + 1];
         std::strcpy(s, str.c_str());
+        s[str.length()] = 0;    // important!
         this->val.r = s;
     } 
     ~Constant(){}

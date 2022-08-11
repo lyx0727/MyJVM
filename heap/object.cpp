@@ -35,11 +35,11 @@ Object::~Object(){
         case ObjectType::DoubleArr: delete (double*)data; break;
         case ObjectType::RefArr:    delete (Object**)data; break;
     }
-    // if(extra){
-    //     if(type == ObjectType::Throwable){
-    //         delete (StackTraceElements*)extra;
-    //     }
-    // }
+    if(extra){
+        if(type == ObjectType::Throwable){
+            delete (StackTraceElements*)extra;
+        }
+    }
 }
 
 bool Object::isInstanceOf(Class* _class) const {

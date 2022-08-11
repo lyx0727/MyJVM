@@ -46,11 +46,15 @@ vector<ExceptionTableEntry> readExceptionTable(ClassReader& cr){
     uint16_t n = cr.readUint16();
     vector<ExceptionTableEntry> exceptionTable(n);
     for(uint16_t i = 0; i < n; i++){
+        uint16_t startPc =   cr.readUint16();  
+        uint16_t endPc =     cr.readUint16();
+        uint16_t handlerPc = cr.readUint16();   
+        uint16_t catchType = cr.readUint16();    
         exceptionTable[i] = ExceptionTableEntry(
-            cr.readUint16(),    // startPc 
-            cr.readUint16(),    // endPc
-            cr.readUint16(),    // handlerPc
-            cr.readUint16()     // catchType
+            startPc,
+            endPc,
+            handlerPc,
+            catchType
         );
     }
     return exceptionTable;
@@ -60,10 +64,9 @@ vector<LineNumberTableEntry> readLineNumberTable(ClassReader& cr){
     uint16_t n = cr.readUint16();
     vector<LineNumberTableEntry> lineNumberTable(n);
     for(uint16_t i = 0; i < n; i++){
-        lineNumberTable[i] = LineNumberTableEntry(
-            cr.readUint16(),    // startPc 
-            cr.readUint16()     // lineNumber
-        );
+        uint16_t startPc    = cr.readUint16();
+        uint16_t lineNumber = cr.readUint16();
+        lineNumberTable[i] = LineNumberTableEntry(startPc, lineNumber);
     }
     return lineNumberTable;
 }
@@ -72,18 +75,23 @@ vector<LocalVariableTableEntry> readLocalVariableTable(ClassReader& cr){
     uint16_t n = cr.readUint16();
     vector<LocalVariableTableEntry> localVariableTable(n);
     for(uint16_t i = 0; i < n; i++){
+        uint16_t startPc         = cr.readUint16();
+        uint16_t length          = cr.readUint16();
+        uint16_t nameIndex       = cr.readUint16();
+        uint16_t descriptorIndex = cr.readUint16();
+        uint16_t index           = cr.readUint16();
         localVariableTable[i] = LocalVariableTableEntry(
-            cr.readUint16(),    // startPc 
-            cr.readUint16(),    // length
-            cr.readUint16(),    // nameIndex
-            cr.readUint16(),    // descriptorIndex
-            cr.readUint16()     // index
+            startPc, 
+            length,
+            nameIndex,
+            descriptorIndex,
+            index
         );
     }
     return localVariableTable;
 }
 
-LineNumberTableAttribute* CodeAttribute::getLineNumberTableAttribute() const{
+LineNumberTableAttribute* CodeAttribute::getLineNumberTableAttribute() const {
     for(AttributeInfo* attr : attributes){
         string name = attr->getName();
         if(AttributeTypeMap.count(name)){

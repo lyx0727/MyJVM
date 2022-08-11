@@ -16,7 +16,7 @@ public:
     std::string   className;
     SymRef(::ConstantPool* cp, const std::string& className)
     : _class(nullptr), cp(cp), className(className){}
-
+    virtual ~SymRef(){}
     Class* resolvedClass();
     void resolveClassRef();
 };
@@ -31,7 +31,7 @@ struct MemberRef : public SymRef{
     std::string descriptor;
     MemberRef(::ConstantPool* cp, classfile::ConstantMemberrefInfo* memberInfo)
         : SymRef(cp, memberInfo->getClassName()){
-        const std::pair<std::string, std::string>& p = memberInfo->getNameAndDescriptor();
+        std::pair<std::string, std::string> p = memberInfo->getNameAndDescriptor();
         name = p.first;
         descriptor = p.second;
     }

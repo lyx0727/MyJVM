@@ -51,6 +51,6 @@ void Thread::handleUncaughtException(Object* ex){
     cout << ex->_class->getJavaName() << ": " << cMsg << endl;
     StackTraceElements* stes = (StackTraceElements*)(ex->extra);
     for(unsigned int i = 0; i < stes->size(); i++){
-        cout << "\tat " << stes->get(i).toString(); 
+        cout << "\tat " << stes->get(i).toString() << endl; 
     }
 }

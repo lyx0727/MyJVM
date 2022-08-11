@@ -31,11 +31,11 @@ ExceptionHandler* ExceptionTable::findExceptionHandler(Class* exClass, int pc){
                 // catch all
                 return handler;
             }
+            Class* catchClass = handler->catchType->resolvedClass();    
+            if(catchClass == exClass || catchClass->isSuperClassOf(exClass)){
+                return handler;
+            } 
         }  
-        Class* catchClass = handler->catchType->resolvedClass();    
-        if(catchClass == exClass || catchClass->isSuperClassOf(exClass)){
-            return handler;
-        } 
     }
     return nullptr;
 }
